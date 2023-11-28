@@ -5,17 +5,17 @@ import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
 
 function App() {
-  const [cities, setCities] = useState([]);
+  const [users, setUsers] = useState([]);
 
   useEffect(() => {
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
     async function fetchData() {
-      const citiesCol = collection(db, 'usuarios');
-      const citySnapshot = await getDocs(citiesCol);
-      const cityList = citySnapshot.docs.map(doc => doc.data());
-      setCities(cityList);
+      const users = collection(db, 'usuarios');
+      const usersSnapshot = await getDocs(users);
+      const UsersList = usersSnapshot.docs.map(doc => doc.data());
+      setUsers(UsersList);
     }
 
     fetchData();
@@ -24,9 +24,9 @@ function App() {
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Lista de Ciudades:</Text>
-      {cities.map((city, index) => (
+      {users.map((user, index) => (
         <Text key={index} style={styles.text}>
-          {`${city.id} - ${city.correoElectronico} - ${city.meditando ? 'Meditando' : 'No meditando'}`}
+          {`${user.id} - ${user.correoElectronico} - ${user.meditando ? 'Meditando' : 'No meditando'}`}
         </Text>
       ))}
     </View>
