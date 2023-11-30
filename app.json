@@ -27,6 +27,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "c5ae49d6-b741-4651-b952-a551736728f1"
+      }
+    },
+    "scheme": "paz_mundial"
   }
 }

@@ -16,4 +16,4 @@ export const firebaseConfig = {
 
 //IOS 133476762148-5ec612ukt96ohs88frg5emcaila6hff7.apps.googleusercontent.com
 
-//android 
+//android 133476762148-48idlu4v6elrn8t14v1msb7gbrvka3cc.apps.googleusercontent.com

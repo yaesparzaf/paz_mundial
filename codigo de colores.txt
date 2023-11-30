@@ -1,0 +1,31 @@
+Blanco: #FFFFFF
+Negro: #000000
+Gris claro: #D3D3D3
+Gris: #808080
+Gris oscuro: #A9A9A9
+Rojo claro: #FFC0CB
+Rojo: #FF0000
+Rojo oscuro: #8B0000
+Rosa: #FF69B4
+Naranja: #FFA500
+Naranja oscuro: #FF8C00
+Amarillo claro: #FFFFE0
+Amarillo: #FFFF00
+Amarillo oscuro: #FFD700
+Verde claro: #90EE90
+Verde: #008000
+Verde oscuro: #006400
+Cian: #00FFFF
+Azul claro: #ADD8E6
+Azul: #0000FF
+Azul oscuro: #00008B
+Morado claro: #E6E6FA
+Morado: #800080
+Morado oscuro: #4B0082
+Turquesa: #40E0D0
+Marrón claro: #D2B48C
+Marrón: #A52A2A
+Marrón oscuro: #8B4513
+Oro: #FFD700
+Plata: #C0C0C0
+Oro rosa: #FFC0CB
