@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
+import { View, Text, StyleSheet, Dimensions } from "react-native";
 import React from "react";
 import ForosBtn from "../componentes/ForosBtn";
 const windowWidth = Dimensions.get("window").width;

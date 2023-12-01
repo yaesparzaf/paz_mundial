@@ -2,6 +2,7 @@ import React from 'react'
 //import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack';
 import Comunidad from '../assets/screens/Comunidad';
 import Noticias from '../assets/screens/Noticias';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
@@ -9,11 +10,11 @@ import { mdiAccountGroup } from '@mdi/js';
 import Entrenamiento from '../assets/screens/Entrenamiento';
 import Notificaciones from '../assets/screens/Notificaciones';
 import Meditar from '../assets/screens/Meditar';
+import Foro from '../assets/screens/Foro';
 
 
-
-const Tab = createBottomTabNavigator()
-
+const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
 function Mytabs(){
   return(
     <Tab.Navigator initialRouteName='Comunidad' screenOptions={{tabBarActiveTintColor:'#40E0D0'}}>
@@ -62,7 +63,11 @@ function Mytabs(){
 const MainStack = () => {
   return (
     <NavigationContainer>
-        <Mytabs/>
+        <Stack.Navigator>
+        <Stack.Screen name="MainTabs" component={Mytabs} options={{ headerShown: false }} />
+        <Stack.Screen name="Foro" component={Foro} /> 
+        
+      </Stack.Navigator>
     </NavigationContainer>
   )
 }
