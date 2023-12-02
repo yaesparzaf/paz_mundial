@@ -1,18 +1,12 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  KeyboardAvoidingView,
-} from "react-native";
+import {View,Text,StyleSheet,ScrollView,KeyboardAvoidingView,} from "react-native";
 import React from "react";
 import Input from "../componentes/Input";
 
 const Foro = () => {
   return (
     <KeyboardAvoidingView style={styles.container}>
+      
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        {/* Contenido de la pantalla */}
         <Text>Contenido del foro...</Text>
         <Text>
           Texto enviado: Lorem Ipsum es simplemente el texto de relleno de las
