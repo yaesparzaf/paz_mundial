@@ -1,51 +1,48 @@
-// API KEY YT AIzaSyAWSs96Vfv5skthhcwKiob9HKskRrxkco4
-import React, { useEffect, useState } from "react";
-import { View, Text, Image } from "react-native";
-import YouTube from 'react-native-youtube';
+//const apiKey = "AIzaSyAWSs96Vfv5skthhcwKiob9HKskRrxkco4";
+//const playlistId = "et6qEl6rxlI";
+import React, { useState, useEffect } from "react";
+import { View, Text } from "react-native";
+import YouTube from 'react-native-youtube-iframe';
 import axios from "axios";
 
 const apiKey = "AIzaSyAWSs96Vfv5skthhcwKiob9HKskRrxkco4";
-const playlistId = "et6qEl6rxlI";
+const videoId = "et6qEl6rxlI"; // Reemplaza esto con el ID de tu video de YouTube
 
-  
 const Videos = () => {
-    const [videos, setVideos] = useState([]);
-    const [selectedVideo, setSelectedVideo] = useState(null);
-  
-    useEffect(() => {
-      axios.get(`https://www.googleapis.com/youtube/v3/search?key=${apiKey}&part=snippet&type=video&maxResults=10&q=${playlistId}`)
-        .then((response) => {
-          setVideos(response.data.items);
-        })
-        .catch((error) => {
-          console.error('Error al obtener videos de YouTube:', error);
-        });
-    }, []);
-  
-    const playVideo = (videoId) => {
-        setSelectedVideo(videoId);
-      };
-  
-      return (
-        <View>
-          {selectedVideo ? (
-            <YouTube
-              videoId={selectedVideo}
-              play={true}
-              style={{ alignSelf: 'stretch', height: 300 }}
-            />
-          ) : (
-            <View style={{ height: 100, width: 300 }}>
-              {videos.map((video) => (
-                <View key={video.id.videoId}>
-                  <Text //onPress={() => playVideo(video.id.videoId)}
-                  >{video.snippet.title}</Text>
-                </View>
-              ))}
-            </View>
-          )}
+  const [videoInfo, setVideoInfo] = useState(null);
+
+  useEffect(() => {
+    axios
+      .get(
+        `https://www.googleapis.com/youtube/v3/videos?key=${apiKey}&part=snippet&id=${videoId}`
+      )
+      .then((response) => {
+        if (response.data.items.length > 0) {
+          setVideoInfo(response.data.items[0].snippet);
+        } else {
+          console.error("No se encontró información del video.");
+        }
+      })
+      .catch((error) => {
+        console.error("Error al obtener información del video de YouTube:", error);
+      });
+  }, []);
+
+  return (
+    <View style={{ flex: 1 }}>
+      {videoInfo ? (
+        <View style={{ flex: 1 }}>
+          <Text>{videoInfo.title}</Text>
+          <YouTube
+            videoId={videoId}
+            height={200}
+          />
         </View>
-      );
-  };
-  
-  export default Videos;
+      ) : (
+        <Text>Cargando...</Text>
+      )}
+    </View>
+  );
+};
+
+export default Videos;

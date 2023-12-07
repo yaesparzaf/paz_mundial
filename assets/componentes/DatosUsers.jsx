@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
-import { firebaseConfig } from '../../firebase-config';
-import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
+import { db } from '../../firebase-config';
+
+//usar useLayoutEffect para renderizar cosas en pantalla
 
 export default function DatosUsers() {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+    
 
     async function fetchData() {
       const users = collection(db, 'usuarios');

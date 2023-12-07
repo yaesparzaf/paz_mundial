@@ -1,30 +1,51 @@
 import {View,Text,StyleSheet,ScrollView,KeyboardAvoidingView,} from "react-native";
-import React from "react";
-import Input from "../componentes/Input";
-
-const Foro = () => {
-  return (
-    <KeyboardAvoidingView style={styles.container}>
+import { collection, onSnapshot, query,orderBy } from 'firebase/firestore';
+import React, { useCallback, useLayoutEffect, useState } from 'react';
+import { GiftedChat } from 'react-native-gifted-chat';
+import { db } from '../../firebase-config';
+const Foro = ({route}) => {
+  const [messages, setMessages] = useState([]);
+  const {name_foro} = route.params;
+  console.log(name_foro);
+  useLayoutEffect(() => {
+    const CollectionMen = collection(db, 'foros', name_foro, 'mensajes');
+    const q = query(CollectionMen,orderBy('createAt', 'desc'));
+    
+    const NewMsg = onSnapshot(q, snapshot => {
+      console.log('snapshot');
+      setMessages(
+        snapshot.docs.map(doc => {
+          console.log('id:'+doc.id);
+          return{
+          _id: doc.id,
+          autor: doc.data().autor,
+          mensaje: doc.data().mensaje
+          };
+        })
+        
+      );
       
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <Text>Contenido del foro...</Text>
-        <Text>
-          Texto enviado: Lorem Ipsum es simplemente el texto de relleno de las
-          imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno
-          estándar de las industrias desde el año 1500, cuando un impresor (N.
-          del T. persona que se dedica a la imprenta) desconocido usó una
-          galería de textos y los mezcló de tal manera que logró hacer un libro
-          de textos especimen. No sólo sobrevivió 500 años, sino que tambien
-          ingresó como texto de relleno en documentos electrónicos, quedando
-          esencialmente igual al original. Fue popularizado en los 60s con la
-          creación de las hojas "Letraset", las cuales contenian pasajes de
-          Lorem Ipsum, y más recientemente con software de autoedición, como por
-          ejemplo Aldus PageMaker, el cual incluye versiones de Lorem Ipsum.
-        </Text>
-      </ScrollView>
-      {/* Input en la parte inferior */}
-      <Input />
-    </KeyboardAvoidingView>
+    });
+    return () => NewMsg();
+  }, []);
+
+  const onSend = useCallback((messages = []) => {
+    setMessages(previousMessages => GiftedChat.append(previousMessages, messages));
+    const {_id, autor, mensaje}=messages[0];
+    addDoc(collection(db,'foros',name_foro,'mensajes'),{
+      _id,autor,mensaje
+    });
+  }, []);
+
+
+  return (
+    messages && (
+      <GiftedChat
+        messages={messages}
+        onSend={(messages) => onSend(messages)}
+        user={{ _id:  1}} 
+      />
+    )
   );
 };
 

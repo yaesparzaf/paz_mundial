@@ -4,22 +4,23 @@ import React from "react";
 import { useNavigation } from "@react-navigation/native";
 
 const ForosBtn = () => {
-    const navigacion =useNavigation();
-  const handlePress = () => {
+  const foros=['PoderMental','Hipnosis'];
+  const navigacion =useNavigation();
+  const botonPresionado = (name_foro) => {
     // Acción al presionar el botón "Foro 1"
-    console.log('Botón "Foro 1" presionado');
-    navigacion.navigate('Foro');
+    console.log('Botón '+name_foro+' presionado');
+    navigacion.navigate('Foro',{name_foro});
   };
   return (
     <View>
-      <TouchableOpacity style={styles.foros} onPress={handlePress}>
-        <Text style={styles.titulo_btn}>Foro 1</Text>
-        <Text style={{marginLeft:10,}}>Descubre todo sobre tus chakras</Text>
+      <TouchableOpacity style={styles.foros} onPress={() => botonPresionado(foros[0])}>
+        <Text style={styles.titulo_btn}>Poder mental</Text>
+        <Text style={{marginLeft:10,}}>Poderes mentales</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.foros} onPress={handlePress}>
-        <Text style={styles.titulo_btn}>Foro 2</Text>
+      <TouchableOpacity style={styles.foros} onPress={() => botonPresionado(foros[1])}>
+        <Text style={styles.titulo_btn}>Hipnosis</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.foros} onPress={handlePress}>
+      <TouchableOpacity style={styles.foros} onPress={botonPresionado}>
         <Text style={styles.titulo_btn}>Foro 3</Text>
       </TouchableOpacity>
     </View>

@@ -1,3 +1,6 @@
+npm install -g eas-cli
+eas login
+
 Blanco: #FFFFFF
 Negro: #000000
 Gris claro: #D3D3D3
