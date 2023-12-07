@@ -36,8 +36,6 @@ const Foro = ({route}) => {
       _id,autor,mensaje
     });
   }, []);
-
-
   return (
     messages && (
       <GiftedChat
