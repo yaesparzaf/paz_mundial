@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, { createContext, useContext, useEffect, useState,useLayoutEffect } from 'react'
 //import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -6,21 +6,63 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Comunidad from '../assets/screens/Comunidad';
 import Noticias from '../assets/screens/Noticias';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { mdiAccountGroup } from '@mdi/js';
 import Entrenamiento from '../assets/screens/Entrenamiento';
 import Notificaciones from '../assets/screens/Notificaciones';
 import Meditar from '../assets/screens/Meditar';
 import Foro from '../assets/screens/Foro';
 import { auth } from '../firebase-config';
-
+import { onAuthStateChanged } from 'firebase/auth';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 const AuthenticatedUserContex = createContext({});
 
+const AuthenticatedUserProvider = ({children})=>{
+  const [usuario,setUsuario] = useState(null);
+  return (
+    <AuthenticatedUserContex.Provider value={{usuario,setUsuario}}>
+      {children}
+    </AuthenticatedUserContex.Provider>
+  )
+}
+
+const useUser = () =>{
+  const context = useContext(AuthenticatedUserContex);
+  if (!context) {
+    throw new Error('useUser debe ser utilizado dentro de un UserProvider');
+  }
+  return context;
+}
+export { AuthenticatedUserProvider,useUser };
+
+export  function DatosUsers() {
+  const { usuario, setUsuario } = useUser();
+  
+  useLayoutEffect(() => {
+    async function fetchUser(nombre, email) {
+      const usuariosRef = collection(db, 'usuarios');
+      const q = query(usuariosRef, where('nombre', '==', nombre), where('email', '==', email));
+      const querySnapShot = await getDocs(q);
+      if (querySnapShot.docs.length > 0) {
+        const userData = querySnapShot.docs[0].data();
+        setUsuario(userData);
+        console.log('el usuario existe');
+        return true;
+      } else {
+        console.log('NO existe existe');
+        return false;
+      }
+    }
+    const usernameABuscar = 'Yamil';
+    const correoABuscar = 'yamilya.esparza25@gmail.com';
+    fetchUser(usernameABuscar, correoABuscar);
+  }, [setUsuario]);
+  return{usuario};
+}
+
 function Mytabs() {
   return (
-    <Tab.Navigator initialRouteName='Comunidad' screenOptions={{ tabBarActiveTintColor: '#40E0D0' }}>
+    <Tab.Navigator initialRouteName='Noticias' screenOptions={{ tabBarActiveTintColor: '#40E0D0' }}>
       <Tab.Screen name='noticias' component={Noticias}
         options={{
           tabBarLabel: 'Noticias',
@@ -72,15 +114,7 @@ function TabStack() {
 }
 
 const MainStack = () => {
-  const { user, setUser } = useContext(AuthenticatedUserContex);
-  const { loading, setLoading } = useState(true);
-  /*useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth,
-      async authenticatedUser =>{
-        authenticatedUser ? setUser(authenticatedUser) :setUser(null);
-        setLoading(false);
-      })
-  });*/
+ 
   return (
     <NavigationContainer>
       <TabStack />
@@ -88,4 +122,4 @@ const MainStack = () => {
   )
 }
 
-export default MainStack
+export default MainStack;

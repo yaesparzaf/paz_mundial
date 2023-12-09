@@ -2,10 +2,9 @@ import React, { useLayoutEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { getFirestore, collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../../firebase-config';
-import { useUser } from '../../navegacion/MainStack';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useUser } from '../MainStack';
 
-export  function DatosUsers() {
+export default function DatosUsers() {
   const { usuario, setUsuario } = useUser();
   
   useLayoutEffect(() => {
@@ -41,6 +40,31 @@ export  function DatosUsers() {
     </View>
   );
 
+  /*
+  const [users, setUsers] = useState([]);
+  useEffect(() => {
+    
+
+    async function fetchData() {
+      const users = collection(db, 'usuarios');
+      const usersSnapshot = await getDocs(users);
+      const UsersList = usersSnapshot.docs.map(doc => doc.data());
+      setUsers(UsersList);
+    }
+
+    fetchData();
+  }, []);
+
+  return (
+    <ScrollView contentContainerStyle={styles.scrollViewContent}>
+      <Text style={styles.title}>Lista de usuarios:</Text>
+      {users.map((user, index) => (
+        <Text key={index} style={styles.text}>
+          {`${user.id} - ${user.correoElectronico} - ${user.meditando ? 'Meditando' : 'No meditando'}`}
+        </Text>
+      ))}
+    </ScrollView>
+  );*/
 }
 
 const styles = StyleSheet.create({
@@ -62,14 +86,3 @@ const styles = StyleSheet.create({
     marginTop: 10, // Espacio entre cada elemento de la lista
   },
 });
-const Noticias = () => {
-  return (
-    <SafeAreaView>
-      <View>
-        <DatosUsers />
-      </View>
-    </SafeAreaView>
-  );
-};
-
-export default Noticias;
