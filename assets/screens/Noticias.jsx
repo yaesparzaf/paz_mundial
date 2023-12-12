@@ -68,6 +68,7 @@ const Noticias = () => {
     <SafeAreaView>
       <View>
         <DatosUsers/>
+        <Text>noticias</Text>
       </View>
     </SafeAreaView>
   );

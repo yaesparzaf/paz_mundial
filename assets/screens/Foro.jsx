@@ -4,10 +4,12 @@ import React, { useCallback, useLayoutEffect, useState } from 'react';
 import { GiftedChat } from 'react-native-gifted-chat';
 import { db } from '../../fb/firebase-config';
 import { doc } from "firebase/firestore";
+import { useUser } from "../../fb/DatosUsers";
 
 const Foro = ({route}) => {
   const [messages, setMessages] = useState([]);
   const {name_foro} = route.params;
+  const {usuario,setUsuario} =useUser();
   console.log(name_foro);
   useLayoutEffect(() => {
     const CollectionMen = collection(db,"foros","Hipnosis","Mensajes");
@@ -18,8 +20,11 @@ const Foro = ({route}) => {
         snapshot.docs.map(doc => {
           return{
           _id: doc.id,
-          autor: doc.data().autor,
-          mensaje: doc.data().mensaje
+          text: doc.data().mensaje,
+          user:{
+            _id:123,
+            name:doc.data().nombre,
+          },
           };
         })
         
@@ -31,10 +36,10 @@ const Foro = ({route}) => {
   }, []);
   const onSend = useCallback((messages = []) => {
     setMessages(previousMessages => GiftedChat.append(previousMessages, messages));
-    const {_id, autor, mensaje}=messages[0];
+    const {_id, autor, mensaje,fecha}=messages[0];
     console.log("ID: "+_id);
     addDoc(collection(db,'foros',name_foro,'Mensajes'),{
-      _id,autor,mensaje
+      _id,autor,mensaje,fecha
     });
   }, []);
   return (
@@ -42,7 +47,7 @@ const Foro = ({route}) => {
       <GiftedChat
         messages={messages}
         onSend={(messages) => onSend(messages)}
-        user={{ _id:  1}} 
+        user={{ _id:  usuario.id}} 
       />
     )
   );
