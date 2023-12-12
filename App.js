@@ -1,6 +1,6 @@
 import { SafeAreaView,StyleSheet} from 'react-native';
 import MainStack from './navegacion/MainStack';
-import {AuthenticatedUserProvider} from './navegacion/MainStack';
+import {AuthenticatedUserProvider} from './fb/DatosUsers';
 
 
 function App() {

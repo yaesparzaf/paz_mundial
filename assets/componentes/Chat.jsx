@@ -1,7 +1,7 @@
 import { collection, onSnapshot, query } from 'firebase/firestore';
 import React, { useCallback, useLayoutEffect, useState } from 'react';
 import { GiftedChat } from 'react-native-gifted-chat';
-import { db } from '../../firebase-config';
+//import { db } from '../../firebase-config';
 import { View } from 'react-native';
 
 

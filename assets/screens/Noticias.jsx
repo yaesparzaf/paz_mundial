@@ -1,11 +1,12 @@
 import React, { useLayoutEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { getFirestore, collection, getDocs, query, where } from 'firebase/firestore';
-import { db } from '../../firebase-config';
+import { db } from '../../fb/firebase-config';
 import { useUser } from '../../navegacion/MainStack';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { DatosUsers } from '../../fb/DatosUsers';
 
-export  function DatosUsers() {
+/*export  function DatosUsers() {
   const { usuario, setUsuario } = useUser();
   
   useLayoutEffect(() => {
@@ -41,7 +42,7 @@ export  function DatosUsers() {
     </View>
   );
 
-}
+}*/
 
 const styles = StyleSheet.create({
   scrollViewContent: {
@@ -66,7 +67,7 @@ const Noticias = () => {
   return (
     <SafeAreaView>
       <View>
-        <DatosUsers />
+        <DatosUsers/>
       </View>
     </SafeAreaView>
   );

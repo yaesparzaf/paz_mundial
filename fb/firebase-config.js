@@ -1,6 +1,8 @@
 import { initializeApp } from 'firebase/app';
 import  Constants  from 'expo-constants';
 import { getFirestore } from 'firebase/firestore';
+import { getAuth,initializeAuth } from 'firebase/auth';
+//import { getReactNativePersistence } from '@react-native-firebase/auth';
 
 const firebaseConfig = {
   apiKey: Constants.expoConfig.extra.apiKey,
@@ -12,9 +14,17 @@ const firebaseConfig = {
   measurementId: Constants.expoConfig.extra.measurementId,
 };
 
-initializeApp(firebaseConfig);
-export const auth = initializeApp(firebaseConfig);
-export const db = getFirestore(auth);
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// Configurar autenticación con persistencia
+/*initializeAuth(auth, {
+  persistence: getReactNativePersistence(ReactNativeAsyncStorage),
+});*/
+
+export { app, auth, db };
 
 //IOS 133476762148-5ec612ukt96ohs88frg5emcaila6hff7.apps.googleusercontent.com
 

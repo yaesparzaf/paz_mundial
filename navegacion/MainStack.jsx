@@ -10,13 +10,13 @@ import Entrenamiento from '../assets/screens/Entrenamiento';
 import Notificaciones from '../assets/screens/Notificaciones';
 import Meditar from '../assets/screens/Meditar';
 import Foro from '../assets/screens/Foro';
-import { auth } from '../firebase-config';
 import { onAuthStateChanged } from 'firebase/auth';
+import { db } from '../fb/firebase-config';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
-const AuthenticatedUserContex = createContext({});
 
+/*
 const AuthenticatedUserProvider = ({children})=>{
   const [usuario,setUsuario] = useState(null);
   return (
@@ -33,9 +33,9 @@ const useUser = () =>{
   }
   return context;
 }
-export { AuthenticatedUserProvider,useUser };
+export { AuthenticatedUserProvider,useUser };*/
 
-export  function DatosUsers() {
+/*export  function DatosUsers() {
   const { usuario, setUsuario } = useUser();
   
   useLayoutEffect(() => {
@@ -58,7 +58,7 @@ export  function DatosUsers() {
     fetchUser(usernameABuscar, correoABuscar);
   }, [setUsuario]);
   return{usuario};
-}
+}*/
 
 function Mytabs() {
   return (
