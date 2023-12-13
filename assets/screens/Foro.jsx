@@ -12,17 +12,17 @@ const Foro = ({route}) => {
   const {usuario,setUsuario} =useUser();
   console.log(name_foro);
   useLayoutEffect(() => {
-    const CollectionMen = collection(db,"foros","Hipnosis","Mensajes");
+    const CollectionMen = collection(db,"foros",name_foro,"Mensajes");
     const q = query(CollectionMen,orderBy('fecha', 'desc'));
     const NewMsg = onSnapshot(q, snapshot => {
-      console.log('snapshot:', JSON.stringify(snapshot, null, 2));
+      //console.log('snapshot:', JSON.stringify(snapshot.docs, null, 2));
       setMessages(
         snapshot.docs.map(doc => {
           return{
           _id: doc.id,
           text: doc.data().mensaje,
           user:{
-            _id:123,
+            _id:usuario.id,
             name:doc.data().nombre,
           },
           };
@@ -36,10 +36,10 @@ const Foro = ({route}) => {
   }, []);
   const onSend = useCallback((messages = []) => {
     setMessages(previousMessages => GiftedChat.append(previousMessages, messages));
-    const {_id, autor, mensaje,fecha}=messages[0];
+    const {autor, autor_id,fecha, mensaje}=messages[0];
     console.log("ID: "+_id);
     addDoc(collection(db,'foros',name_foro,'Mensajes'),{
-      _id,autor,mensaje,fecha
+      autor,autor_id,fecha,mensaje
     });
   }, []);
   return (

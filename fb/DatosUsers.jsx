@@ -41,10 +41,8 @@ export  function DatosUsers() {
             ...querySnapShot.docs[0].data()
           };
           setUsuario(userData);
-          console.log('el usuario existe');
           return true;
         } else {
-          console.log('NO existe existe');
           return false;
         }
       }
