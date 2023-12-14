@@ -24,11 +24,8 @@ const useUser = () =>{
 }
 export { AuthenticatedUserProvider,useUser };
 
-
-
-
 export  function DatosUsers() {
-    const { usuario, setUsuario } = useUser();
+    const { usuario, setUsuario } = useUser({});
     
     useLayoutEffect(() => {
       async function fetchUser(nombre, email) {
@@ -40,16 +37,17 @@ export  function DatosUsers() {
             id:querySnapShot.docs[0].id,
             ...querySnapShot.docs[0].data()
           };
+          setUsuario(null);
           setUsuario(userData);
           return true;
         } else {
           return false;
         }
       }
-      const usernameABuscar = 'brian';
-      const correoABuscar = 'yamil@fundaciondespertar.com';
-      //const usernameABuscar = 'Yamil';
-      //const correoABuscar = 'yamilya.esparza25@gmail.com';
+      //const usernameABuscar = 'brian';
+      //const correoABuscar = 'yamil@fundaciondespertar.com';
+      const usernameABuscar = 'Yamil';
+      const correoABuscar = 'yamilya.esparza25@gmail.com';
       fetchUser(usernameABuscar, correoABuscar);
     }, [setUsuario]);
   

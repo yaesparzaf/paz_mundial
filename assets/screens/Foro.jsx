@@ -10,7 +10,7 @@ const Foro = ({route}) => {
   const [messages, setMessages] = useState([]);
   const {name_foro} = route.params;
   const {usuario,setUsuario} =useUser();
-  console.log(name_foro);
+  //console.log(name_foro);
   useLayoutEffect(() => {
     const CollectionMen = collection(db,"foros",name_foro,"Mensajes");
     const q = query(CollectionMen,orderBy('fecha', 'desc'));
@@ -18,12 +18,14 @@ const Foro = ({route}) => {
       //console.log('snapshot:', JSON.stringify(snapshot.docs, null, 2));
       setMessages(
         snapshot.docs.map(doc => {
+          console.log("id: "+doc.data().autor_id+" usuario logeado: "+usuario.id,
+            doc.data().autor)
           return{
-          _id: doc.id,
+          _id: doc.data().msj_id,
           text: doc.data().mensaje,
           user:{
-            _id:usuario.id,
-            name:doc.data().nombre,
+            _id:doc.data().autor_id,
+            name:doc.data().autor,
           },
           };
         })
@@ -35,12 +37,12 @@ const Foro = ({route}) => {
     
   }, [name_foro]);
   const onSend = useCallback((messages = []) => {
-    const fechaActual = Timestamp.now();
+    //const fechaActual = Timestamp.now();
     setMessages(previousMessages => GiftedChat.append(previousMessages, messages));
     const {user,_id:msj_id,createdAt:fecha,text: mensaje}=messages[0];
-    const {autor:autor,autor_id:autor_id} =user;
+    const {name:autor,_id:autor_id} =user;
     //console.log(messages[0]);
-    console.log(user);
+    //console.log(user);
     const datos ={
       msj_id,autor,autor_id,fecha,mensaje
     };
@@ -60,9 +62,8 @@ const Foro = ({route}) => {
         onSend={(messages) => onSend(messages)}
         user={{ 
           _id:  usuario.id,
-          autor: usuario.nombre,
-          autor_id: usuario.id,
-        }} 
+          name: usuario.nombre,
+        }}
       />
     )
   );
