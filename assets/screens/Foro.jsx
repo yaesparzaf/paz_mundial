@@ -1,5 +1,5 @@
 import {View,Text,StyleSheet,ScrollView,KeyboardAvoidingView,} from "react-native";
-import { collection, onSnapshot, query,orderBy } from 'firebase/firestore';
+import { collection, onSnapshot, query,orderBy, addDoc, Timestamp } from 'firebase/firestore';
 import React, { useCallback, useLayoutEffect, useState } from 'react';
 import { GiftedChat } from 'react-native-gifted-chat';
 import { db } from '../../fb/firebase-config';
@@ -33,13 +33,24 @@ const Foro = ({route}) => {
     });
     return () => NewMsg();
     
-  }, []);
+  }, [name_foro]);
   const onSend = useCallback((messages = []) => {
+    const fechaActual = Timestamp.now();
     setMessages(previousMessages => GiftedChat.append(previousMessages, messages));
-    const {autor, autor_id,fecha, mensaje}=messages[0];
-    console.log("ID: "+_id);
-    addDoc(collection(db,'foros',name_foro,'Mensajes'),{
-      autor,autor_id,fecha,mensaje
+    const {user,_id:msj_id,createdAt:fecha,text: mensaje}=messages[0];
+    const {autor:autor,autor_id:autor_id} =user;
+    //console.log(messages[0]);
+    console.log(user);
+    const datos ={
+      msj_id,autor,autor_id,fecha,mensaje
+    };
+    console.log(datos);
+    addDoc(collection(db, 'foros', name_foro, 'Mensajes'), {
+      autor,
+      autor_id,
+      fecha,
+      mensaje,
+      msj_id
     });
   }, []);
   return (
@@ -47,7 +58,11 @@ const Foro = ({route}) => {
       <GiftedChat
         messages={messages}
         onSend={(messages) => onSend(messages)}
-        user={{ _id:  usuario.id}} 
+        user={{ 
+          _id:  usuario.id,
+          autor: usuario.nombre,
+          autor_id: usuario.id,
+        }} 
       />
     )
   );
