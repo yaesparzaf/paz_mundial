@@ -1,71 +1,65 @@
-import {View,Text,StyleSheet,ScrollView,KeyboardAvoidingView,} from "react-native";
-import { collection, onSnapshot, query,orderBy, addDoc, Timestamp } from 'firebase/firestore';
-import React, { useCallback, useLayoutEffect, useState } from 'react';
+import React, { useCallback, useLayoutEffect, useState, useRef, useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView, KeyboardAvoidingView, } from "react-native";
 import { GiftedChat } from 'react-native-gifted-chat';
+import { collection, onSnapshot, query, orderBy, addDoc } from 'firebase/firestore';
 import { db } from '../../fb/firebase-config';
-import { doc } from "firebase/firestore";
-import { useUser } from "../../fb/DatosUsers";
-
-const Foro = ({route}) => {
+import { useUser } from '../../fb/DatosUsers';
+const Foro = ({ route }) => {
   const [messages, setMessages] = useState([]);
-  const {name_foro} = route.params;
-  const {usuario,setUsuario} =useUser();
-  //console.log(name_foro);
-  useLayoutEffect(() => {
-    const CollectionMen = collection(db,"foros",name_foro,"Mensajes");
-    const q = query(CollectionMen,orderBy('fecha', 'desc'));
-    const NewMsg = onSnapshot(q, snapshot => {
-      //console.log('snapshot:', JSON.stringify(snapshot.docs, null, 2));
-      setMessages(
-        snapshot.docs.map(doc => {
-          console.log("id: "+doc.data().autor_id+" usuario logeado: "+usuario.id,
-            doc.data().autor)
-          return{
-          _id: doc.data().msj_id,
-          text: doc.data().mensaje,
-          user:{
-            _id:doc.data().autor_id,
-            name:doc.data().autor,
-          },
-          };
-        })
-        
-      );
-      
-    });
-    return () => NewMsg();
-    
+  const { name_foro } = route.params;
+  const { usuario } = useUser();
+
+  const initialLoadRef = useRef(false);
+
+  useEffect(() => {
+    console.log(initialLoadRef+" "+initialLoadRef.current);
+    if (!initialLoadRef.current) {
+      const CollectionMen = collection(db, 'foros', name_foro, 'Mensajes');
+      const q = query(CollectionMen, orderBy('fecha', 'desc'));
+      const unsubscribe = onSnapshot(q, (snapshot) => {
+        setMessages(
+          snapshot.docs.map((doc) => ({
+            _id: doc.data().msj_id,
+            text: doc.data().mensaje,
+            user: {
+              _id: doc.data().autor_id,
+              name: doc.data().autor,
+            },
+          }))
+        );
+        initialLoadRef.current = true;
+      });
+
+      return () => {
+        if (unsubscribe) unsubscribe();
+      };
+    }
   }, [name_foro]);
-  const onSend = useCallback((messages = []) => {
-    //const fechaActual = Timestamp.now();
-    setMessages(previousMessages => GiftedChat.append(previousMessages, messages));
-    const {user,_id:msj_id,createdAt:fecha,text: mensaje}=messages[0];
-    const {name:autor,_id:autor_id} =user;
-    //console.log(messages[0]);
-    //console.log(user);
-    const datos ={
-      msj_id,autor,autor_id,fecha,mensaje
-    };
-    console.log(datos);
+
+  const onSend = useCallback((newMessages = []) => {
+    setMessages((previousMessages) => GiftedChat.append(previousMessages, newMessages));
+    const { user, _id: msj_id, createdAt: fecha, text: mensaje } = newMessages[0];
+    const { name: autor, _id: autor_id } = user;
     addDoc(collection(db, 'foros', name_foro, 'Mensajes'), {
       autor,
       autor_id,
       fecha,
       mensaje,
-      msj_id
+      msj_id,
     });
-  }, []);
+  }, [name_foro]);
+
   return (
-    messages && (
-      <GiftedChat
-        messages={messages}
-        onSend={(messages) => onSend(messages)}
-        user={{ 
-          _id:  usuario.id,
-          name: usuario.nombre,
-        }}
-      />
-    )
+    <GiftedChat
+      messages={messages}
+      onSend={(newMessages) => onSend(newMessages)}
+      user={{
+        _id: usuario.id,
+        name: usuario.nombre,
+      }}
+      loadEarlier={false}
+      isLoadingEarlier={false}
+    />
   );
 };
 
