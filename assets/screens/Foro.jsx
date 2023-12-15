@@ -12,7 +12,7 @@ const Foro = ({ route }) => {
   const initialLoadRef = useRef(false);
 
   useEffect(() => {
-    console.log(initialLoadRef+" "+initialLoadRef.current);
+    //console.log(initialLoadRef+" "+initialLoadRef.current);
     if (!initialLoadRef.current) {
       const CollectionMen = collection(db, 'foros', name_foro, 'Mensajes');
       const q = query(CollectionMen, orderBy('fecha', 'desc'));
