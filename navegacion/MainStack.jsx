@@ -83,7 +83,7 @@ function TabStack() {
         ),
        // headerStyle:{marginBottom:0}
       }} />
-      <Stack.Screen name="Perfil" component={Perfil} />
+      <Stack.Screen name="Perfil" component={Perfil} options={{headerStyle:{backgroundColor:'cyan'}}}/>
       <Stack.Screen name="Foro" component={Foro} />
     </Stack.Navigator>
   )

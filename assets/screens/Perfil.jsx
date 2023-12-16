@@ -8,30 +8,64 @@ const Perfil = () => {
 
   return (
     <View style={styles.container}>
-      <Image
-        source={{ uri: 'https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp' }}
-        style={styles.profileImage}
-      />
-      <Text>Perfil de {usuario.nombre}</Text>
+      <View style={styles.image_cont}>
+        <Image
+          source={{ uri: 'https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp' }}
+          style={styles.profileImage}
+          resizeMode="cover"
+        />
+      </View>
+      <View style={styles.data_cont}>
+        <Text style={styles.data_title}>Nombre</Text>
+        <Text style={styles.data_info}>{usuario.nombre}</Text>
+        <Text style={styles.data_title}>Correo</Text>
+        <Text style={styles.data_info}>{usuario.email}</Text>
+      </View>
     </View>
   );
 };
 
-
 const styles = StyleSheet.create({
-  container:{
+  container: {
     flex: 1,
+    alignItems: 'center',
+    
+    backgroundColor:'white'
+  },
+  image_cont: {
+    borderWidth: 3,
+    borderColor: 'black',
+    borderRadius: 100,
+    marginBottom: 20,
+    overflow: 'hidden',
+    marginTop:20 
   },
   profileImage: {
-    width: 250,  // Ajusta el ancho según tus necesidades
-    height: 150, // Ajusta la altura según tus necesidades
-    borderRadius: 100, // Ajusta el radio de la esquina para que sea un círculo
-    marginBottom: 20,
+    width: 200, 
+    height: 200,
+    borderRadius: 75,
+  },
+  data_cont:{
+    flex:0.4,
+    width:'90%',
+    marginTop:10,
+    justifyContent:'space-around'
+    //backgroundColor:'red'
   },
   profileName: {
     fontSize: 20,
     fontWeight: 'bold',
   },
+  data_title:{
+    fontSize:15,
+    color:'#808080',
+    borderBottomWidth:1,
+    borderBottomColor:'#808080',
+    fontWeight:'bold'
+  },
+  data_info:{
+    fontSize:17
+  }
 });
 
 export default Perfil
