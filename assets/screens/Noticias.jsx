@@ -67,7 +67,6 @@ const Noticias = () => {
   return (
     <SafeAreaView>
       <View>
-        <DatosUsers/>
         <Text>noticias</Text>
       </View>
     </SafeAreaView>

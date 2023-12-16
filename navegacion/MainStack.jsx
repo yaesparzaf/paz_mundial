@@ -1,12 +1,12 @@
 import React, { createContext, useContext, useEffect, useState, useLayoutEffect } from 'react'
 //import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { View, TouchableOpacity, Text } from 'react-native';
+import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { NavigationContainer, useNavigation } from '@react-navigation/native'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import Comunidad from '../assets/screens/Comunidad';
 import Noticias from '../assets/screens/Noticias';
-import { Ionicons, Feather, MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialIcons, Ionicons, Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import Entrenamiento from '../assets/screens/Entrenamiento';
 import Notificaciones from '../assets/screens/Notificaciones';
 import Meditar from '../assets/screens/Meditar';
@@ -23,7 +23,7 @@ function Mytabs() {
       screenOptions={{
         tabBarActiveTintColor: '#40E0D0',
         headerTitleStyle: {
-          fontSize:10,
+          fontSize: 10,
         },
       }}>
       <Tab.Screen name='Noticias' component={Noticias}
@@ -32,14 +32,14 @@ function Mytabs() {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="newspaper-outline" size={size} color={color} />
           ),
-          headerShown:false,
+          headerShown: false,
         }} />
       <Tab.Screen name='Comunidad' component={Comunidad}
         options={{
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="account-group" size={size} color={color} />
           ),
-          headerShown:false
+          headerShown: false
         }}
       />
       <Tab.Screen name='Entrenamiento' component={Entrenamiento}
@@ -47,7 +47,7 @@ function Mytabs() {
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="head-cog-outline" size={size} color={color} />
           ),
-          headerShown:false
+          headerShown: false
         }}
       />
       <Tab.Screen name='Meditar' component={Meditar}
@@ -55,7 +55,7 @@ function Mytabs() {
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="meditation" size={size} color={color} />
           ),
-          headerShown:false
+          headerShown: false
         }}
       />
       <Tab.Screen name='notificaciones' component={Notificaciones}
@@ -63,7 +63,7 @@ function Mytabs() {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="notifications" size={size} color={color} />
           ),
-          headerShown:false
+          headerShown: false
         }}
       />
     </Tab.Navigator>
@@ -77,13 +77,14 @@ function TabStack() {
       <Stack.Screen name="MainTabs" component={Mytabs} options={{
         title: 'Por la paz mundial',
         headerRight: () => (
-          <TouchableOpacity onPress={() => navigation.navigate('Perfil')} style={{ padding: 10 }}>
-            <Feather name="user" size={24} color="black" />
-          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate('Perfil')} style={styles.account}>
+            <MaterialIcons name="account-circle" size={30} color="black" />      
+            <Text style={styles.account_text}>Mi cuenta</Text>    
+            </TouchableOpacity>
         ),
-       // headerStyle:{marginBottom:0}
+        headerStyle: { backgroundColor: 'cyan' }
       }} />
-      <Stack.Screen name="Perfil" component={Perfil} options={{headerStyle:{backgroundColor:'cyan'}}}/>
+      <Stack.Screen name="Perfil" component={Perfil} options={{ headerStyle: { backgroundColor: 'cyan' } }} />
       <Stack.Screen name="Foro" component={Foro} />
     </Stack.Navigator>
   )
@@ -98,4 +99,13 @@ const MainStack = () => {
   )
 }
 
+const styles = StyleSheet.create({
+  account:{
+    alignItems:'center',
+    marginRight:5
+  },
+  account_text:{
+    fontSize:10,
+  }
+})
 export default MainStack;

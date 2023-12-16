@@ -51,7 +51,7 @@ export  function DatosUsers() {
       fetchUser(usernameABuscar, correoABuscar);
     }, [setUsuario]);
   
-    return (
+    /*return (
       <View style={styles.container}>
         {usuario ? (
           <>
@@ -64,7 +64,7 @@ export  function DatosUsers() {
           <Text>No se encontró el usuario.</Text>
         )}
       </View>
-    );
+    );*/
   
   }
   

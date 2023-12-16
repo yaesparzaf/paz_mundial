@@ -1,13 +1,36 @@
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, Linking } from 'react-native'
 import React from 'react'
 import { Entypo } from '@expo/vector-icons';
 
-const SocialBotones = () => {
+const SocialBotones = (nombre) => {
+    const openFacebook = async () =>{
+        const AppFbUrl ='fb://page/1231272500288305';
+        const WebFbUrl ='https://www.facebook.com/1231272500288305';
+        
+        try{
+            const isSupported = await Linking.canOpenURL(AppFbUrl);
+            if(isSupported)
+                await Linking.openURL(AppFbUrl);
+            else
+                await Linking.openURL(WebFbUrl);
+        }catch(error){
+            console.log('Error al abrir la aplicacion: '+error);
+        }
+    };
+    /*const openYoutube = async () =>{
+        const AppYTUrl ='vnd.youtube://channel/UCCHANNELID';
+        const WebYTUrl ='';
+        try{
+
+        }catch(error){
+
+        }
+    };*/
     return (
         <View style={styles.cont_rs}>
             {/*<Text style={styles.titulo}>Redes Sociales</Text>*/}
             <View style={styles.cont_botones}>
-                <TouchableOpacity style={styles.fb_boton}>
+                <TouchableOpacity style={styles.fb_boton} onPress={openFacebook}>
                     <Entypo name="facebook" size={50} color="blue" />
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.yt_boton}>
