@@ -19,7 +19,7 @@ const Stack = createStackNavigator();
 function Mytabs() {
   const navigacion = useNavigation();
   return (
-    <Tab.Navigator initialRouteName='Noticias'
+    <Tab.Navigator initialRouteName='Comunidad'
       screenOptions={{
         tabBarActiveTintColor: '#40E0D0',
         headerTitleStyle: {

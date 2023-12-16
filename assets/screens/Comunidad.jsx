@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet, Dimensions } from "react-native";
 import React from "react";
 import ForosBtn from "../componentes/ForosBtn";
+import SocialBotones from "../componentes/SocialBotones";
 const windowWidth = Dimensions.get("window").width;
 
 const Comunidad = () => {
@@ -8,9 +9,7 @@ const Comunidad = () => {
 
   return (
     <View style={styles.contenedor}>
-      <View style={styles.cont_rs}>
-        <Text>Redes sociales</Text>
-      </View>
+     <SocialBotones/>
       <View style={styles.cont_titulo_foros}>
         <Text style={styles.titulos}>Foros</Text>
       </View>
@@ -28,14 +27,6 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     backgroundColor: "#FFFFFF",
   },
-  cont_rs: {
-    flex: 0.2,
-    width: windowWidth,
-    alignItems: "center",
-    //backgroundColor:"#b61832",
-    borderBottomWidth: 1,
-    borderBottomColor: "#D3D3D3",
-  },
   cont_titulo_foros:{
     flex:0.1,
     marginTop:10,
@@ -50,7 +41,7 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
   titulos: {
-    fontSize: 25,
+    fontSize: 20,
     fontWeight: "bold",
   },
   text: {
