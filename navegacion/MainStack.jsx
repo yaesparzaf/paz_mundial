@@ -12,6 +12,7 @@ import Notificaciones from '../assets/screens/Notificaciones';
 import Meditar from '../assets/screens/Meditar';
 import Foro from '../assets/screens/Foro';
 import Perfil from '../assets/screens/Perfil';
+import Publicar from '../assets/componentes/Publicar';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -19,7 +20,7 @@ const Stack = createStackNavigator();
 function Mytabs() {
   const navigacion = useNavigation();
   return (
-    <Tab.Navigator initialRouteName='Comunidad'
+    <Tab.Navigator initialRouteName='Noticias'
       screenOptions={{
         tabBarActiveTintColor: '#40E0D0',
         headerTitleStyle: {
@@ -86,6 +87,7 @@ function TabStack() {
       }} />
       <Stack.Screen name="Perfil" component={Perfil} options={{ headerStyle: { backgroundColor: 'cyan' } }} />
       <Stack.Screen name="Foro" component={Foro} />
+      <Stack.Screen name='Publicar' component={Publicar}/>
     </Stack.Navigator>
   )
 }

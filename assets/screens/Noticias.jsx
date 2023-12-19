@@ -1,48 +1,29 @@
 import React, { useLayoutEffect } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { getFirestore, collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../../fb/firebase-config';
 import { useUser } from '../../navegacion/MainStack';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { DatosUsers } from '../../fb/DatosUsers';
+import FloatButton from '../componentes/FloatButton';
 
-/*export  function DatosUsers() {
-  const { usuario, setUsuario } = useUser();
-  
-  useLayoutEffect(() => {
-    async function fetchUser(nombre, email) {
-      const usuariosRef = collection(db, 'usuarios');
-      const q = query(usuariosRef, where('nombre', '==', nombre), where('email', '==', email));
-      const querySnapShot = await getDocs(q);
-      if (querySnapShot.docs.length > 0) {
-        const userData = querySnapShot.docs[0].data();
-        setUsuario(userData);
-        console.log('el usuario existe');
-        return true;
-      } else {
-        console.log('NO existe existe');
-        return false;
-      }
-    }
-    
-    const usernameABuscar = 'Yamil';
-    const correoABuscar = 'yamilya.esparza25@gmail.com';
-    fetchUser(usernameABuscar, correoABuscar);
-  }, [setUsuario]);
-
+const Noticias = () => {
   return (
-    <View style={styles.container}>
-      {usuario ? (
-        <Text>
-          Nombre: {usuario.nombre} - Email: {usuario.email}
-        </Text>
-      ) : (
-        <Text>No se encontró el usuario.</Text>
-      )}
-    </View>
+    <SafeAreaView style={{flex:1}}>
+      <ScrollView>
+        
+      </ScrollView>
+      <View style={{ flex: 1,
+            justifyContent: 'flex-end',
+            alignItems: 'flex-end',
+            //backgroundColor: "red", 
+            }}>
+               <FloatButton />
+      </View>
+     
+    </SafeAreaView>
   );
-
-}*/
+};
 
 const styles = StyleSheet.create({
   scrollViewContent: {
@@ -54,7 +35,7 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: 'bold',
     color: 'black',
-    marginTop: 20, // Espacio superior para el título
+    marginTop: 20, 
   },
   text: {
     textAlign: 'center',
@@ -63,14 +44,6 @@ const styles = StyleSheet.create({
     marginTop: 10, // Espacio entre cada elemento de la lista
   },
 });
-const Noticias = () => {
-  return (
-    <SafeAreaView>
-      <View>
-        <Text>noticias</Text>
-      </View>
-    </SafeAreaView>
-  );
-};
+
 
 export default Noticias;
