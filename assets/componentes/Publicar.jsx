@@ -3,17 +3,19 @@ import { View, Text, SafeAreaView, StyleSheet, TouchableOpacity, ScrollView } fr
 import { TextInput } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
 import Galeria from './Galeria';
+import { disabled } from 'deprecated-react-native-prop-types/DeprecatedTextPropTypes';
 
 const Publicar = () => {
   const [text, onChangeText] = React.useState('');
   const [number, onChangeNumber] = React.useState('');
-  const [publicar,setPublicar] = useState('false');
+  const [publicar, setPublicar] = useState(false);
+  console.log(publicar);
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: 'blue' }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
       <View style={styles.botones_cont}>
-        <Galeria/>
-        <TouchableOpacity>
-          <Text>Publicar</Text>
+        <Galeria />
+        <TouchableOpacity style={styles.publicar_btn} disabled={!publicar}>
+          <Text style={{ ...styles.text_botones, color: publicar ? '#000000' : '#D3D3D3' }}>Publicar</Text>
         </TouchableOpacity>
       </View>
       <ScrollView>
@@ -22,6 +24,10 @@ const Publicar = () => {
             placeholder='Escribe un texto...'
             style={styles.input}
             value={text}
+            onChangeText={(newText) => {
+              onChangeText(newText);
+              setPublicar(newText.length > 0);
+            }}
           />
         </View>
       </ScrollView>
@@ -33,28 +39,37 @@ const styles = StyleSheet.create({
   input: {
     height: 100,
     margin: 12,
-    borderWidth: 1,
+    //borderWidth: 1,
     textAlignVertical: 'top',
     padding: 10,
     fontSize: 20,
-    backgroundColor: 'red',
   },
   botones_cont: {
     flexDirection: 'row',
-    justifyContent:'space-between',
-    backgroundColor: 'green'
+    marginHorizontal: 10,
+    justifyContent: 'space-between',
+    //backgroundColor: 'green'
   },
   up_fv: {
-    width: '30%',
-    backgroundColor: 'red',
+    width: '45%',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     padding: 10,
+    backgroundColor:'white'
   },
-  buttonText: {
-    marginLeft: 5,
+  publicar_btn: {
+    width:'20%',
+    alignItems:'center',
+    justifyContent:'center',
+    borderWidth:1,
+    borderRadius:5,
+    borderColor:'#FFFF'
   },
+  text_botones:{
+    fontSize:18,
+    color:'#00000'
+  }
 });
 
 export default Publicar;

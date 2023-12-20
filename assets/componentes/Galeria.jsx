@@ -46,8 +46,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   up_fv: {
-    width: '40%',
-    backgroundColor: 'red',
+    width: '35%',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
