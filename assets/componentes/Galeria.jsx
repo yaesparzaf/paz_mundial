@@ -22,8 +22,9 @@ const Galeria = () => {
         quality: 1,
       });
 
-      if (!result.cancelled) {
-        setImageUri(result.uri);
+      if (!result.canceled) {
+        const selectedAsset = result.assets && result.assets.length > 0 ? result.assets[0] : null;
+        setImageUri(selectedAsset ? selectedAsset.uri : null);
       }
     } catch (error) {
       console.error('Error al abrir la galería: ', error);
@@ -32,11 +33,13 @@ const Galeria = () => {
 
   return (
     <View style={styles.container}>
-      {imageUri && <Image source={{ uri: imageUri }} style={styles.image} />}
-      <TouchableOpacity style={styles.up_fv} onPress={abrirGaleria}>
-        <FontAwesome5 name="photo-video" size={24} color="black" />
-        <Text style={styles.buttonText}>Foto/Video</Text>
-      </TouchableOpacity>
+      <View style={styles.content}>
+        <TouchableOpacity style={styles.up_fv} onPress={abrirGaleria}>
+          <FontAwesome5 name="photo-video" size={24} color="black" />
+          <Text style={styles.buttonText}>Foto/Video</Text>
+        </TouchableOpacity>
+        {imageUri && <Image source={{ uri: imageUri }} style={styles.image} />}
+      </View>
     </View>
   );
 };
@@ -45,17 +48,21 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  content: {
+    alignItems: 'flex-start',
+  },
   up_fv: {
     width: '35%',
     flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
     padding: 10,
   },
   image: {
     width: 200,
     height: 200,
-    marginVertical: 20,
+    marginHorizontal: 20,
+  },
+  buttonText: {
+    marginLeft: 5,
   },
 });
 

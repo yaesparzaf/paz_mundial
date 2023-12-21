@@ -1,20 +1,79 @@
 import React, { useState } from 'react';
-import { View, Text, SafeAreaView, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, SafeAreaView, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { TextInput } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
-import Galeria from './Galeria';
+import * as ImagePicker from 'expo-image-picker';
 import { disabled } from 'deprecated-react-native-prop-types/DeprecatedTextPropTypes';
+import { db, storage } from '../../fb/firebase-config';
+import { firebase } from '@react-native-firebase/firestore';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 const Publicar = () => {
   const [text, onChangeText] = React.useState('');
   const [number, onChangeNumber] = React.useState('');
   const [publicar, setPublicar] = useState(false);
-  console.log(publicar);
+  const [imageUri, setImageUri] = useState(null);
+
+  const abrirGaleria = async () => {
+    try {
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+      if (status !== 'granted') {
+        console.log('Permiso denegado para acceder a la galería');
+        return;
+      }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        allowsEditing: false,
+        //aspect: [4, 3],
+        quality: 1,
+      });
+
+      if (!result.canceled) {
+        const selectedAsset = result.assets && result.assets.length > 0 ? result.assets[0] : null;
+        setImageUri(selectedAsset ? selectedAsset.uri : null);
+      }
+    } catch (error) {
+      console.error('Error al abrir la galería: ', error);
+    }
+  };
+  const eliminarImagen = () => {
+    setImageUri(null);
+  };
+
+  const onSend = async (text, imageUri) => {
+    try{
+      const coleccion = await addDoc(collection(db,'noticias'),{
+        texto:text,
+        fecha:serverTimestamp(),
+      }
+      )
+      if(imageUri){
+        const response = await fetch(imageUri);
+        const blob =await response.blob();
+        const storageRef = storage.ref(`uploads/noticias/imagenes/${coleccion.id}`);
+        await storageRef.put(blob);
+        const imageUrl = await storageRef.getDownloadURL();
+        await coleccion.update({imagen:imageUrl});
+      }
+      console.log('mensaje enviado con exito');
+    }
+    catch(error){
+      console.error('error al enviar datos: '+error);
+    }
+  };
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
       <View style={styles.botones_cont}>
-        <Galeria />
-        <TouchableOpacity style={styles.publicar_btn} disabled={!publicar}>
+        <TouchableOpacity style={styles.up_fv} onPress={abrirGaleria}>
+          <FontAwesome5 name="photo-video" size={24} color="black" />
+          <Text style={styles.buttonText}>Foto/Video</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => onSend(text,imageUri)}
+          style={{ ...styles.publicar_btn, backgroundColor: publicar ? '#00FFFF' : '#A9A9A9' }} disabled={!publicar}>
           <Text style={{ ...styles.text_botones, color: publicar ? '#000000' : '#D3D3D3' }}>Publicar</Text>
         </TouchableOpacity>
       </View>
@@ -29,6 +88,14 @@ const Publicar = () => {
               setPublicar(newText.length > 0);
             }}
           />
+        </View>
+        <View style={styles.container}>
+          <View style={styles.content}>
+            {imageUri && <Image source={{ uri: imageUri }} style={styles.image} resizeMode="contain" />}
+            <TouchableOpacity style={styles.eliminarButton} onPress={eliminarImagen}>
+              <FontAwesome5 name="times-circle" size={25} color="#FFFFFF" />
+            </TouchableOpacity>
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -51,24 +118,44 @@ const styles = StyleSheet.create({
     //backgroundColor: 'green'
   },
   up_fv: {
-    width: '45%',
-    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    padding: 10,
-    backgroundColor:'white'
+    flexDirection: 'row',
+    //backgroundColor:'red'
+  },
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    //backgroundColor: 'red'
+  },
+  content: {
+    width: 360,
+    alignItems: 'flex-end',
+    justifyContent: 'flex-start',
+    //backgroundColor: '#FF69B4'
+  },
+  image: {
+    width: 350,
+    height: 500,
+    marginHorizontal: 5,
+  },
+  buttonText: {
+    marginLeft: 5,
   },
   publicar_btn: {
-    width:'20%',
-    alignItems:'center',
-    justifyContent:'center',
-    borderWidth:1,
-    borderRadius:5,
-    borderColor:'#FFFF'
+    width: '30%',
+    height: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 5,
   },
-  text_botones:{
-    fontSize:18,
-    color:'#00000'
+  eliminarButton: {
+    position: 'absolute',
+    //backgroundColor: '#A9A9A9',
+    //padding: 15,
+  },
+  text_botones: {
+    fontSize: 18,
+    color: '#00000'
   }
 });
 

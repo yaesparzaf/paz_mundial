@@ -83,11 +83,11 @@ function TabStack() {
             <Text style={styles.account_text}>Mi cuenta</Text>    
             </TouchableOpacity>
         ),
-        headerStyle: { backgroundColor: 'cyan' }
+        headerStyle: { backgroundColor: 'white' }
       }} />
       <Stack.Screen name="Perfil" component={Perfil} options={{ headerStyle: { backgroundColor: 'cyan' } }} />
       <Stack.Screen name="Foro" component={Foro} />
-      <Stack.Screen name='Publicar' component={Publicar}/>
+      <Stack.Screen name='Publicar' component={Publicar} options={{title:'Crear noticia'}}/>
     </Stack.Navigator>
   )
 }
