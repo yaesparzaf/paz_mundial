@@ -2,7 +2,6 @@ import React, { useLayoutEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { getFirestore, collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../../fb/firebase-config';
-import { useUser } from '../../navegacion/MainStack';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { DatosUsers } from '../../fb/DatosUsers';
 import FloatButton from '../componentes/FloatButton';

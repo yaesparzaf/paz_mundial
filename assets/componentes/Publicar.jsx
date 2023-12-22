@@ -7,12 +7,16 @@ import { disabled } from 'deprecated-react-native-prop-types/DeprecatedTextPropT
 import { db, storage } from '../../fb/firebase-config';
 import { firebase } from '@react-native-firebase/firestore';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { useNavigation } from '@react-navigation/native';
+import { useUser } from '../../fb/DatosUsers';
 
 const Publicar = () => {
+  const {usuario,setUsuario } = useUser();
   const [text, onChangeText] = React.useState('');
   const [number, onChangeNumber] = React.useState('');
   const [publicar, setPublicar] = useState(false);
   const [imageUri, setImageUri] = useState(null);
+  const navegacion = useNavigation();
 
   const abrirGaleria = async () => {
     try {
@@ -45,10 +49,11 @@ const Publicar = () => {
   const onSend = async (text, imageUri) => {
     try{
       const coleccion = await addDoc(collection(db,'noticias'),{
+        autor: usuario.nombre,
+        autor_id: usuario.id,
         texto:text,
         fecha:serverTimestamp(),
-      }
-      )
+      })
       if(imageUri){
         const response = await fetch(imageUri);
         const blob =await response.blob();
@@ -58,6 +63,7 @@ const Publicar = () => {
         await coleccion.update({imagen:imageUrl});
       }
       console.log('mensaje enviado con exito');
+      navegacion.navigate('Noticias');
     }
     catch(error){
       console.error('error al enviar datos: '+error);
