@@ -51,8 +51,8 @@ const Publicar = () => {
       const coleccion = await addDoc(collection(db,'noticias'),{
         autor: usuario.nombre,
         autor_id: usuario.id,
-        texto:text,
         fecha:serverTimestamp(),
+        texto:text
       })
       if(imageUri){
         const response = await fetch(imageUri);
@@ -63,7 +63,7 @@ const Publicar = () => {
         await coleccion.update({imagen:imageUrl});
       }
       console.log('mensaje enviado con exito');
-      navegacion.navigate('Noticias');
+      navegacion.navigate('Noticias', { screen: 'Noticias' });
     }
     catch(error){
       console.error('error al enviar datos: '+error);

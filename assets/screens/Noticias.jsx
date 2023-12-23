@@ -1,25 +1,23 @@
 import React, { useLayoutEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
-import { getFirestore, collection, getDocs, query, where } from 'firebase/firestore';
+
 import { db } from '../../fb/firebase-config';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { DatosUsers } from '../../fb/DatosUsers';
 import FloatButton from '../componentes/FloatButton';
+import Publicaciones from '../componentes/Publicaciones';
 
 const Noticias = () => {
   return (
-    <SafeAreaView style={{flex:1}}>
-      <ScrollView>
-        
-      </ScrollView>
-      <View style={{ flex: 1,
-            justifyContent: 'flex-end',
-            alignItems: 'flex-end',
-            //backgroundColor: "red", 
-            }}>
-               <FloatButton />
+    <SafeAreaView style={{ flex: 1 }}>
+      <Publicaciones />
+      <View style={{
+        flex: 1,
+        justifyContent: 'flex-end',
+        alignItems: 'flex-end',
+      }}>
+        <FloatButton />
       </View>
-     
+
     </SafeAreaView>
   );
 };
@@ -34,7 +32,7 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: 'bold',
     color: 'black',
-    marginTop: 20, 
+    marginTop: 20,
   },
   text: {
     textAlign: 'center',

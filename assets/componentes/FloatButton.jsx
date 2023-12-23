@@ -25,10 +25,12 @@ const styles = StyleSheet.create({
   container: {
     justifyContent: 'flex-end',
     alignItems: 'flex-end',
-    margin: 16,
+    margin: 20,
+    marginBottom:50
   },
   fab: {
     position: 'absolute',
+    backgroundColor:'cyan'
   },
 });
 
