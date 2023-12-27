@@ -29,7 +29,6 @@ function Mytabs() {
       }}>
       <Tab.Screen name='Noticias' component={Noticias}
         options={{
-          tabBarLabel: 'Noticias',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="newspaper-outline" size={size} color={color} />
           ),

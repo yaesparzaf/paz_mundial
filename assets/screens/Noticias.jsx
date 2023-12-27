@@ -1,7 +1,5 @@
-import React, { useLayoutEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
-
-import { db } from '../../fb/firebase-config';
+import React from 'react';
+import { View, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import FloatButton from '../componentes/FloatButton';
 import Publicaciones from '../componentes/Publicaciones';
@@ -17,7 +15,6 @@ const Noticias = () => {
       }}>
         <FloatButton />
       </View>
-
     </SafeAreaView>
   );
 };
@@ -25,20 +22,7 @@ const Noticias = () => {
 const styles = StyleSheet.create({
   scrollViewContent: {
     alignItems: 'center',
-    paddingBottom: 20, // Ajusta esto según sea necesario para el espacio adicional al final
-  },
-  title: {
-    textAlign: 'center',
-    fontSize: 30,
-    fontWeight: 'bold',
-    color: 'black',
-    marginTop: 20,
-  },
-  text: {
-    textAlign: 'center',
-    fontSize: 18,
-    color: 'black',
-    marginTop: 10, // Espacio entre cada elemento de la lista
+    paddingBottom: 20, 
   },
 });
 

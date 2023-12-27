@@ -9,11 +9,14 @@ import { firebase } from '@react-native-firebase/firestore';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { useNavigation } from '@react-navigation/native';
 import { useUser } from '../../fb/DatosUsers';
+import { Title } from 'react-native-paper';
 
 const Publicar = () => {
-  const {usuario,setUsuario } = useUser();
+  const { usuario, setUsuario } = useUser();
+  const [titulo, setTitulo] = React.useState();
+  const [asunto, setAsunto] = useState();
   const [text, onChangeText] = React.useState('');
-  const [number, onChangeNumber] = React.useState('');
+  const [title, onChangeTitle] = React.useState('');
   const [publicar, setPublicar] = useState(false);
   const [imageUri, setImageUri] = useState(null);
   const navegacion = useNavigation();
@@ -46,27 +49,33 @@ const Publicar = () => {
     setImageUri(null);
   };
 
-  const onSend = async (text, imageUri) => {
-    try{
-      const coleccion = await addDoc(collection(db,'noticias'),{
+  const onSend = async (titulo,asunto,text, imageUri) => {
+    try {
+      const coleccion = await addDoc(collection(db, 'noticias'), {
+        titulo:titulo,
+        asunto:asunto,
         autor: usuario.nombre,
         autor_id: usuario.id,
-        fecha:serverTimestamp(),
-        texto:text
+        fecha: serverTimestamp(),
+        texto: text
       })
-      if(imageUri){
-        const response = await fetch(imageUri);
-        const blob =await response.blob();
-        const storageRef = storage.ref(`uploads/noticias/imagenes/${coleccion.id}`);
-        await storageRef.put(blob);
-        const imageUrl = await storageRef.getDownloadURL();
-        await coleccion.update({imagen:imageUrl});
+      if (coleccion) {
+        if (imageUri) {
+          const response = await fetch(imageUri);
+          const blob = await response.blob();
+          const storageRef = storage.ref(`uploads/noticias/imagenes/${coleccion.id}`);
+          await storageRef.put(blob);
+          const imageUrl = await storageRef.getDownloadURL();
+          await coleccion.update({ imagen: imageUrl });
+        }
+        console.log('mensaje enviado con exito');
+        navegacion.navigate('Noticias', { screen: 'Noticias' });
+      } else {
+        console.error('Error al obtener la referencia de la colección');
       }
-      console.log('mensaje enviado con exito');
-      navegacion.navigate('Noticias', { screen: 'Noticias' });
     }
-    catch(error){
-      console.error('error al enviar datos: '+error);
+    catch (error) {
+      console.error('error al enviar datos: ' + error);
     }
   };
 
@@ -78,7 +87,7 @@ const Publicar = () => {
           <Text style={styles.buttonText}>Foto/Video</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => onSend(text,imageUri)}
+          onPress={() => onSend(titulo,asunto,text, imageUri)}
           style={{ ...styles.publicar_btn, backgroundColor: publicar ? '#00FFFF' : '#A9A9A9' }} disabled={!publicar}>
           <Text style={{ ...styles.text_botones, color: publicar ? '#000000' : '#D3D3D3' }}>Publicar</Text>
         </TouchableOpacity>
@@ -86,12 +95,29 @@ const Publicar = () => {
       <ScrollView>
         <View>
           <TextInput
+            placeholder='Título'
+            style={styles.titulo_asunto_input}
+            value={titulo}
+            onChangeText={(title) => {
+              setTitulo(title);
+              setPublicar(title.length > 0);
+              
+            }}
+          />
+          <TextInput
+            placeholder='Asunto (opcional)'
+            style={styles.titulo_asunto_input}
+            value={asunto} 
+            onChangeText={(newAsunto) =>{
+              setAsunto(newAsunto);
+            }}
+            />
+          <TextInput
             placeholder='Escribe un texto...'
             style={styles.input}
             value={text}
             onChangeText={(newText) => {
               onChangeText(newText);
-              setPublicar(newText.length > 0);
             }}
           />
         </View>
@@ -138,6 +164,11 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     justifyContent: 'flex-start',
     //backgroundColor: '#FF69B4'
+  },
+  titulo_asunto_input: {
+    backgroundColor: '#FEA',
+    height:50,
+    fontSize:20
   },
   image: {
     width: 350,
