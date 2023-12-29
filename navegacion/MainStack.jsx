@@ -13,6 +13,7 @@ import Meditar from '../assets/screens/Meditar';
 import Foro from '../assets/screens/Foro';
 import Perfil from '../assets/screens/Perfil';
 import Publicar from '../assets/componentes/Publicar';
+import NoticiaInfo from '../assets/screens/NoticiaInfo';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -78,15 +79,18 @@ function TabStack() {
         title: 'Por la paz mundial',
         headerRight: () => (
           <TouchableOpacity onPress={() => navigation.navigate('Perfil')} style={styles.account}>
-            <MaterialIcons name="account-circle" size={30} color="black" />      
-            <Text style={styles.account_text}>Mi cuenta</Text>    
-            </TouchableOpacity>
+            <MaterialIcons name="account-circle" size={30} color="black" />
+            <Text style={styles.account_text}>Mi cuenta</Text>
+          </TouchableOpacity>
         ),
         headerStyle: { backgroundColor: 'white' }
       }} />
       <Stack.Screen name="Perfil" component={Perfil} options={{ headerStyle: { backgroundColor: 'cyan' } }} />
       <Stack.Screen name="Foro" component={Foro} />
-      <Stack.Screen name='Publicar' component={Publicar} options={{title:'Crear noticia'}}/>
+      <Stack.Screen name='Publicar' component={Publicar} options={{ title: 'Crear noticia' }} />
+      <Stack.Screen name='NoticiaInfo' component={NoticiaInfo} options={{
+        title: 'Noticia',
+      }} />
     </Stack.Navigator>
   )
 }
@@ -101,12 +105,12 @@ const MainStack = () => {
 }
 
 const styles = StyleSheet.create({
-  account:{
-    alignItems:'center',
-    marginRight:5
+  account: {
+    alignItems: 'center',
+    marginRight: 5
   },
-  account_text:{
-    fontSize:10,
+  account_text: {
+    fontSize: 10,
   }
 })
 export default MainStack;

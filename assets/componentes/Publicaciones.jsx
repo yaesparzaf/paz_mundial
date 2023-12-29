@@ -1,13 +1,14 @@
-import { View, Text, FlatList, StyleSheet, TouchableOpacity,ActivityIndicator } from 'react-native'
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { useUser } from '../../fb/DatosUsers'
 import { collection, onSnapshot, query } from 'firebase/firestore';
 import { db } from '../../fb/firebase-config';
 import { Entypo } from '@expo/vector-icons';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
+import { pressRetentionOffset } from 'deprecated-react-native-prop-types/DeprecatedTextPropTypes';
+import { useNavigation } from '@react-navigation/native';
 //import { LinearGradient } from 'expo-linear-gradient';
 let nveces = 0;
-
 
 const Publicaciones = () => {
     const { usuario } = useUser();
@@ -21,9 +22,6 @@ const Publicaciones = () => {
                 ...doc.data(),
             }));
             newPublicacion.sort((a, b) => b.fecha - a.fecha);
-            newPublicacion.forEach((publicacion, index) => {
-                console.log(`Publicación ${index + 1}:`, publicacion);
-            });
             setPublicaciones(newPublicacion);
             setLoading(false);
         });
@@ -33,13 +31,13 @@ const Publicaciones = () => {
             console.log('Suscripción limpiada');
         }
     }, [usuario]);
-    if (loading) 
-        return <ActivityIndicator size="large" color="#40E0D0" style={{flex:1,alignItems:'center'}}/>;
+    if (loading)
+        return <ActivityIndicator size="large" color="#40E0D0" style={{ flex: 1, alignItems: 'center' }} />;
     return (
         <FlatList
             data={publicaciones}
             keyExtractor={(item) => item.id.toString()}
-            renderItem={({ item }) => <Post item={item} rol={usuario.rol} />}
+            renderItem={({ item }) => <Info item={item} rol={usuario.rol} />}
         /*ListEmptyComponent={() => (
             <SkeletonPlaceholder>
                 {[1, 2, 3].map((index) => (
@@ -51,15 +49,12 @@ const Publicaciones = () => {
     )
 }
 
-const Post = ({ item, rol }) => {
+const Info = ({ item, rol }) => {
+    const navegacion = useNavigation();
     nveces = nveces + 1;
-    console.log('entro: ' + nveces + 'veces');
+    //console.log('entro: ' + nveces + 'veces');
     const fecha = item.fecha ? item.fecha.toDate() : null;
     item = { titulo: item.titulo, asunto: item.asunto, autor: item.autor, texto: item.texto };
-    //console.log(item);
-    console.log('rol:' + rol);
-    console.log('item ingresado: ',item);
-
     const FormatoFecha = (fecha) => {
         if (!fecha) return '';
 
@@ -67,6 +62,9 @@ const Post = ({ item, rol }) => {
         return fecha.toLocaleDateString(undefined, options);
     };
 
+    const pressButton = (info) =>{
+        navegacion.navigate('NoticiaInfo',{info});
+    }
     return (
         <View style={styles.publicacionContainer}>
             <View style={styles.encabezado}>
@@ -82,10 +80,11 @@ const Post = ({ item, rol }) => {
                     )}
                 </View>
             </View>
-            <Text style={styles.titulo_publicacion}>{item.titulo}</Text>
-            <Text style={styles.asunto_publicacion}>{item.asunto}</Text>
-            <Text style={styles.textoPublicacion}>{item.texto}</Text>
-            {item.imagen && <Image source={{ uri: item.imagen }} style={styles.imagenPublicacion} />}
+            <TouchableOpacity style={styles.noticia_btn} onPress={()=>pressButton(item)}>
+                <Text style={styles.titulo_publicacion}>{item.titulo}</Text>
+                <Text style={styles.asunto_publicacion}>{item.asunto}</Text>
+                {item.imagen && <Image source={{ uri: item.imagen }} style={styles.imagenPublicacion} />}
+            </TouchableOpacity>
         </View>
     )
 }
@@ -104,6 +103,9 @@ const styles = StyleSheet.create({
         height: 100,
         width: '100%',
     },
+    noticia_btn:{
+        //backgroundColor:'brown'
+    },  
     encabezado: {
         flexDirection: 'row',
         height: 30,

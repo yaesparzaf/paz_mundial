@@ -8,13 +8,7 @@ const Noticias = () => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Publicaciones />
-      <View style={{
-        flex: 1,
-        justifyContent: 'flex-end',
-        alignItems: 'flex-end',
-      }}>
         <FloatButton />
-      </View>
     </SafeAreaView>
   );
 };
