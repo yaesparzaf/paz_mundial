@@ -16,7 +16,7 @@ const Noticias = () => {
 const styles = StyleSheet.create({
   scrollViewContent: {
     alignItems: 'center',
-    paddingBottom: 20, 
+    paddingBottom: 20,
   },
 });
 

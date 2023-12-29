@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
     },  
     header_cont:{
         flex:0.15,
-        backgroundColor:'green'
+        //backgroundColor:'green'
     },  
     titulo_publicacion: {
         fontSize: 25,

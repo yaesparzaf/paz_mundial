@@ -11,27 +11,21 @@ const FloatButton = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <FAB
-        style={styles.fab}
-        icon="pencil"
-        onPress={onPressHandler}
-      />
-    </View>
+    <FAB
+      style={styles.fab}
+      icon="pencil"
+      onPress={onPressHandler}
+    />
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    justifyContent: 'flex-end',
-    alignItems: 'flex-end',
-    margin: 20,
-    marginBottom:50
-  },
   fab: {
     position: 'absolute',
-    backgroundColor:'cyan'
+    margin: 20,
+    right: 10,
+    bottom: 20,
+    backgroundColor: 'cyan',
   },
 });
-
 export default FloatButton;

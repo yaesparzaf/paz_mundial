@@ -34,10 +34,13 @@ const Publicaciones = () => {
     if (loading)
         return <ActivityIndicator size="large" color="#40E0D0" style={{ flex: 1, alignItems: 'center' }} />;
     return (
+        
         <FlatList
             data={publicaciones}
             keyExtractor={(item) => item.id.toString()}
-            renderItem={({ item }) => <Info item={item} rol={usuario.rol} />}
+            renderItem={({ item }) => <Info item={item} rol={usuario.rol} 
+            style={{backgroundColor:'green'}}
+            />}
         /*ListEmptyComponent={() => (
             <SkeletonPlaceholder>
                 {[1, 2, 3].map((index) => (
