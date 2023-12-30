@@ -78,12 +78,10 @@ export  function DatosUsers() {
       fontSize: 30,
       fontWeight: 'bold',
       color: 'black',
-      marginTop: 20, // Espacio superior para el título
     },
     text: {
       textAlign: 'center',
       fontSize: 18,
       color: 'black',
-      marginTop: 10, 
     },
   });

@@ -5,7 +5,6 @@ import { collection, onSnapshot, query } from 'firebase/firestore';
 import { db } from '../../fb/firebase-config';
 import { Entypo } from '@expo/vector-icons';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
-import { pressRetentionOffset } from 'deprecated-react-native-prop-types/DeprecatedTextPropTypes';
 import { useNavigation } from '@react-navigation/native';
 //import { LinearGradient } from 'expo-linear-gradient';
 let nveces = 0;
@@ -39,7 +38,7 @@ const Publicaciones = () => {
             data={publicaciones}
             keyExtractor={(item) => item.id.toString()}
             renderItem={({ item }) => <Info item={item} rol={usuario.rol} 
-            style={{backgroundColor:'green'}}
+            //style={{alignItems:'flex-start'}}
             />}
         /*ListEmptyComponent={() => (
             <SkeletonPlaceholder>

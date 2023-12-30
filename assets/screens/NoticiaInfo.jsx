@@ -7,9 +7,10 @@ const NoticiaInfo = ({ route }) => {
     return (
         <SafeAreaView style={styles.contenedor}>
             <View style={styles.header_cont}>
+                <Text style={styles.autor_publicacion}>{autor}</Text>
                 <Text style={styles.titulo_publicacion}>{titulo}</Text>
                 <Text style={styles.asunto_publicacion}>{asunto}</Text>
-                <Text style={styles.autor_publicacion}> Publicado por: {autor}</Text>
+
             </View>
             <Text style={styles.texto_publicacion}>{texto}</Text>
             {imagen !== null && (
@@ -20,14 +21,14 @@ const NoticiaInfo = ({ route }) => {
 }
 
 const styles = StyleSheet.create({
-    contenedor:{
-        flex:1,
-        backgroundColor:'white'
-    },  
-    header_cont:{
-        flex:0.15,
+    contenedor: {
+        flex: 1,
+        backgroundColor: 'white'
+    },
+    header_cont: {
+        flex: 0.15,
         //backgroundColor:'green'
-    },  
+    },
     titulo_publicacion: {
         fontSize: 25,
         fontWeight: 'bold',

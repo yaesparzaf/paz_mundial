@@ -4,8 +4,8 @@ import { TextInput } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { db, storage } from '../../fb/firebase-config';
-import { ref, uploadString, getDownloadURL } from 'firebase/storage';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { ref, uploadString, getDownloadURL, getStorage, uploadBytes } from 'firebase/storage';
+import { collection, addDoc, serverTimestamp, updateDoc } from 'firebase/firestore';
 import { useNavigation } from '@react-navigation/native';
 import { useUser } from '../../fb/DatosUsers';
 
@@ -57,31 +57,42 @@ const Publicar = () => {
         fecha: serverTimestamp(),
         texto: text,
       });
-  
+
       if (coleccionRef) {
         console.log('Referencia de la colección:', coleccionRef.id);
-  
         if (imageUri) {
-          const imageRef = ref(storage, `uploads/noticias/imagenes/${coleccionRef.id}`);
-          await uploadString(imageRef, imageUri, 'data_url');
-  
-          const imageUrl = await getDownloadURL(imageRef);
-  
-          // Ahora actualiza el documento con la URL de la imagen
-          await updateDoc(coleccionRef, { imagen: imageUrl });
-  
-          console.log('Imagen subida con éxito');
+          const storage = getStorage();
+          const storageRef = ref(storage, `uploads/noticias/imagenes/${coleccionRef.id}`);
+
+          try {
+            // Convertir la imagen a un blob
+            const response = await fetch(imageUri);
+            const blob = await response.blob();
+
+            // Subir el blob a Firebase Storage
+            const snapshot = await uploadBytes(storageRef, blob);
+
+            // Obtener la URL de descarga de la imagen
+            const imageUrl = await getDownloadURL(snapshot.ref);
+
+            // Actualizar el documento con la URL de la imagen
+            await updateDoc(coleccionRef, { imagen: imageUrl });
+
+            console.log('Imagen subida con éxito');
+          } catch (error) {
+            console.error(error);
+          }
         }
-  
-        console.log('Mensaje enviado con éxito');
-        navegacion.navigate('Noticias', { screen: 'Noticias' });
       } else {
         console.error('Error al obtener la referencia de la colección');
       }
+      console.log('Mensaje enviado con éxito');
+      navegacion.navigate('Noticias', { screen: 'Noticias' });
     } catch (error) {
       console.error('Error al enviar datos:', error);
     }
   };
+
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>

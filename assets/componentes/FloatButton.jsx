@@ -1,12 +1,11 @@
 import { useNavigation } from '@react-navigation/native';
-import React, { useEffect, useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import React from 'react';
+import { StyleSheet } from 'react-native';
 import { FAB } from 'react-native-paper';
 
 const FloatButton = () => {
   const navegacion = useNavigation();
   const onPressHandler = () => {
-    console.log('Botón flotante presionado');
     navegacion.navigate('Publicar');
   };
 
