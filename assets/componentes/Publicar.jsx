@@ -3,8 +3,8 @@ import { View, Text, SafeAreaView, StyleSheet, Image, TouchableOpacity, ScrollVi
 import { TextInput } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import { db, storage } from '../../fb/firebase-config';
-import { ref, uploadString, getDownloadURL, getStorage, uploadBytes } from 'firebase/storage';
+import { db } from '../../fb/firebase-config';
+import { ref, uploadString, getDownloadURL, getStorage } from 'firebase/storage';
 import { collection, addDoc, serverTimestamp, updateDoc } from 'firebase/firestore';
 import { useNavigation } from '@react-navigation/native';
 import { useUser } from '../../fb/DatosUsers';
@@ -14,9 +14,9 @@ const Publicar = () => {
   const [titulo, setTitulo] = React.useState();
   const [asunto, setAsunto] = useState('');
   const [text, onChangeText] = React.useState('');
-  const [title, onChangeTitle] = React.useState('');
   const [publicar, setPublicar] = useState(false);
   const [imageUri, setImageUri] = useState(null);
+  const [guardandoImagen, setGuardandoImagen] = useState(false);
   const navegacion = useNavigation();
 
   const abrirGaleria = async () => {
@@ -31,20 +31,22 @@ const Publicar = () => {
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.All,
         allowsEditing: false,
-        //aspect: [4, 3],
         quality: 1,
       });
 
       if (!result.canceled) {
         const selectedAsset = result.assets && result.assets.length > 0 ? result.assets[0] : null;
         setImageUri(selectedAsset ? selectedAsset.uri : null);
+        setPublicar(titulo && (selectedAsset || text.length > 0));
       }
     } catch (error) {
       console.error('Error al abrir la galería: ', error);
     }
   };
+
   const eliminarImagen = () => {
     setImageUri(null);
+    setPublicar(titulo && text.length > 0);
   };
 
   const onSend = async (titulo, asunto, text, imageUri) => {
@@ -57,30 +59,24 @@ const Publicar = () => {
         fecha: serverTimestamp(),
         texto: text,
       });
-
+  
       if (coleccionRef) {
         console.log('Referencia de la colección:', coleccionRef.id);
         if (imageUri) {
           const storage = getStorage();
           const storageRef = ref(storage, `uploads/noticias/imagenes/${coleccionRef.id}`);
-
           try {
-            // Convertir la imagen a un blob
+            setGuardandoImagen(true); // Indicar que se está guardando la imagen
             const response = await fetch(imageUri);
             const blob = await response.blob();
-
-            // Subir el blob a Firebase Storage
-            const snapshot = await uploadBytes(storageRef, blob);
-
-            // Obtener la URL de descarga de la imagen
-            const imageUrl = await getDownloadURL(snapshot.ref);
-
-            // Actualizar el documento con la URL de la imagen
+            await uploadString(storageRef, blob);
+            const imageUrl = await getDownloadURL(storageRef);
             await updateDoc(coleccionRef, { imagen: imageUrl });
-
             console.log('Imagen subida con éxito');
           } catch (error) {
             console.error(error);
+          } finally {
+            setGuardandoImagen(false); // Indicar que la imagen se ha guardado (o ha ocurrido un error)
           }
         }
       } else {
@@ -93,7 +89,6 @@ const Publicar = () => {
     }
   };
 
-
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
       <View style={styles.botones_cont}>
@@ -103,8 +98,10 @@ const Publicar = () => {
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => onSend(titulo, asunto, text, imageUri)}
-          style={{ ...styles.publicar_btn, backgroundColor: publicar ? '#00FFFF' : '#A9A9A9' }} disabled={!publicar}>
-          <Text style={{ ...styles.text_botones, color: publicar ? '#000000' : '#D3D3D3' }}>Publicar</Text>
+          style={{ ...styles.publicar_btn, backgroundColor: publicar ? '#00FFFF' : '#A9A9A9' }} disabled={!publicar || guardandoImagen}>
+          <Text style={{ ...styles.text_botones, color: publicar ? '#000000' : '#D3D3D3' }}>
+            {guardandoImagen ? 'Guardando...' : 'Publicar'}
+          </Text>
         </TouchableOpacity>
       </View>
       <ScrollView>
@@ -115,8 +112,7 @@ const Publicar = () => {
             value={titulo}
             onChangeText={(title) => {
               setTitulo(title);
-              setPublicar(title.length > 0);
-
+              setPublicar(title && (imageUri || text.length > 0)); // Ajustar la condición
             }}
           />
           <TextInput
@@ -129,20 +125,24 @@ const Publicar = () => {
           />
           <TextInput
             placeholder='Escribe un texto...'
-            style={styles.input}
+            style={styles.texto_input}
+            multiline={true}
+            numberOfLines={4}
             value={text}
             onChangeText={(newText) => {
               onChangeText(newText);
+              setPublicar(titulo && (imageUri || newText.length > 0)); // Ajustar la condición
             }}
           />
         </View>
-        <View style={styles.container}>
-          <View style={styles.content}>
+        <View style={styles.prev_cont}>
+          <View style={styles.imagen_prev}>
             {imageUri && <Image source={{ uri: imageUri }} style={styles.image} resizeMode="contain" />}
-            <TouchableOpacity style={styles.eliminarButton} onPress={eliminarImagen}>
-              <FontAwesome5 name="times-circle" size={25} color="#FFFFFF" />
-            </TouchableOpacity>
+
           </View>
+          <TouchableOpacity style={styles.eliminarButton} onPress={eliminarImagen}>
+            <FontAwesome5 name="times-circle" size={25} color="#000" />
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -150,48 +150,42 @@ const Publicar = () => {
 };
 
 const styles = StyleSheet.create({
-  input: {
-    height: 100,
-    margin: 12,
-    //borderWidth: 1,
+  texto_input: {
+    //height: 150,
     textAlignVertical: 'top',
-    padding: 10,
+    padding: 5,
     fontSize: 20,
+    backgroundColor: 'red'
   },
   botones_cont: {
     flexDirection: 'row',
     marginHorizontal: 10,
     justifyContent: 'space-between',
-    //backgroundColor: 'green'
   },
   up_fv: {
     alignItems: 'center',
     flexDirection: 'row',
-    //backgroundColor:'red'
   },
-  container: {
-    flex: 1,
+  prev_cont: {
+    backgroundColor: 'white'
+  },
+  imagen_prev: {
     alignItems: 'center',
-    //backgroundColor: 'red'
-  },
-  content: {
-    width: 360,
-    alignItems: 'flex-end',
-    justifyContent: 'flex-start',
-    //backgroundColor: '#FF69B4'
+    //backgroundColor: 'green'
   },
   titulo_asunto_input: {
-    backgroundColor: '#FEA',
+    //backgroundColor: '#FEA',
     height: 50,
     fontSize: 20
   },
   image: {
     width: 350,
-    height: 500,
+    height: 400,
     marginHorizontal: 5,
   },
   buttonText: {
     marginLeft: 5,
+    fontWeight:'bold'
   },
   publicar_btn: {
     width: '30%',
@@ -202,8 +196,8 @@ const styles = StyleSheet.create({
   },
   eliminarButton: {
     position: 'absolute',
-    //backgroundColor: '#A9A9A9',
-    //padding: 15,
+    right: 0,
+
   },
   text_botones: {
     fontSize: 18,
