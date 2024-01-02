@@ -8,6 +8,7 @@ import { ref, uploadString, getDownloadURL, getStorage } from 'firebase/storage'
 import { collection, addDoc, serverTimestamp, updateDoc } from 'firebase/firestore';
 import { useNavigation } from '@react-navigation/native';
 import { useUser } from '../../fb/DatosUsers';
+import Video from 'react-native-video';
 
 const Publicar = () => {
   const { usuario, setUsuario } = useUser();
@@ -18,6 +19,9 @@ const Publicar = () => {
   const [imageUri, setImageUri] = useState(null);
   const [guardandoImagen, setGuardandoImagen] = useState(false);
   const navegacion = useNavigation();
+
+  const [esImagen, setesImagen] = useState();
+  const [esVideo, setesVideo] = useState();
 
   const abrirGaleria = async () => {
     try {
@@ -31,11 +35,13 @@ const Publicar = () => {
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.All,
         allowsEditing: false,
-        quality: 1,
+        quality: 0.6,
       });
 
       if (!result.canceled) {
         const selectedAsset = result.assets && result.assets.length > 0 ? result.assets[0] : null;
+        setesImagen(selectedAsset?.type.startsWith('image'));
+        setesVideo(selectedAsset?.type.startsWith('video'));
         setImageUri(selectedAsset ? selectedAsset.uri : null);
         setPublicar(titulo && (selectedAsset || text.length > 0));
       }
@@ -59,14 +65,14 @@ const Publicar = () => {
         fecha: serverTimestamp(),
         texto: text,
       });
-  
+
       if (coleccionRef) {
         console.log('Referencia de la colección:', coleccionRef.id);
         if (imageUri) {
           const storage = getStorage();
           const storageRef = ref(storage, `uploads/noticias/imagenes/${coleccionRef.id}`);
           try {
-            setGuardandoImagen(true); // Indicar que se está guardando la imagen
+            setGuardandoImagen(true);
             const response = await fetch(imageUri);
             const blob = await response.blob();
             await uploadString(storageRef, blob);
@@ -76,7 +82,7 @@ const Publicar = () => {
           } catch (error) {
             console.error(error);
           } finally {
-            setGuardandoImagen(false); // Indicar que la imagen se ha guardado (o ha ocurrido un error)
+            setGuardandoImagen(false);
           }
         }
       } else {
@@ -112,7 +118,7 @@ const Publicar = () => {
             value={titulo}
             onChangeText={(title) => {
               setTitulo(title);
-              setPublicar(title && (imageUri || text.length > 0)); // Ajustar la condición
+              setPublicar(title && (imageUri || title.length > 0));
             }}
           />
           <TextInput
@@ -131,18 +137,28 @@ const Publicar = () => {
             value={text}
             onChangeText={(newText) => {
               onChangeText(newText);
-              setPublicar(titulo && (imageUri || newText.length > 0)); // Ajustar la condición
             }}
           />
         </View>
         <View style={styles.prev_cont}>
-          <View style={styles.imagen_prev}>
-            {imageUri && <Image source={{ uri: imageUri }} style={styles.image} resizeMode="contain" />}
-
-          </View>
-          <TouchableOpacity style={styles.eliminarButton} onPress={eliminarImagen}>
-            <FontAwesome5 name="times-circle" size={25} color="#000" />
-          </TouchableOpacity>
+          {imageUri ? (
+            <View style={styles.prev_cont}>
+              <TouchableOpacity style={styles.eliminarButton} onPress={eliminarImagen}>
+                <FontAwesome5 name="times-circle" size={25} color="#000" />
+              </TouchableOpacity>
+              {esImagen && (
+                <Image source={{ uri: imageUri }} style={styles.image} resizeMode="contain" />
+              )}
+              {esVideo && (
+                <Video
+                  source={{ uri: imageUri }}
+                  style={styles.video}
+                  controls={true}
+                  resizeMode="cover"
+                />
+              )}
+            </View>
+          ) : null}
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -151,11 +167,9 @@ const Publicar = () => {
 
 const styles = StyleSheet.create({
   texto_input: {
-    //height: 150,
     textAlignVertical: 'top',
-    padding: 5,
     fontSize: 20,
-    backgroundColor: 'red'
+    //backgroundColor: 'red'
   },
   botones_cont: {
     flexDirection: 'row',
@@ -167,6 +181,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   prev_cont: {
+    marginTop: 40,
     backgroundColor: 'white'
   },
   imagen_prev: {
@@ -179,13 +194,13 @@ const styles = StyleSheet.create({
     fontSize: 20
   },
   image: {
-    width: 350,
-    height: 400,
+    width: 400,
+    height: 500,
     marginHorizontal: 5,
   },
   buttonText: {
     marginLeft: 5,
-    fontWeight:'bold'
+    fontWeight: 'bold'
   },
   publicar_btn: {
     width: '30%',
@@ -195,9 +210,10 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   eliminarButton: {
-    position: 'absolute',
+    alignItems: 'flex-start',
+    //position: 'absolute',
+    flexDirection: 'row-reverse',
     right: 0,
-
   },
   text_botones: {
     fontSize: 18,

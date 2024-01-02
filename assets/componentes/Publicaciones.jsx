@@ -1,4 +1,4 @@
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native'
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, ActivityIndicator, Image } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { useUser } from '../../fb/DatosUsers'
 import { collection, onSnapshot, query } from 'firebase/firestore';
@@ -6,6 +6,7 @@ import { db } from '../../fb/firebase-config';
 import { Entypo } from '@expo/vector-icons';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import { useNavigation } from '@react-navigation/native';
+import { FontAwesome } from '@expo/vector-icons';
 //import { LinearGradient } from 'expo-linear-gradient';
 let nveces = 0;
 
@@ -32,8 +33,7 @@ const Publicaciones = () => {
     }, [usuario]);
     if (loading)
         return <ActivityIndicator size="large" color="#40E0D0" style={{ flex: 1, alignItems: 'center' }} />;
-    return (
-        
+    return (    
         <FlatList
             data={publicaciones}
             keyExtractor={(item) => item.id.toString()}
@@ -56,16 +56,17 @@ const Info = ({ item, rol }) => {
     nveces = nveces + 1;
     //console.log('entro: ' + nveces + 'veces');
     const fecha = item.fecha ? item.fecha.toDate() : null;
-    item = { titulo: item.titulo, asunto: item.asunto, autor: item.autor, texto: item.texto };
+    item = { titulo: item.titulo, asunto: item.asunto, autor: item.autor, imagen:item.imagen,texto: item.texto };
+    console.log(item.imagen)
     const FormatoFecha = (fecha) => {
         if (!fecha) return '';
-
         const options = { day: 'numeric', month: 'numeric', year: 'numeric' };
         return fecha.toLocaleDateString(undefined, options);
     };
 
-    const pressButton = (info) =>{
-        navegacion.navigate('NoticiaInfo',{info});
+    const pressButton = (info,fecha) =>{
+        console.log('item a enviar: ',info)
+        navegacion.navigate('NoticiaInfo',{info},fecha);
     }
     return (
         <View style={styles.publicacionContainer}>
@@ -82,10 +83,13 @@ const Info = ({ item, rol }) => {
                     )}
                 </View>
             </View>
-            <TouchableOpacity style={styles.noticia_btn} onPress={()=>pressButton(item)}>
+            <TouchableOpacity style={styles.noticia_btn} onPress={()=>pressButton(item,fecha)}>
                 <Text style={styles.titulo_publicacion}>{item.titulo}</Text>
                 <Text style={styles.asunto_publicacion}>{item.asunto}</Text>
-                {item.imagen && <Image source={{ uri: item.imagen }} style={styles.imagenPublicacion} />}
+                {item.imagen && 
+                <FontAwesome name="photo" size={18} color="black" />
+                //<Image source={{ uri: item.imagen }} style={styles.imagenPublicacion} 
+                }
             </TouchableOpacity>
         </View>
     )
@@ -120,6 +124,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
     },
     autorTexto: {
+        fontWeight:'bold',
         marginBottom: 5,
         marginRight: 10
     },
@@ -128,7 +133,6 @@ const styles = StyleSheet.create({
         textAlign: 'justify',
     },
     imagenPublicacion: {
-        width: '100%',
         height: 200,
         resizeMode: 'cover',
         marginBottom: 10,
