@@ -4,11 +4,10 @@ import { TextInput } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { db } from '../../fb/firebase-config';
-import { ref, uploadString, getDownloadURL, getStorage } from 'firebase/storage';
+import { ref, getDownloadURL, getStorage, uploadBytes } from 'firebase/storage';
 import { collection, addDoc, serverTimestamp, updateDoc } from 'firebase/firestore';
 import { useNavigation } from '@react-navigation/native';
 import { useUser } from '../../fb/DatosUsers';
-import Video from 'react-native-video';
 
 const Publicar = () => {
   const { usuario, setUsuario } = useUser();
@@ -70,14 +69,22 @@ const Publicar = () => {
         console.log('Referencia de la colección:', coleccionRef.id);
         if (imageUri) {
           const storage = getStorage();
-          const storageRef = ref(storage, `uploads/noticias/imagenes/${coleccionRef.id}`);
+          const extension = imageUri.split('.').pop();
+          const storageRef = ref(storage, `uploads/noticias/imagenes/${coleccionRef.id}.${extension}`);
           try {
             setGuardandoImagen(true);
             const response = await fetch(imageUri);
             const blob = await response.blob();
-            await uploadString(storageRef, blob);
-            const imageUrl = await getDownloadURL(storageRef);
+
+            // Subir el blob a Firebase Storage
+            const snapshot = await uploadBytes(storageRef, blob);
+
+            // Obtener la URL de descarga de la imagen
+            const imageUrl = await getDownloadURL(snapshot.ref);
+
+            // Actualizar el documento con la URL de la imagen
             await updateDoc(coleccionRef, { imagen: imageUrl });
+
             console.log('Imagen subida con éxito');
           } catch (error) {
             console.error(error);

@@ -4,11 +4,10 @@ import { useUser } from '../../fb/DatosUsers'
 import { collection, onSnapshot, query } from 'firebase/firestore';
 import { db } from '../../fb/firebase-config';
 import { Entypo } from '@expo/vector-icons';
-import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome } from '@expo/vector-icons';
 //import { LinearGradient } from 'expo-linear-gradient';
-let nveces = 0;
+
 
 const Publicaciones = () => {
     const { usuario } = useUser();
@@ -53,8 +52,6 @@ const Publicaciones = () => {
 
 const Info = ({ item, rol }) => {
     const navegacion = useNavigation();
-    nveces = nveces + 1;
-    //console.log('entro: ' + nveces + 'veces');
     const fecha = item.fecha ? item.fecha.toDate() : null;
     item = { titulo: item.titulo, asunto: item.asunto, autor: item.autor, imagen:item.imagen,texto: item.texto };
     console.log(item.imagen)
@@ -64,8 +61,7 @@ const Info = ({ item, rol }) => {
         return fecha.toLocaleDateString(undefined, options);
     };
 
-    const pressButton = (info,fecha) =>{
-        console.log('item a enviar: ',info)
+    const pressButton = (info) =>{
         navegacion.navigate('NoticiaInfo',{info},fecha);
     }
     return (
@@ -83,7 +79,7 @@ const Info = ({ item, rol }) => {
                     )}
                 </View>
             </View>
-            <TouchableOpacity style={styles.noticia_btn} onPress={()=>pressButton(item,fecha)}>
+            <TouchableOpacity style={styles.noticia_btn} onPress={()=>pressButton(item)}>
                 <Text style={styles.titulo_publicacion}>{item.titulo}</Text>
                 <Text style={styles.asunto_publicacion}>{item.asunto}</Text>
                 {item.imagen && 
