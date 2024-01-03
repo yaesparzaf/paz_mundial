@@ -6,6 +6,7 @@ import { db } from '../../fb/firebase-config';
 import { Entypo } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome } from '@expo/vector-icons';
+import OpcionesUD from './OpcionesUD';
 //import { LinearGradient } from 'expo-linear-gradient';
 
 
@@ -24,7 +25,6 @@ const Publicaciones = () => {
             setPublicaciones(newPublicacion);
             setLoading(false);
         });
-        console.log('Suscripción establecida');
         return () => {
             subscripcion();
             console.log('Suscripción limpiada');
@@ -51,45 +51,56 @@ const Publicaciones = () => {
 }
 
 const Info = ({ item, rol }) => {
+    const [mostrarOpciones, setMostrarOpciones] = useState(false);
     const navegacion = useNavigation();
     const fecha = item.fecha ? item.fecha.toDate() : null;
-    item = { titulo: item.titulo, asunto: item.asunto, autor: item.autor, imagen:item.imagen,texto: item.texto };
-    console.log(item.imagen)
+    item = { titulo: item.titulo, asunto: item.asunto, autor: item.autor, imagen: item.imagen, texto: item.texto };
+  
     const FormatoFecha = (fecha) => {
-        if (!fecha) return '';
-        const options = { day: 'numeric', month: 'numeric', year: 'numeric' };
-        return fecha.toLocaleDateString(undefined, options);
+      if (!fecha) return '';
+      const options = { day: 'numeric', month: 'numeric', year: 'numeric' };
+      return fecha.toLocaleDateString(undefined, options);
     };
-
-    const pressButton = (info) =>{
-        navegacion.navigate('NoticiaInfo',{info},fecha);
-    }
+  
+    const pressButton = (info) => {
+      navegacion.navigate('NoticiaInfo', { info }, fecha);
+    };
+  
+    const toggleOpciones = () => {
+      setMostrarOpciones(!mostrarOpciones);
+    };
+  
     return (
-        <View style={styles.publicacionContainer}>
-            <View style={styles.encabezado}>
-                <Text style={styles.autorTexto}>{item.autor}</Text>
-                {fecha !== null && (
-                    <Text style={styles.fechaTexto}>{FormatoFecha(fecha)}</Text>
-                )}
-                <View style={styles.menu_publicacion}>
-                    {rol === 'admin' && (
-                        <TouchableOpacity activeOpacity={1.0}>
-                            <Entypo name="dots-three-vertical" size={15} color="black" />
-                        </TouchableOpacity>
-                    )}
-                </View>
-            </View>
-            <TouchableOpacity style={styles.noticia_btn} onPress={()=>pressButton(item)}>
-                <Text style={styles.titulo_publicacion}>{item.titulo}</Text>
-                <Text style={styles.asunto_publicacion}>{item.asunto}</Text>
-                {item.imagen && 
-                <FontAwesome name="photo" size={18} color="black" />
-                //<Image source={{ uri: item.imagen }} style={styles.imagenPublicacion} 
-                }
-            </TouchableOpacity>
+      <View style={styles.publicacionContainer}>
+        <View style={styles.encabezado}>
+          <Text style={styles.autorTexto}>{item.autor}</Text>
+          {fecha !== null && (
+            <Text style={styles.fechaTexto}>{FormatoFecha(fecha)}</Text>
+          )}
+          <View style={styles.menu_publicacion}>
+            {rol === 'admin' && (
+              <TouchableOpacity activeOpacity={1.0} onPress={toggleOpciones}>
+                <Entypo name="dots-three-vertical" size={15} color="black" />
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
-    )
-}
+        <TouchableOpacity style={styles.noticia_btn} onPress={() => pressButton(item)}>
+          <Text style={styles.titulo_publicacion}>{item.titulo}</Text>
+          <Text style={styles.asunto_publicacion}>{item.asunto}</Text>
+          {item.imagen &&
+            <FontAwesome name="photo" size={18} color="black" />
+            //<Image source={{ uri: item.imagen }} style={styles.imagenPublicacion} 
+          }
+        </TouchableOpacity>
+          {mostrarOpciones && (
+          <OpcionesUD
+            onClose={toggleOpciones}
+          />
+        )}
+      </View>
+    );
+  };
 
 const styles = StyleSheet.create({
     publicacionContainer: {

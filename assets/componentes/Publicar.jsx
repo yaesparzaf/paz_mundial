@@ -66,7 +66,6 @@ const Publicar = () => {
       });
 
       if (coleccionRef) {
-        console.log('Referencia de la colección:', coleccionRef.id);
         if (imageUri) {
           const storage = getStorage();
           const extension = imageUri.split('.').pop();
@@ -75,17 +74,9 @@ const Publicar = () => {
             setGuardandoImagen(true);
             const response = await fetch(imageUri);
             const blob = await response.blob();
-
-            // Subir el blob a Firebase Storage
             const snapshot = await uploadBytes(storageRef, blob);
-
-            // Obtener la URL de descarga de la imagen
             const imageUrl = await getDownloadURL(snapshot.ref);
-
-            // Actualizar el documento con la URL de la imagen
             await updateDoc(coleccionRef, { imagen: imageUrl });
-
-            console.log('Imagen subida con éxito');
           } catch (error) {
             console.error(error);
           } finally {
@@ -95,7 +86,6 @@ const Publicar = () => {
       } else {
         console.error('Error al obtener la referencia de la colección');
       }
-      console.log('Mensaje enviado con éxito');
       navegacion.navigate('Noticias', { screen: 'Noticias' });
     } catch (error) {
       console.error('Error al enviar datos:', error);
@@ -113,7 +103,7 @@ const Publicar = () => {
           onPress={() => onSend(titulo, asunto, text, imageUri)}
           style={{ ...styles.publicar_btn, backgroundColor: publicar ? '#00FFFF' : '#A9A9A9' }} disabled={!publicar || guardandoImagen}>
           <Text style={{ ...styles.text_botones, color: publicar ? '#000000' : '#D3D3D3' }}>
-            {guardandoImagen ? 'Guardando...' : 'Publicar'}
+            {guardandoImagen ? 'Publicando...' : 'Publicar'}
           </Text>
         </TouchableOpacity>
       </View>

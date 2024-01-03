@@ -31,6 +31,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'white'
     },
     header_cont: {
+        margin:5,
         flexDirection: 'row',
         //backgroundColor:'green'
     },
@@ -48,7 +49,7 @@ const styles = StyleSheet.create({
         marginRight: 10
     },
     texto_publicacion: {
-        fontSize: 18,
+        fontSize: 16,
         textAlign: 'justify',
     },
     info_cont:{
