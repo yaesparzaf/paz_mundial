@@ -4,7 +4,6 @@ import React from 'react'
 const NoticiaInfo = ({ route }) => {
     const { params } = route;
     const { asunto, autor, fecha, imagen, texto, titulo } = params.info;
-    console.log('item recibido: ', params.info);
     return (
         <SafeAreaView style={styles.contenedor}>
             <ScrollView>
@@ -13,12 +12,16 @@ const NoticiaInfo = ({ route }) => {
                     <Text>{fecha}</Text>
                 </View>
                 <View style={styles.info_cont}>
-                <Text style={styles.titulo_publicacion}>{titulo}</Text>
-                <Text style={styles.asunto_publicacion}>{asunto}</Text>
+                    <Text style={styles.titulo_publicacion}>{titulo}</Text>
+                    <Text style={styles.asunto_publicacion}>{asunto}</Text>
+                </View>
+                <View style={styles.texto_cont}>
                     <Text style={styles.texto_publicacion}>{texto}</Text>
                 </View>
                 {imagen !== null && (
-                    <Image source={{ uri: imagen }} style={styles.imagenPublicacion} />
+                    <View style={styles.imagen_cont}>
+                        <Image source={{ uri: imagen }} style={styles.imagenPublicacion} />
+                    </View>
                 )}
             </ScrollView>
         </SafeAreaView>
@@ -31,8 +34,9 @@ const styles = StyleSheet.create({
         backgroundColor: 'white'
     },
     header_cont: {
-        margin:5,
+        margin: 5,
         flexDirection: 'row',
+        marginHorizontal:15,
         //backgroundColor:'green'
     },
     titulo_publicacion: {
@@ -52,11 +56,19 @@ const styles = StyleSheet.create({
         fontSize: 16,
         textAlign: 'justify',
     },
-    info_cont:{
-        margin:5
+    info_cont: {
+        margin: 5,
+        marginHorizontal:15,
+    },
+    texto_cont: {
+        marginHorizontal: 10,
+        marginHorizontal:25,
+    },
+    imagen_cont:{
+        alignItems:'center'
     },
     imagenPublicacion: {
-        width: '100%',
+        width: '90%',
         height: 500,
         resizeMode: 'cover',
         marginBottom: 10,

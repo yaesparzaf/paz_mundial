@@ -1,15 +1,16 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, SafeAreaView, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { TextInput } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { db } from '../../fb/firebase-config';
 import { ref, getDownloadURL, getStorage, uploadBytes } from 'firebase/storage';
-import { collection, addDoc, serverTimestamp, updateDoc } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, updateDoc, doc, getDoc } from 'firebase/firestore';
 import { useNavigation } from '@react-navigation/native';
 import { useUser } from '../../fb/DatosUsers';
 
-const Publicar = () => {
+const Publicar = ({ route }) => {
+
   const { usuario, setUsuario } = useUser();
   const [titulo, setTitulo] = React.useState();
   const [asunto, setAsunto] = useState('');
@@ -18,9 +19,31 @@ const Publicar = () => {
   const [imageUri, setImageUri] = useState(null);
   const [guardandoImagen, setGuardandoImagen] = useState(false);
   const navegacion = useNavigation();
-
   const [esImagen, setesImagen] = useState();
   const [esVideo, setesVideo] = useState();
+
+  useEffect(() => {
+    const obtenerDatos = async () => {
+      const { params } = route;
+      const {itemId} = params; 
+
+      if (itemId) {
+        const noticiaRef = collection(db, 'noticias');
+        const noticiaEdit = await getDoc(doc(noticiaRef,itemId));
+        console.log(noticiaEdit);
+        if (noticiaEdit.exists()) {
+          const datos_noticia = noticiaEdit.data();
+          setTitulo(datos_noticia.titulo);
+          setAsunto(datos_noticia.asunto);
+          onChangeText(datos_noticia.texto);
+          setImageUri(datos_noticia.imagen);
+          console.log(datos_noticia.titulo)
+          console.log(datos_noticia.asunto);
+        } else { console.log('no hay datos para mostrar ' + itemId); }
+      }
+    };
+    obtenerDatos();
+  }, []);
 
   const abrirGaleria = async () => {
     try {

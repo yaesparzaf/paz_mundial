@@ -24,6 +24,7 @@ const Publicaciones = () => {
             newPublicacion.sort((a, b) => b.fecha - a.fecha);
             setPublicaciones(newPublicacion);
             setLoading(false);
+            //console.log(newPublicacion);
         });
         return () => {
             subscripcion();
@@ -54,8 +55,8 @@ const Info = ({ item, rol }) => {
     const [mostrarOpciones, setMostrarOpciones] = useState(false);
     const navegacion = useNavigation();
     const fecha = item.fecha ? item.fecha.toDate() : null;
-    item = { titulo: item.titulo, asunto: item.asunto, autor: item.autor, imagen: item.imagen, texto: item.texto };
-  
+    item = { id: item.id, titulo: item.titulo, asunto: item.asunto, autor: item.autor, imagen: item.imagen, texto: item.texto };
+    //console.log(item);
     const FormatoFecha = (fecha) => {
       if (!fecha) return '';
       const options = { day: 'numeric', month: 'numeric', year: 'numeric' };
@@ -63,7 +64,7 @@ const Info = ({ item, rol }) => {
     };
   
     const pressButton = (info) => {
-      navegacion.navigate('NoticiaInfo', { info }, fecha);
+      navegacion.navigate('NoticiaInfo', { info });
     };
   
     const toggleOpciones = () => {
@@ -96,6 +97,7 @@ const Info = ({ item, rol }) => {
           {mostrarOpciones && (
           <OpcionesUD
             onClose={toggleOpciones}
+            itemId ={item.id}
           />
         )}
       </View>
