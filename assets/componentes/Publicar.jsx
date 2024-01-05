@@ -16,30 +16,38 @@ const Publicar = ({ route }) => {
   const [asunto, setAsunto] = useState('');
   const [text, onChangeText] = React.useState('');
   const [publicar, setPublicar] = useState(false);
-  const [imageUri, setImageUri] = useState(null);
+  const [imageUri, setImageUri] = useState();
   const [guardandoImagen, setGuardandoImagen] = useState(false);
   const navegacion = useNavigation();
   const [esImagen, setesImagen] = useState();
   const [esVideo, setesVideo] = useState();
+  const [editar, setEditar] = useState(false);
+  const [noticiaId, setNoticiaId] = useState();
 
   useEffect(() => {
     const obtenerDatos = async () => {
       const { params } = route;
-      const {itemId} = params; 
-
-      if (itemId) {
-        const noticiaRef = collection(db, 'noticias');
-        const noticiaEdit = await getDoc(doc(noticiaRef,itemId));
-        console.log(noticiaEdit);
-        if (noticiaEdit.exists()) {
-          const datos_noticia = noticiaEdit.data();
-          setTitulo(datos_noticia.titulo);
-          setAsunto(datos_noticia.asunto);
-          onChangeText(datos_noticia.texto);
-          setImageUri(datos_noticia.imagen);
-          console.log(datos_noticia.titulo)
-          console.log(datos_noticia.asunto);
-        } else { console.log('no hay datos para mostrar ' + itemId); }
+      if (params) {
+        const { itemId } = params;
+        setNoticiaId(itemId);
+        if (itemId) {
+          const noticiaRef = collection(db, 'noticias');
+          const noticiaEdit = await getDoc(doc(noticiaRef, itemId));
+          //console.log(noticiaEdit);
+          if (noticiaEdit.exists()) {
+            const datos_noticia = noticiaEdit.data();
+            setTitulo(datos_noticia.titulo);
+            setAsunto(datos_noticia.asunto);
+            onChangeText(datos_noticia.texto);
+            setImageUri(datos_noticia.imagen);
+            //console.log(datos_noticia.titulo)
+            //console.log(datos_noticia.asunto);
+            //console.log(datos_noticia.imagen);
+            console.log(imageUri);
+            //setesImagen(!esImagen);
+            setEditar(!editar);
+          } else { console.log('no hay datos para mostrar ' + itemId); }
+        }
       }
     };
     obtenerDatos();
@@ -115,22 +123,43 @@ const Publicar = ({ route }) => {
     }
   };
 
+  const onSendEdit = async (noticiaId, new_titulo, new_asunto, new_texto, ant_imagen, new_imagen) => {
+    console.log('doc a editar: ', noticiaId);
+    const noticiaRef = doc(db, 'noticias', noticiaId);
+    try {
+      await updateDoc(noticiaRef, {
+        titulo: new_titulo,
+        asunto: new_asunto,
+        texto: new_texto,
+        //imagen: new_imagen,
+      });
+      //if(ant_imagen){
+
+      //}
+      console.log('noticia editada con exito.');
+      navegacion.navigate('Noticias', { screen: 'Noticias' });
+    } catch (error) {
+      console.log('hubo un erro al actualizar los datos: ' + error);
+    }
+  };
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
-      <View style={styles.botones_cont}>
-        <TouchableOpacity style={styles.up_fv} onPress={abrirGaleria}>
-          <FontAwesome5 name="photo-video" size={24} color="black" />
-          <Text style={styles.buttonText}>Foto/Video</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => onSend(titulo, asunto, text, imageUri)}
-          style={{ ...styles.publicar_btn, backgroundColor: publicar ? '#00FFFF' : '#A9A9A9' }} disabled={!publicar || guardandoImagen}>
-          <Text style={{ ...styles.text_botones, color: publicar ? '#000000' : '#D3D3D3' }}>
-            {guardandoImagen ? 'Publicando...' : 'Publicar'}
-          </Text>
-        </TouchableOpacity>
-      </View>
       <ScrollView>
+        <View style={styles.botones_cont}>
+          <TouchableOpacity style={styles.up_fv} onPress={abrirGaleria}>
+            <FontAwesome5 name="photo-video" size={24} color="black" />
+            <Text style={styles.buttonText}>Foto/Video</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => (editar ? onSendEdit(noticiaId, titulo, asunto, text) : onSend(titulo, asunto, text, imageUri))}
+            style={{ ...styles.publicar_btn, backgroundColor: publicar ? '#00FFFF' : '#A9A9A9' }} disabled={!publicar || guardandoImagen}>
+            <Text style={{ ...styles.text_botones, color: publicar ? '#000000' : '#D3D3D3' }}>
+              {guardandoImagen ? 'Publicando...' : 'Publicar'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
         <View>
           <TextInput
             placeholder='Título'
@@ -146,6 +175,7 @@ const Publicar = ({ route }) => {
             style={styles.titulo_asunto_input}
             value={asunto}
             onChangeText={(newAsunto) => {
+              if (editar) { setPublicar(newAsunto && (newAsunto.length > 0)); }
               setAsunto(newAsunto);
             }}
           />
@@ -156,6 +186,7 @@ const Publicar = ({ route }) => {
             numberOfLines={4}
             value={text}
             onChangeText={(newText) => {
+              if (editar) { setPublicar(newText && (newText.length > 0)); }
               onChangeText(newText);
             }}
           />
@@ -165,8 +196,8 @@ const Publicar = ({ route }) => {
             <View style={styles.prev_cont}>
               <TouchableOpacity style={styles.eliminarButton} onPress={eliminarImagen}>
                 <FontAwesome5 name="times-circle" size={25} color="#000" />
-              </TouchableOpacity>
-              {esImagen && (
+              </TouchableOpacity>{console.log(' esImagen: ' + esImagen + ' editar: ' + editar)}
+              {esImagen || editar && (
                 <Image source={{ uri: imageUri }} style={styles.image} resizeMode="contain" />
               )}
               {esVideo && (
@@ -201,7 +232,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   prev_cont: {
-    marginTop: 40,
+    marginTop: 20,
     backgroundColor: 'white'
   },
   imagen_prev: {
