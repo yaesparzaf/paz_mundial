@@ -123,7 +123,7 @@ const Publicar = ({ route }) => {
     }
   };
 
-  const onSendEdit = async (noticiaId, new_titulo, new_asunto, new_texto, ant_imagen, new_imagen) => {
+  const onSendEdit = async (noticiaId, new_titulo, new_asunto, new_texto) => {
     console.log('doc a editar: ', noticiaId);
     const noticiaRef = doc(db, 'noticias', noticiaId);
     try {
@@ -152,7 +152,7 @@ const Publicar = ({ route }) => {
             <Text style={styles.buttonText}>Foto/Video</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => (editar ? onSendEdit(noticiaId, titulo, asunto, text) : onSend(titulo, asunto, text, imageUri))}
+            onPress={() =>(editar ? onSendEdit(noticiaId, titulo, asunto, text) : onSend(titulo, asunto, text, imageUri))}
             style={{ ...styles.publicar_btn, backgroundColor: publicar ? '#00FFFF' : '#A9A9A9' }} disabled={!publicar || guardandoImagen}>
             <Text style={{ ...styles.text_botones, color: publicar ? '#000000' : '#D3D3D3' }}>
               {guardandoImagen ? 'Publicando...' : 'Publicar'}

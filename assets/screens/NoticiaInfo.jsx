@@ -3,13 +3,13 @@ import React from 'react'
 
 const NoticiaInfo = ({ route }) => {
     const { params } = route;
-    const { asunto, autor, fecha, imagen, texto, titulo } = params.info;
+    const { asunto, autor, fecha, imagen, texto, titulo } = params?.info || {};
     return (
         <SafeAreaView style={styles.contenedor}>
             <ScrollView>
                 <View style={styles.header_cont}>
                     <Text style={styles.autor_publicacion}>{autor}</Text>
-                    <Text>{fecha}</Text>
+                    
                 </View>
                 <View style={styles.info_cont}>
                     <Text style={styles.titulo_publicacion}>{titulo}</Text>
@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
     header_cont: {
         margin: 5,
         flexDirection: 'row',
-        marginHorizontal:15,
+        marginHorizontal: 15,
         //backgroundColor:'green'
     },
     titulo_publicacion: {
@@ -58,14 +58,14 @@ const styles = StyleSheet.create({
     },
     info_cont: {
         margin: 5,
-        marginHorizontal:15,
+        marginHorizontal: 15,
     },
     texto_cont: {
         marginHorizontal: 10,
-        marginHorizontal:25,
+        marginHorizontal: 25,
     },
-    imagen_cont:{
-        alignItems:'center'
+    imagen_cont: {
+        alignItems: 'center'
     },
     imagenPublicacion: {
         width: '90%',
