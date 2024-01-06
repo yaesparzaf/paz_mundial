@@ -30,7 +30,7 @@ const Publicar = ({ route }) => {
       const { params } = route;
       if (params) {
         const { noticiaId } = params;
-        console.log('id recibio para editar:',noticiaId);
+        console.log('id recibio para editar:', noticiaId);
         setNoticiaId(noticiaId);
         if (noticiaId) {
           const noticiaRef = collection(db, 'noticias');
@@ -74,6 +74,8 @@ const Publicar = ({ route }) => {
         const selectedAsset = result.assets && result.assets.length > 0 ? result.assets[0] : null;
         setesImagen(selectedAsset?.type.startsWith('image'));
         //setesVideo(selectedAsset?.type.startsWith('video'));
+        if (editar && !imagenUri_prev)
+          setImagenUri_prev(imagenUri);
         setImagenUri(selectedAsset ? selectedAsset.uri : null);
         setPublicar(titulo && (selectedAsset || text.length > 0));
       }
@@ -103,9 +105,13 @@ const Publicar = ({ route }) => {
   };
 
   const eliminarImagen = () => {
-    if (editar)
+    console.log('imagen uri: ', imagenUri);
+    if (editar) {
       setImagenUri_prev(imagenUri);
+      console.log('antes de null: ', imagenUri_prev);
+    }
     setImagenUri(null);
+    console.log('despues de null: ', imagenUri_prev);
     setPublicar(titulo && text.length > 0);
   };
 
@@ -140,10 +146,11 @@ const Publicar = ({ route }) => {
 
 
   const onSendEdit = async (noticiaId, new_titulo, new_asunto, new_texto, new_imagen, prev_imagen) => {
-    console.log('doc a editar: ', noticiaId);
     const noticiaRef = doc(db, 'noticias', noticiaId);
     try {
-      if (prev_imagen) {
+      console.log(prev_imagen);
+      console.log('nueva imagen: ', new_imagen);
+      if (prev_imagen && new_imagen) {
         await updateDoc(noticiaRef, {
           titulo: new_titulo,
           asunto: new_asunto,
@@ -152,6 +159,8 @@ const Publicar = ({ route }) => {
         });
         const storage = getStorage();
         const imagenRef = ref(storage, prev_imagen);
+        subirImagen(noticiaRef, new_imagen);
+        console.log('imagen actualizada');
         try {
           await deleteObject(imagenRef);
           console.log('imagen eliminada!');
@@ -164,7 +173,6 @@ const Publicar = ({ route }) => {
         asunto: new_asunto,
         texto: new_texto,
       });
-
       console.log('noticia editada con exito.');
       navegacion.navigate('Noticias', { screen: 'Noticias' });
     } catch (error) {
@@ -181,7 +189,7 @@ const Publicar = ({ route }) => {
             <Text style={styles.buttonText}>Foto/Video</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => (editar ? onSendEdit(noticiaId, titulo, asunto, text) : onSend(titulo, asunto, text, imagenUri))}
+            onPress={() => (editar ? onSendEdit(noticiaId, titulo, asunto, text, imagenUri, imagenUri_prev) : onSend(titulo, asunto, text, imagenUri))}
             style={{ ...styles.publicar_btn, backgroundColor: publicar ? '#00FFFF' : '#A9A9A9' }} disabled={!publicar || guardandoImagen}>
             <Text style={{ ...styles.text_botones, color: publicar ? '#000000' : '#D3D3D3' }}>
               {guardandoImagen ? 'Publicando...' : 'Publicar'}
@@ -227,7 +235,7 @@ const Publicar = ({ route }) => {
                 <FontAwesome5 name="times-circle" size={25} color="#000" />
               </TouchableOpacity>{console.log(' esImagen: ' + esImagen + ' editar: ' + editar)}
               {(esImagen || editar) && (
-                <Image source={{ uri: imagenUri }} style={styles.image} resizeMode="contain" />
+                <Image source={{ uri: imagenUri }} style={styles.image} />
               )}
               {esVideo && (
                 <Video
@@ -274,8 +282,9 @@ const styles = StyleSheet.create({
     fontSize: 20
   },
   image: {
-    width: 400,
+    width: '100%',
     height: 500,
+    resizeMode: "contain",
     marginHorizontal: 5,
   },
   buttonText: {
