@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, SafeAreaView, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { TextInput } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { db } from '../../fb/firebase-config';
-import { ref, getDownloadURL, getStorage, uploadBytes } from 'firebase/storage';
-import { collection, addDoc, serverTimestamp, updateDoc, doc, getDoc } from 'firebase/firestore';
+import { ref, getDownloadURL, getStorage, uploadBytes, deleteObject } from 'firebase/storage';
+import { collection, addDoc, serverTimestamp, updateDoc, doc, getDoc, deleteDoc } from 'firebase/firestore';
 import { useNavigation } from '@react-navigation/native';
 import { useUser } from '../../fb/DatosUsers';
 
@@ -16,7 +16,8 @@ const Publicar = ({ route }) => {
   const [asunto, setAsunto] = useState('');
   const [text, onChangeText] = React.useState('');
   const [publicar, setPublicar] = useState(false);
-  const [imageUri, setImageUri] = useState();
+  const [imagenUri, setImagenUri] = useState();
+  const [imagenUri_prev, setImagenUri_prev] = useState();
   const [guardandoImagen, setGuardandoImagen] = useState(false);
   const navegacion = useNavigation();
   const [esImagen, setesImagen] = useState();
@@ -28,25 +29,26 @@ const Publicar = ({ route }) => {
     const obtenerDatos = async () => {
       const { params } = route;
       if (params) {
-        const { itemId } = params;
-        setNoticiaId(itemId);
-        if (itemId) {
+        const { noticiaId } = params;
+        console.log('id recibio para editar:',noticiaId);
+        setNoticiaId(noticiaId);
+        if (noticiaId) {
           const noticiaRef = collection(db, 'noticias');
-          const noticiaEdit = await getDoc(doc(noticiaRef, itemId));
+          const noticiaEdit = await getDoc(doc(noticiaRef, noticiaId));
           //console.log(noticiaEdit);
           if (noticiaEdit.exists()) {
             const datos_noticia = noticiaEdit.data();
             setTitulo(datos_noticia.titulo);
             setAsunto(datos_noticia.asunto);
             onChangeText(datos_noticia.texto);
-            setImageUri(datos_noticia.imagen);
+            setImagenUri(datos_noticia.imagen);
             //console.log(datos_noticia.titulo)
             //console.log(datos_noticia.asunto);
             //console.log(datos_noticia.imagen);
-            console.log(imageUri);
+            console.log(imagenUri);
             //setesImagen(!esImagen);
             setEditar(!editar);
-          } else { console.log('no hay datos para mostrar ' + itemId); }
+          } else { console.log('no hay datos para mostrar ' + noticiaId); }
         }
       }
     };
@@ -63,7 +65,7 @@ const Publicar = ({ route }) => {
       }
 
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: false,
         quality: 0.6,
       });
@@ -71,8 +73,8 @@ const Publicar = ({ route }) => {
       if (!result.canceled) {
         const selectedAsset = result.assets && result.assets.length > 0 ? result.assets[0] : null;
         setesImagen(selectedAsset?.type.startsWith('image'));
-        setesVideo(selectedAsset?.type.startsWith('video'));
-        setImageUri(selectedAsset ? selectedAsset.uri : null);
+        //setesVideo(selectedAsset?.type.startsWith('video'));
+        setImagenUri(selectedAsset ? selectedAsset.uri : null);
         setPublicar(titulo && (selectedAsset || text.length > 0));
       }
     } catch (error) {
@@ -80,12 +82,34 @@ const Publicar = ({ route }) => {
     }
   };
 
+  const subirImagen = async (coleccionRef, imagenUri) => {
+    const storage = getStorage();
+    const extension = imagenUri.split('.').pop();
+    const storageRef = ref(storage, `uploads/noticias/imagenes/${coleccionRef.id}.${extension}`);
+    try {
+      setGuardandoImagen(true);
+      const response = await fetch(imagenUri);
+      const blob = await response.blob();
+      const snapshot = await uploadBytes(storageRef, blob);
+      const imageUrl = await getDownloadURL(snapshot.ref);
+      await updateDoc(coleccionRef, { imagen: imageUrl });
+      return true;
+    } catch (error) {
+      console.error(error);
+      return false;
+    } finally {
+      setGuardandoImagen(false);
+    }
+  };
+
   const eliminarImagen = () => {
-    setImageUri(null);
+    if (editar)
+      setImagenUri_prev(imagenUri);
+    setImagenUri(null);
     setPublicar(titulo && text.length > 0);
   };
 
-  const onSend = async (titulo, asunto, text, imageUri) => {
+  const onSend = async (titulo, asunto, text, imagenUri) => {
     try {
       const coleccionRef = await addDoc(collection(db, 'noticias'), {
         titulo: titulo,
@@ -95,27 +119,18 @@ const Publicar = ({ route }) => {
         fecha: serverTimestamp(),
         texto: text,
       });
-
+      console.log('Después de addDoc');
+      console.log('coleccion: ', coleccionRef);
+      //console.log(nuevoDocumento);
       if (coleccionRef) {
-        if (imageUri) {
-          const storage = getStorage();
-          const extension = imageUri.split('.').pop();
-          const storageRef = ref(storage, `uploads/noticias/imagenes/${coleccionRef.id}.${extension}`);
-          try {
-            setGuardandoImagen(true);
-            const response = await fetch(imageUri);
-            const blob = await response.blob();
-            const snapshot = await uploadBytes(storageRef, blob);
-            const imageUrl = await getDownloadURL(snapshot.ref);
-            await updateDoc(coleccionRef, { imagen: imageUrl });
-          } catch (error) {
-            console.error(error);
-          } finally {
-            setGuardandoImagen(false);
+        if (imagenUri) {
+          const imagenSubida = await subirImagen(coleccionRef, imagenUri);
+          if (!imagenSubida) {
+            await deleteDoc(coleccionRef);
           }
         }
       } else {
-        console.error('Error al obtener la referencia de la colección');
+        console.error('Error al obtener la referencia del nuevo documento');
       }
       navegacion.navigate('Noticias', { screen: 'Noticias' });
     } catch (error) {
@@ -123,19 +138,33 @@ const Publicar = ({ route }) => {
     }
   };
 
-  const onSendEdit = async (noticiaId, new_titulo, new_asunto, new_texto) => {
+
+  const onSendEdit = async (noticiaId, new_titulo, new_asunto, new_texto, new_imagen, prev_imagen) => {
     console.log('doc a editar: ', noticiaId);
     const noticiaRef = doc(db, 'noticias', noticiaId);
     try {
+      if (prev_imagen) {
+        await updateDoc(noticiaRef, {
+          titulo: new_titulo,
+          asunto: new_asunto,
+          texto: new_texto,
+          imagen: new_imagen,
+        });
+        const storage = getStorage();
+        const imagenRef = ref(storage, prev_imagen);
+        try {
+          await deleteObject(imagenRef);
+          console.log('imagen eliminada!');
+        } catch (error) {
+          console.log('no se pudo eliminar la imagen ' + error);
+        }
+      }
       await updateDoc(noticiaRef, {
         titulo: new_titulo,
         asunto: new_asunto,
         texto: new_texto,
-        //imagen: new_imagen,
       });
-      //if(ant_imagen){
 
-      //}
       console.log('noticia editada con exito.');
       navegacion.navigate('Noticias', { screen: 'Noticias' });
     } catch (error) {
@@ -152,7 +181,7 @@ const Publicar = ({ route }) => {
             <Text style={styles.buttonText}>Foto/Video</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() =>(editar ? onSendEdit(noticiaId, titulo, asunto, text) : onSend(titulo, asunto, text, imageUri))}
+            onPress={() => (editar ? onSendEdit(noticiaId, titulo, asunto, text) : onSend(titulo, asunto, text, imagenUri))}
             style={{ ...styles.publicar_btn, backgroundColor: publicar ? '#00FFFF' : '#A9A9A9' }} disabled={!publicar || guardandoImagen}>
             <Text style={{ ...styles.text_botones, color: publicar ? '#000000' : '#D3D3D3' }}>
               {guardandoImagen ? 'Publicando...' : 'Publicar'}
@@ -167,7 +196,7 @@ const Publicar = ({ route }) => {
             value={titulo}
             onChangeText={(title) => {
               setTitulo(title);
-              setPublicar(title && (imageUri || title.length > 0));
+              setPublicar(title && (imagenUri || title.length > 0));
             }}
           />
           <TextInput
@@ -192,17 +221,17 @@ const Publicar = ({ route }) => {
           />
         </View>
         <View style={styles.prev_cont}>
-          {imageUri ? (
+          {imagenUri ? (
             <View style={styles.prev_cont}>
               <TouchableOpacity style={styles.eliminarButton} onPress={eliminarImagen}>
                 <FontAwesome5 name="times-circle" size={25} color="#000" />
               </TouchableOpacity>{console.log(' esImagen: ' + esImagen + ' editar: ' + editar)}
-              {esImagen || editar && (
-                <Image source={{ uri: imageUri }} style={styles.image} resizeMode="contain" />
+              {(esImagen || editar) && (
+                <Image source={{ uri: imagenUri }} style={styles.image} resizeMode="contain" />
               )}
               {esVideo && (
                 <Video
-                  source={{ uri: imageUri }}
+                  source={{ uri: imagenUri }}
                   style={styles.video}
                   controls={true}
                   resizeMode="cover"

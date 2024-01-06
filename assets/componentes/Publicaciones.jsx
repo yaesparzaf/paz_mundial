@@ -97,7 +97,8 @@ const Info = ({ item, rol }) => {
       {mostrarOpciones && (
         <OpcionesUD
           onClose={toggleOpciones}
-          itemId={item.id}
+          noticiaId={item.id}
+          imagenUrl={item.imagen}
         />
       )}
     </View>

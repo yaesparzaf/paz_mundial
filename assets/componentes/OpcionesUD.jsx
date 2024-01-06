@@ -1,20 +1,37 @@
 import { View, Text, Modal, TouchableOpacity, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import React from 'react';
-import Publicar from './Publicar';
+import Publicar from '../screens/Publicar';
 import { useNavigation } from '@react-navigation/native';
+import { deleteDoc, doc } from 'firebase/firestore';
+import { deleteObject, getStorage, ref } from 'firebase/storage';
+import { db } from '../../fb/firebase-config';
 
-const OpcionesUD = ({ onClose,itemId }) => {
-    const navegacion =useNavigation();
-
+const OpcionesUD = ({ onClose, noticiaId, imagenUrl }) => {
+    const navegacion = useNavigation();
+    //const { params } = route;
+    console.log(noticiaId);
+    console.log(imagenUrl);
     const accion = () => {
         console.log('botón presionado');
         onClose();
     };
-    const pressEditar = () =>{
-        navegacion.navigate('Publicar',{itemId});
-        console.log('item a editar: ', { itemId });
+    const pressEditar = () => {
+        navegacion.navigate('Publicar', { noticiaId });
         onClose();
     };
+    const pressEliminar = async () => {
+        const storage = getStorage();
+        const imagenRef = ref(storage, imagenUrl);
+        try {
+            await deleteDoc(doc(db, 'noticias', noticiaId));
+            if(imagenUrl)
+                await deleteObject(imagenRef);
+            console.log('se elimino la noticia.');
+        } catch (error) {
+            console.log('hubo un error al eliminar la publicacion. ' + error);
+        }
+        onClose();
+    }
     const pressOverlay = () => {
         onClose();
     }
@@ -32,7 +49,7 @@ const OpcionesUD = ({ onClose,itemId }) => {
                     <Text style={styles.acciones_texto}>Editar</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.acciones_btn}>
-                    <Text style={{...styles.acciones_texto, color:'red'}}>Eliminar</Text>
+                    <Text style={{ ...styles.acciones_texto, color: 'red' }} onPress={pressEliminar}>Eliminar</Text>
                 </TouchableOpacity>
             </View>
         </Modal>
@@ -51,7 +68,7 @@ const styles = StyleSheet.create({
         bottom: 0,
         backgroundColor: 'white',
     },
-    acciones_btn: {        
+    acciones_btn: {
         justifyContent: 'center',
         width: '100%',
         height: 50,

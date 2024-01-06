@@ -12,7 +12,7 @@ import Notificaciones from '../assets/screens/Notificaciones';
 import Meditar from '../assets/screens/Meditar';
 import Foro from '../assets/screens/Foro';
 import Perfil from '../assets/screens/Perfil';
-import Publicar from '../assets/componentes/Publicar';
+import Publicar from '../assets/screens/Publicar';
 import NoticiaInfo from '../assets/screens/NoticiaInfo';
 
 const Tab = createBottomTabNavigator();
