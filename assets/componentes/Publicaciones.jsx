@@ -1,11 +1,12 @@
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, ActivityIndicator, Image } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { useUser } from '../../fb/DatosUsers'
-import { collection, onSnapshot, query } from 'firebase/firestore';
+import { collection, getDoc, getDocs, onSnapshot, query } from 'firebase/firestore';
 import { db } from '../../fb/firebase-config';
 import { Entypo } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import OpcionesUD from './OpcionesUD';
 //import { LinearGradient } from 'expo-linear-gradient';
 
@@ -14,6 +15,7 @@ const Publicaciones = () => {
   const { usuario } = useUser();
   const [loading, setLoading] = useState(true);
   const [publicaciones, setPublicaciones] = useState([]);
+  const [noticiaLeida, setNoticiaLeida] = useState();
   useEffect(() => {
     const q = query(collection(db, 'noticias'));
     const subscripcion = onSnapshot(q, (snapshot) => {
@@ -24,7 +26,6 @@ const Publicaciones = () => {
       newPublicacion.sort((a, b) => b.fecha - a.fecha);
       setPublicaciones(newPublicacion);
       setLoading(false);
-      //console.log(newPublicacion);
     });
     return () => {
       subscripcion();
@@ -37,8 +38,7 @@ const Publicaciones = () => {
     <FlatList
       data={publicaciones}
       keyExtractor={(item) => item.id.toString()}
-      renderItem={({ item }) => <Info item={item} rol={usuario.rol}
-      //style={{alignItems:'flex-start'}}
+      renderItem={({ item }) => <Info item={item} rol={usuario.rol} usuario_id={usuario.id}
       />}
     /*ListEmptyComponent={() => (
         <SkeletonPlaceholder>
@@ -51,22 +51,40 @@ const Publicaciones = () => {
   )
 }
 
-const Info = ({ item, rol }) => {
+const Info = ({ item, rol, usuario_id }) => {
   const [mostrarOpciones, setMostrarOpciones] = useState(false);
+  const [nueva, setNueva] = useState();
   const navegacion = useNavigation();
   const fecha = item.fecha ? item.fecha.toDate() : null;
   //item = { id: item.id, titulo: item.titulo, asunto: item.asunto, autor: item.autor, imagen: item.imagen, texto: item.texto };
   //console.log(item);
+
+  useEffect(() => {
+    const NuevaNoticia = async () => {
+      try {
+        //console.log('usuario logeado recibido: ', usuario_id)
+        const coleccionRef = collection(db, 'usuarios', usuario_id, 'noticiasLeidas');
+        const datosColeccion = await getDocs(coleccionRef);
+        const vacia = datosColeccion.empty;
+        setNueva(vacia);
+      } catch (error) {
+        console.log('hubo un error en la solicitud');
+      }
+    };
+    NuevaNoticia();
+  }, [usuario_id, item.id]);
+
+  //console.log('la noticia es nueva: ',nueva);
   const FormatoFecha = (fecha) => {
     if (!fecha) return '';
     const options = { day: 'numeric', month: 'numeric', year: 'numeric' };
     return fecha.toLocaleDateString(undefined, options);
   };
-
   const pressButton = (info) => {
+   setNueva(!nueva);
+    //addLeida(usuario_id,info.id);
     navegacion.navigate('NoticiaInfo', { info });
   };
-
   const toggleOpciones = () => {
     setMostrarOpciones(!mostrarOpciones);
   };
@@ -78,6 +96,10 @@ const Info = ({ item, rol }) => {
         {fecha !== null && (
           <Text style={styles.fechaTexto}>{FormatoFecha(fecha)}</Text>
         )}
+        {nueva && (
+          <MaterialIcons name="fiber-new" size={24} color="red" />
+           // <Entypo name="new" size={24} color="red" />
+          )}
         <View style={styles.menu_publicacion}>
           {rol === 'admin' && (
             <TouchableOpacity activeOpacity={1.0} onPress={toggleOpciones}>
@@ -104,6 +126,8 @@ const Info = ({ item, rol }) => {
     </View>
   );
 };
+
+
 
 const styles = StyleSheet.create({
   publicacionContainer: {
@@ -152,7 +176,7 @@ const styles = StyleSheet.create({
   fechaTexto: {
     fontSize: 12,
     color: '#888',
-    marginTop:0
+    marginTop: 0
   },
   menu_publicacion: {
     flexDirection: 'row-reverse',

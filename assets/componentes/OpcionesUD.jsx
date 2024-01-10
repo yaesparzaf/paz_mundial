@@ -8,13 +8,6 @@ import { db } from '../../fb/firebase-config';
 
 const OpcionesUD = ({ onClose, noticiaId, imagenUrl }) => {
     const navegacion = useNavigation();
-    //const { params } = route;
-    console.log(noticiaId);
-    console.log(imagenUrl);
-    const accion = () => {
-        console.log('botón presionado');
-        onClose();
-    };
     const pressEditar = () => {
         navegacion.navigate('Publicar', { noticiaId });
         onClose();
@@ -70,7 +63,7 @@ const styles = StyleSheet.create({
     },
     acciones_btn: {
         justifyContent: 'center',
-        width: '100%',
+        width: '50%',
         height: 50,
         borderBottomWidth: 0.8,
         borderColor: 'black',

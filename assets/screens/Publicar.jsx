@@ -105,13 +105,8 @@ const Publicar = ({ route }) => {
   };
 
   const eliminarImagen = () => {
-    console.log('imagen uri: ', imagenUri);
-    if (editar) {
-      setImagenUri_prev(imagenUri);
-      console.log('antes de null: ', imagenUri_prev);
-    }
+    if (editar) {setImagenUri_prev(imagenUri);}
     setImagenUri(null);
-    console.log('despues de null: ', imagenUri_prev);
     setPublicar(titulo && text.length > 0);
   };
 
@@ -123,11 +118,10 @@ const Publicar = ({ route }) => {
         autor: usuario.nombre,
         autor_id: usuario.id,
         fecha: serverTimestamp(),
+        leida:false,
         texto: text,
       });
-      console.log('Después de addDoc');
-      console.log('coleccion: ', coleccionRef);
-      //console.log(nuevoDocumento);
+      //console.log(coleccionRef.id);
       if (coleccionRef) {
         if (imagenUri) {
           const imagenSubida = await subirImagen(coleccionRef, imagenUri);
@@ -135,16 +129,18 @@ const Publicar = ({ route }) => {
             await deleteDoc(coleccionRef);
           }
         }
+        //const noticiasLeidasRef = await getDoc(collection(db,'usuarios',usuario.))
       } else {
         console.error('Error al obtener la referencia del nuevo documento');
       }
+      //NoticiaNueva(usuario.id,coleccionRef.id);
       navegacion.navigate('Noticias', { screen: 'Noticias' });
     } catch (error) {
       console.error('Error al enviar datos:', error);
     }
   };
 
-
+  //arreglar: si elimino la imagen en modo edicion y hago post sin imagen nueva, se mantiene la imagen inicial.
   const onSendEdit = async (noticiaId, new_titulo, new_asunto, new_texto, new_imagen, prev_imagen) => {
     const noticiaRef = doc(db, 'noticias', noticiaId);
     try {
@@ -233,7 +229,7 @@ const Publicar = ({ route }) => {
             <View style={styles.prev_cont}>
               <TouchableOpacity style={styles.eliminarButton} onPress={eliminarImagen}>
                 <FontAwesome5 name="times-circle" size={25} color="#000" />
-              </TouchableOpacity>{console.log(' esImagen: ' + esImagen + ' editar: ' + editar)}
+              </TouchableOpacity>
               {(esImagen || editar) && (
                 <Image source={{ uri: imagenUri }} style={styles.image} />
               )}
