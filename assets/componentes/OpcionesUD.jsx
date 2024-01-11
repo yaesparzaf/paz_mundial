@@ -2,11 +2,13 @@ import { View, Text, Modal, TouchableOpacity, StyleSheet, TouchableWithoutFeedba
 import React from 'react';
 import Publicar from '../screens/Publicar';
 import { useNavigation } from '@react-navigation/native';
-import { deleteDoc, doc } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDoc, getDocs, where } from 'firebase/firestore';
 import { deleteObject, getStorage, ref } from 'firebase/storage';
 import { db } from '../../fb/firebase-config';
+import { useUser } from '../../fb/DatosUsers';
 
 const OpcionesUD = ({ onClose, noticiaId, imagenUrl }) => {
+    const { usuario } = useUser();
     const navegacion = useNavigation();
     const pressEditar = () => {
         navegacion.navigate('Publicar', { noticiaId });
@@ -17,9 +19,17 @@ const OpcionesUD = ({ onClose, noticiaId, imagenUrl }) => {
         const imagenRef = ref(storage, imagenUrl);
         try {
             await deleteDoc(doc(db, 'noticias', noticiaId));
-            if(imagenUrl)
+            if (imagenUrl)
                 await deleteObject(imagenRef);
             console.log('se elimino la noticia.');
+            const allUsuarios = await getDocs(collection(db, 'usuarios'));
+            await Promise.all(allUsuarios.docs.map(async (usuarioDoc) => {
+                const usuario_id = usuarioDoc.id;
+                const noticiaLeidaRef = doc(db, 'usuarios', usuario_id, 'noticiasLeidas', noticiaId);
+                if (noticiaLeidaRef)
+                    await deleteDoc(noticiaLeidaRef);
+                console.log('se eliminó de la colección del usuario: ', usuario_id);
+            }));
         } catch (error) {
             console.log('hubo un error al eliminar la publicacion. ' + error);
         }

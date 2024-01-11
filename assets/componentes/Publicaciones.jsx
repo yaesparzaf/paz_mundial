@@ -1,7 +1,7 @@
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, ActivityIndicator, Image } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { useUser } from '../../fb/DatosUsers'
-import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, onSnapshot, query, where } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, onSnapshot, query, setDoc, where } from 'firebase/firestore';
 import { db } from '../../fb/firebase-config';
 import { Entypo } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -40,13 +40,6 @@ const Publicaciones = () => {
       keyExtractor={(item) => item.id.toString()}
       renderItem={({ item }) => <Info item={item} rol={usuario.rol} usuario_id={usuario.id}
       />}
-    /*ListEmptyComponent={() => (
-        <SkeletonPlaceholder>
-            {[1, 2, 3].map((index) => (
-                <View key={index} style={styles.skeletonItem} />
-            ))}
-        </SkeletonPlaceholder>
-    )}*/
     />
   )
 }
@@ -78,17 +71,18 @@ const Info = ({ item, rol, usuario_id }) => {
   }, [usuario_id, item.id]);
 
   const addLeida = async (noticia_id) => {
-    const coleccionRef = collection(db, 'usuarios', usuario_id, 'noticiasLeidas')
-    const queryDoc = await getDocs(query(coleccionRef, where('noticia_id', '==', noticia_id)));
-    if (queryDoc.empty){
-      setNueva(false);
-      await addDoc(coleccionRef,{
-        noticia_id:noticia_id,
-        leida:true
-      })
-    console.log('se ha añadido a noticias leidas. Nueva: ',nueva);
-    }
+    const coleccionRef = await getDocs(collection(db, 'usuarios', usuario_id, 'noticiasLeidas'));
+    //const querySnapshot = await getDocs(query(coleccionRef, where('noticia_id', '==', noticia_id)));
+    setNueva(false);
+    //if (coleccionRef.empty) {
+      const noticiaRef = doc(db, 'usuarios', usuario_id, 'noticiasLeidas', noticia_id)
+      await setDoc(noticiaRef, {
+        noticia_id: noticia_id,
+        leida: true
+      });
+   // }
   };
+
   const FormatoFecha = (fecha) => {
     if (!fecha) return '';
     const options = { day: 'numeric', month: 'numeric', year: 'numeric' };
