@@ -72,6 +72,7 @@ const styles = StyleSheet.create({
         height: 500,
         resizeMode: 'cover',
         marginBottom: 10,
+        marginTop:20,
     },
     fechaTexto: {
         fontSize: 12,

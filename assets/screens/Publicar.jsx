@@ -182,7 +182,7 @@ const Publicar = ({ route }) => {
         <View style={styles.botones_cont}>
           <TouchableOpacity style={styles.up_fv} onPress={abrirGaleria}>
             <FontAwesome5 name="photo-video" size={24} color="black" />
-            <Text style={styles.buttonText}>Foto/Video</Text>
+            <Text style={styles.buttonText}>Foto</Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => (editar ? onSendEdit(noticiaId, titulo, asunto, text, imagenUri, imagenUri_prev) : onSend(titulo, asunto, text, imagenUri))}
