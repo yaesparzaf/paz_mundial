@@ -119,7 +119,7 @@ const Info = ({ item, rol, usuario_id }) => {
       </View>
       <TouchableOpacity style={styles.noticia_btn} onPress={() => pressButton(item)}>
         <Text style={styles.titulo_publicacion}>{item.titulo}</Text>
-        <Text style={styles.asunto_publicacion}>{item.asunto}</Text>
+        <Text style={[styles.asunto_publicacion,{textAlign:item.align_asunto}]}>{item.asunto}</Text>
         {item.imagen &&
           <FontAwesome name="photo" size={18} color="black" />
           //<Image source={{ uri: item.imagen }} style={styles.imagenPublicacion} 

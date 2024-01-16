@@ -5,7 +5,7 @@ import { FAB } from 'react-native-paper';
 
 const FloatButton = () => {
   const navegacion = useNavigation();
-  const onPressHandler = () => {
+  const navegarAPublicar = () => {
     navegacion.navigate('Publicar');
   };
 
@@ -13,7 +13,7 @@ const FloatButton = () => {
     <FAB
       style={styles.fab}
       icon="pencil"
-      onPress={onPressHandler}
+      onPress={navegarAPublicar}
     />
   );
 };

@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, SafeAreaView, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, SafeAreaView, StyleSheet, Image, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
 import { TextInput } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { db } from '../../fb/firebase-config';
 import { ref, getDownloadURL, getStorage, uploadBytes, deleteObject } from 'firebase/storage';
@@ -15,6 +16,9 @@ const Publicar = ({ route }) => {
   const [titulo, setTitulo] = React.useState();
   const [asunto, setAsunto] = useState('');
   const [text, onChangeText] = React.useState('');
+  const [alignAsunto, setAlignAsunto] = useState('left');
+  const [alignTexto, setAlignTexto] = useState('left');
+  const [menuEdicion, setMenuEdicion] = useState(true);
   const [publicar, setPublicar] = useState(false);
   const [imagenUri, setImagenUri] = useState();
   const [imagenUri_prev, setImagenUri_prev] = useState();
@@ -105,20 +109,33 @@ const Publicar = ({ route }) => {
   };
 
   const eliminarImagen = () => {
-    if (editar) {setImagenUri_prev(imagenUri);}
+    if (editar) { setImagenUri_prev(imagenUri); }
     setImagenUri(null);
     setPublicar(titulo && text.length > 0);
   };
 
-  const onSend = async (titulo, asunto, text, imagenUri) => {
+  const keyboardHide = () => {
+    setMenuEdicion(false);
+  };
+  /*const onAlignTexto = (tipo, input) => {
+    if (input === 'A') {
+      setAlignAsunto(tipo);
+    } else if (input === 'T') {
+      setAlignTexto(tipo);
+    }
+  };*/
+
+  const onSend = async (titulo, asunto, alignAsunto, alignTexto, text, imagenUri) => {
     try {
       const coleccionRef = await addDoc(collection(db, 'noticias'), {
         titulo: titulo,
         asunto: asunto,
+        align_asunto: alignAsunto,
+        align_texto: alignTexto,
         autor: usuario.nombre,
         autor_id: usuario.id,
         fecha: serverTimestamp(),
-        leida:false,
+        leida: false,
         texto: text,
       });
       //console.log(coleccionRef.id);
@@ -141,7 +158,7 @@ const Publicar = ({ route }) => {
   };
 
   //arreglar: si elimino la imagen en modo edicion y hago post sin imagen nueva, se mantiene la imagen inicial.
-  const onSendEdit = async (noticiaId, new_titulo, new_asunto, new_texto, new_imagen, prev_imagen) => {
+  const onSendEdit = async (noticiaId, new_titulo, new_asunto, alignAsunto, alignTexto, new_texto, new_imagen, prev_imagen) => {
     const noticiaRef = doc(db, 'noticias', noticiaId);
     try {
       console.log(prev_imagen);
@@ -176,6 +193,35 @@ const Publicar = ({ route }) => {
     }
   };
 
+  const MenuEdicion = (input) => {
+    if (input === 'A') {
+      return (
+        <View style={styles.row}>
+          <TouchableOpacity style={styles.align_Text} onPress={() => setAlignAsunto('left')}>
+            <Feather name="align-left" size={24} color="black" />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.align_Text} onPress={() => setAlignAsunto('center')}>
+            <Feather name="align-center" size={24} color="black" />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.align_Text} onPress={() => setAlignAsunto('right')}>
+            <Feather name="align-right" size={24} color="black" />
+          </TouchableOpacity>
+        </View>
+      );
+    } else if (input === 'T') {
+      return (
+        <View style={styles.row}>
+          <TouchableOpacity style={styles.align_Text} onPress={() => setAlignTexto('left')}>
+            <Feather name="align-left" size={24} color="black" />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.align_Text} onPress={() => setAlignTexto('center')}>
+            <Feather name="align-center" size={24} color="black" />
+          </TouchableOpacity>
+        </View>
+      );
+    }
+  };
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
       <ScrollView>
@@ -185,14 +231,13 @@ const Publicar = ({ route }) => {
             <Text style={styles.buttonText}>Foto</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => (editar ? onSendEdit(noticiaId, titulo, asunto, text, imagenUri, imagenUri_prev) : onSend(titulo, asunto, text, imagenUri))}
+            onPress={() => (editar ? onSendEdit(noticiaId, titulo, asunto, alignAsunto, alignTexto, text, imagenUri, imagenUri_prev) : onSend(titulo, asunto, alignAsunto, alignTexto, text, imagenUri))}
             style={{ ...styles.publicar_btn, backgroundColor: publicar ? '#00FFFF' : '#A9A9A9' }} disabled={!publicar || guardandoImagen}>
             <Text style={{ ...styles.text_botones, color: publicar ? '#000000' : '#D3D3D3' }}>
               {guardandoImagen ? 'Publicando...' : 'Publicar'}
             </Text>
           </TouchableOpacity>
         </View>
-
         <View>
           <TextInput
             placeholder='Título'
@@ -203,18 +248,26 @@ const Publicar = ({ route }) => {
               setPublicar(title && (imagenUri || title.length > 0));
             }}
           />
+          {menuEdicion && (
+            MenuEdicion('A')
+          )}
           <TextInput
             placeholder='Asunto (opcional)'
-            style={styles.titulo_asunto_input}
+            style={[styles.titulo_asunto_input, { textAlign: alignAsunto }]}
             value={asunto}
+            //onFocus={() => setMenuEdicion(true)}
+            //onBlur={() => setMenuEdicion(false)}
             onChangeText={(newAsunto) => {
               if (editar) { setPublicar(newAsunto && (newAsunto.length > 0)); }
               setAsunto(newAsunto);
             }}
           />
+          {menuEdicion && (
+            MenuEdicion('T')
+          )}
           <TextInput
             placeholder='Escribe un texto...'
-            style={styles.texto_input}
+            style={[styles.texto_input, {textAlign:alignTexto}]}
             multiline={true}
             numberOfLines={4}
             value={text}
@@ -260,6 +313,20 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     justifyContent: 'space-between',
   },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    justifyContent: 'flex-end',
+    marginRight: 5
+  },
+  menu_edicion: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'flex-end',
+
+  },
+  align_Text: {
+    marginRight: 5,
+  },
   up_fv: {
     alignItems: 'center',
     flexDirection: 'row',
@@ -295,10 +362,12 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   eliminarButton: {
-    alignItems: 'flex-start',
+    alignItems: 'flex-end',
     //position: 'absolute',
+    width: 25,
     flexDirection: 'row-reverse',
     right: 0,
+    backgroundColor: '#D3D3D3'
   },
   text_botones: {
     fontSize: 18,
