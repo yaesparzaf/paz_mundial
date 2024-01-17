@@ -6,7 +6,7 @@ import { Feather } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { db } from '../../fb/firebase-config';
 import { ref, getDownloadURL, getStorage, uploadBytes, deleteObject } from 'firebase/storage';
-import { collection, addDoc, serverTimestamp, updateDoc, doc, getDoc, deleteDoc } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, updateDoc, doc, getDoc, deleteDoc, FieldValue, deleteField } from 'firebase/firestore';
 import { useNavigation } from '@react-navigation/native';
 import { useUser } from '../../fb/DatosUsers';
 
@@ -109,7 +109,7 @@ const Publicar = ({ route }) => {
   const eliminarImagen = () => {
     if (editar) { setImagenUri_prev(imagenUri); }
     setImagenUri(null);
-    setPublicar(titulo && text.length > 0);
+    setPublicar(titulo && titulo.length > 0);
   };
 
   const keyboardHide = () => {
@@ -160,16 +160,16 @@ const Publicar = ({ route }) => {
   const onSendEdit = async (noticiaId, new_titulo, new_asunto, alignAsunto, alignTexto, new_texto, new_imagen, prev_imagen) => {
     const noticiaRef = doc(db, 'noticias', noticiaId);
     try {
-      console.log(prev_imagen);
+      console.log('imagen previa: ',prev_imagen);
       console.log('nueva imagen: ', new_imagen);
       if (prev_imagen && new_imagen) {
         await updateDoc(noticiaRef, {
           align_asunto: alignAsunto,
           align_texto: alignTexto,
-          titulo: new_titulo,
           asunto: new_asunto,
-          texto: new_texto,
           imagen: new_imagen,
+          titulo: new_titulo,
+          texto: new_texto,
           tipo_letra: italica ? 'italic' : 'normal',
         });
         const storage = getStorage();
@@ -182,36 +182,58 @@ const Publicar = ({ route }) => {
         } catch (error) {
           console.log('no se pudo eliminar la imagen ' + error);
         }
+      } else if (prev_imagen && !new_imagen) {
+        console.log('entra a if sin imagen nueva');
+        await updateDoc(noticiaRef, {
+          align_asunto: alignAsunto,
+          align_texto: alignTexto,
+          asunto: new_asunto,
+          imagen:deleteField(),
+          titulo: new_titulo,
+          texto: new_texto,
+          tipo_letra: italica ? 'italic' : 'normal',
+        });
+        const storage = getStorage();
+        const imagenRef = ref(storage, prev_imagen);
+        try {
+          await deleteObject(imagenRef);
+          console.log('imagen eliminada!');
+        } catch (error) {
+          console.log('no se pudo eliminar la imagen ' + error);
+        }
+
+      } else {
+        await updateDoc(noticiaRef, {
+          align_asunto: alignAsunto,
+          align_texto: alignTexto,
+          titulo: new_titulo,
+          asunto: new_asunto,
+          texto: new_texto,
+          tipo_letra: italica ? 'italic' : 'normal',
+        });
       }
-      await updateDoc(noticiaRef, {
-        align_asunto: alignAsunto,
-        align_texto: alignTexto,
-        titulo: new_titulo,
-        asunto: new_asunto,
-        texto: new_texto,
-        tipo_letra: italica ? 'italic' : 'normal',
-      });
       console.log('noticia editada con exito.');
       navegacion.navigate('Noticias', { screen: 'Noticias' });
     } catch (error) {
       console.log('hubo un erro al actualizar los datos: ' + error);
     }
+
   };
 
-  const MenuEdicion = (input,alineacion) => {
+  const MenuEdicion = (input) => {
     if (input === 'A') {
       return (
         <View style={styles.row}>
-          <TouchableOpacity style={styles.align_Text} onPress={()=> {setItalica(!italica); setPublicar(!publicar);}} >
+          <TouchableOpacity style={styles.align_Text} onPress={() => { setItalica(!italica); }} >
             <Feather name="italic" size={24} color="black" />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.align_Text} onPress={() => {setAlignAsunto('left');setPublicar(alineacion !='left');}}>
+          <TouchableOpacity style={styles.align_Text} onPress={() => { setAlignAsunto('left'); }}>
             <Feather name="align-left" size={24} color="black" />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.align_Text} onPress={() => {setAlignAsunto('center'); setPublicar(alineacion != 'center');;}}>
+          <TouchableOpacity style={styles.align_Text} onPress={() => { setAlignAsunto('center'); }}>
             <Feather name="align-center" size={24} color="black" />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.align_Text} onPress={() => {setAlignAsunto('right'); setPublicar(alineacion != 'right');}}>
+          <TouchableOpacity style={styles.align_Text} onPress={() => { setAlignAsunto('right'); }}>
             <Feather name="align-right" size={24} color="black" />
           </TouchableOpacity>
         </View>
@@ -219,10 +241,10 @@ const Publicar = ({ route }) => {
     } else if (input === 'T') {
       return (
         <View style={styles.row}>
-          <TouchableOpacity style={styles.align_Text} onPress={() => {setAlignTexto('left'); setPublicar(alineacion != 'left');}}>
+          <TouchableOpacity style={styles.align_Text} onPress={() => { setAlignTexto('left'); }}>
             <Feather name="align-left" size={24} color="black" />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.align_Text} onPress={() => {setAlignTexto('center'); setPublicar(alineacion != 'center');}}>
+          <TouchableOpacity style={styles.align_Text} onPress={() => { setAlignTexto('center'); }}>
             <Feather name="align-center" size={24} color="black" />
           </TouchableOpacity>
         </View>
@@ -257,12 +279,14 @@ const Publicar = ({ route }) => {
             }}
           />
           {menuEdicion && (
-            MenuEdicion('A',alignAsunto)
+            MenuEdicion('A')
           )}
           <TextInput
             placeholder='Asunto (opcional)'
-            style={[styles.titulo_asunto_input, { textAlign: alignAsunto, 
-              fontStyle: italica ? 'italic' : 'normal'}]}
+            style={[styles.titulo_asunto_input, {
+              textAlign: alignAsunto,
+              fontStyle: italica ? 'italic' : 'normal'
+            }]}
             value={asunto}
             //al enviar la publicacion, hay que enviar que tipo de letra se eligio.
             onChangeText={(newAsunto) => {
@@ -271,7 +295,7 @@ const Publicar = ({ route }) => {
             }}
           />
           {menuEdicion && (
-            MenuEdicion('T',alignTexto)
+            MenuEdicion('T')
           )}
           <TextInput
             placeholder='Escribe un texto...'
