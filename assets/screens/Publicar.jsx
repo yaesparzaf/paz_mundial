@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, SafeAreaView, StyleSheet, Image, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
+import { View, Text, SafeAreaView, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { TextInput } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
@@ -18,7 +18,7 @@ const Publicar = ({ route }) => {
   const [text, onChangeText] = React.useState('');
   const [alignAsunto, setAlignAsunto] = useState('left');
   const [alignTexto, setAlignTexto] = useState('left');
-  const [tipoLetra,setTipoLetra] = useState('italic');
+  const [italica, setItalica] = useState(false);
   const [menuEdicion, setMenuEdicion] = useState(true);
   const [publicar, setPublicar] = useState(false);
   const [imagenUri, setImagenUri] = useState();
@@ -40,7 +40,6 @@ const Publicar = ({ route }) => {
         if (noticiaId) {
           const noticiaRef = collection(db, 'noticias');
           const noticiaEdit = await getDoc(doc(noticiaRef, noticiaId));
-          //console.log(noticiaEdit);
           if (noticiaEdit.exists()) {
             const datos_noticia = noticiaEdit.data();
             setTitulo(datos_noticia.titulo);
@@ -49,11 +48,7 @@ const Publicar = ({ route }) => {
             setAsunto(datos_noticia.asunto);
             onChangeText(datos_noticia.texto);
             setImagenUri(datos_noticia.imagen);
-            //console.log(datos_noticia.titulo)
-            //console.log(datos_noticia.asunto);
-            //console.log(datos_noticia.imagen);
-            console.log(imagenUri);
-            //setesImagen(!esImagen);
+            setItalica(datos_noticia.tipo_letra === 'italic');
             setEditar(!editar);
           } else { console.log('no hay datos para mostrar ' + noticiaId); }
         }
@@ -128,7 +123,7 @@ const Publicar = ({ route }) => {
     }
   };*/
 
-  const onSend = async (titulo, asunto, alignAsunto, alignTexto, text, tipoLetra,imagenUri) => {
+  const onSend = async (titulo, asunto, alignAsunto, alignTexto, text, imagenUri) => {
     try {
       const coleccionRef = await addDoc(collection(db, 'noticias'), {
         titulo: titulo,
@@ -139,7 +134,7 @@ const Publicar = ({ route }) => {
         autor_id: usuario.id,
         fecha: serverTimestamp(),
         leida: false,
-        tipo_letra:tipoLetra,
+        tipo_letra: italica ? 'italic' : 'normal',
         texto: text,
       });
       //console.log(coleccionRef.id);
@@ -175,6 +170,7 @@ const Publicar = ({ route }) => {
           asunto: new_asunto,
           texto: new_texto,
           imagen: new_imagen,
+          tipo_letra: italica ? 'italic' : 'normal',
         });
         const storage = getStorage();
         const imagenRef = ref(storage, prev_imagen);
@@ -193,6 +189,7 @@ const Publicar = ({ route }) => {
         titulo: new_titulo,
         asunto: new_asunto,
         texto: new_texto,
+        tipo_letra: italica ? 'italic' : 'normal',
       });
       console.log('noticia editada con exito.');
       navegacion.navigate('Noticias', { screen: 'Noticias' });
@@ -205,6 +202,9 @@ const Publicar = ({ route }) => {
     if (input === 'A') {
       return (
         <View style={styles.row}>
+          <TouchableOpacity style={styles.align_Text} onPress={()=> setItalica(!italica)} >
+            <Feather name="italic" size={24} color="black" />
+          </TouchableOpacity>
           <TouchableOpacity style={styles.align_Text} onPress={() => setAlignAsunto('left')}>
             <Feather name="align-left" size={24} color="black" />
           </TouchableOpacity>
@@ -239,7 +239,7 @@ const Publicar = ({ route }) => {
             <Text style={styles.buttonText}>Foto</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => (editar ? onSendEdit(noticiaId, titulo, asunto, alignAsunto, alignTexto, text, imagenUri, imagenUri_prev) : onSend(titulo, asunto, alignAsunto, alignTexto, text,tipoLetra, imagenUri))}
+            onPress={() => (editar ? onSendEdit(noticiaId, titulo, asunto, alignAsunto, alignTexto, text, imagenUri, imagenUri_prev) : onSend(titulo, asunto, alignAsunto, alignTexto, text, imagenUri))}
             style={{ ...styles.publicar_btn, backgroundColor: publicar ? '#00FFFF' : '#A9A9A9' }} disabled={!publicar || guardandoImagen}>
             <Text style={{ ...styles.text_botones, color: publicar ? '#000000' : '#D3D3D3' }}>
               {guardandoImagen ? 'Publicando...' : 'Publicar'}
@@ -261,10 +261,10 @@ const Publicar = ({ route }) => {
           )}
           <TextInput
             placeholder='Asunto (opcional)'
-            style={[styles.titulo_asunto_input, { textAlign: alignAsunto }]}
+            style={[styles.titulo_asunto_input, { textAlign: alignAsunto, 
+              fontStyle: italica ? 'italic' : 'normal'}]}
             value={asunto}
-            //onFocus={() => setMenuEdicion(true)}
-            //onBlur={() => setMenuEdicion(false)}
+            //al enviar la publicacion, hay que enviar que tipo de letra se eligio.
             onChangeText={(newAsunto) => {
               if (editar) { setPublicar(newAsunto && (newAsunto.length > 0)); }
               setAsunto(newAsunto);

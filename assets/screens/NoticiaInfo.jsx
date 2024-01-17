@@ -4,7 +4,7 @@ import React from 'react'
 const NoticiaInfo = ({ route }) => {
     const { params } = route;
     console.log(params.info)
-    const { align_asunto, align_texto, asunto, autor, fecha, imagen, texto, titulo } = params?.info || {};
+    const { align_asunto, align_texto, asunto, autor, fecha, imagen, texto, tipo_letra, titulo } = params?.info || {};
     return (
         <SafeAreaView style={styles.contenedor}>
             <ScrollView>
@@ -14,7 +14,7 @@ const NoticiaInfo = ({ route }) => {
                 </View>
                 <View style={styles.info_cont}>
                     <Text style={styles.titulo_publicacion}>{titulo}</Text>
-                    <Text style={[styles.asunto_publicacion,{textAlign:align_asunto}]}>{asunto}</Text>
+                    <Text style={[styles.asunto_publicacion,{textAlign:align_asunto, fontStyle:tipo_letra}]}>{asunto}</Text>
                 </View>
                 <View style={styles.texto_cont}>
                     <Text style={[styles.texto_publicacion,{textAlign:align_texto}]}>{texto}</Text>
