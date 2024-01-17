@@ -198,20 +198,20 @@ const Publicar = ({ route }) => {
     }
   };
 
-  const MenuEdicion = (input) => {
+  const MenuEdicion = (input,alineacion) => {
     if (input === 'A') {
       return (
         <View style={styles.row}>
-          <TouchableOpacity style={styles.align_Text} onPress={()=> setItalica(!italica)} >
+          <TouchableOpacity style={styles.align_Text} onPress={()=> {setItalica(!italica); setPublicar(!publicar);}} >
             <Feather name="italic" size={24} color="black" />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.align_Text} onPress={() => setAlignAsunto('left')}>
+          <TouchableOpacity style={styles.align_Text} onPress={() => {setAlignAsunto('left');setPublicar(alineacion !='left');}}>
             <Feather name="align-left" size={24} color="black" />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.align_Text} onPress={() => setAlignAsunto('center')}>
+          <TouchableOpacity style={styles.align_Text} onPress={() => {setAlignAsunto('center'); setPublicar(alineacion != 'center');;}}>
             <Feather name="align-center" size={24} color="black" />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.align_Text} onPress={() => setAlignAsunto('right')}>
+          <TouchableOpacity style={styles.align_Text} onPress={() => {setAlignAsunto('right'); setPublicar(alineacion != 'right');}}>
             <Feather name="align-right" size={24} color="black" />
           </TouchableOpacity>
         </View>
@@ -219,10 +219,10 @@ const Publicar = ({ route }) => {
     } else if (input === 'T') {
       return (
         <View style={styles.row}>
-          <TouchableOpacity style={styles.align_Text} onPress={() => setAlignTexto('left')}>
+          <TouchableOpacity style={styles.align_Text} onPress={() => {setAlignTexto('left'); setPublicar(alineacion != 'left');}}>
             <Feather name="align-left" size={24} color="black" />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.align_Text} onPress={() => setAlignTexto('center')}>
+          <TouchableOpacity style={styles.align_Text} onPress={() => {setAlignTexto('center'); setPublicar(alineacion != 'center');}}>
             <Feather name="align-center" size={24} color="black" />
           </TouchableOpacity>
         </View>
@@ -257,7 +257,7 @@ const Publicar = ({ route }) => {
             }}
           />
           {menuEdicion && (
-            MenuEdicion('A')
+            MenuEdicion('A',alignAsunto)
           )}
           <TextInput
             placeholder='Asunto (opcional)'
@@ -271,7 +271,7 @@ const Publicar = ({ route }) => {
             }}
           />
           {menuEdicion && (
-            MenuEdicion('T')
+            MenuEdicion('T',alignTexto)
           )}
           <TextInput
             placeholder='Escribe un texto...'
