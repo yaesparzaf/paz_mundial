@@ -1,9 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import * as Location from 'expo-location';
 
-const Ubicacion = () => {
+const Ubicacion = ({getLocation}) => {
+  const [ubicacionObtenida, setUbicacionObtenida] = useState(null);
+
   useEffect(() => {
-    // Llamamos a la función que solicita permisos cuando el componente se monta.
     getPermisos();
   }, []);
 
@@ -12,10 +13,12 @@ const Ubicacion = () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
         console.log('Permisos no concedidos');
-        // Puedes mostrar un mensaje al usuario informándole sobre la necesidad de conceder permisos.
+        return false;
       } else {
-        // Si los permisos son concedidos, obtenemos la ubicación del usuario.
-        getUserLocation();
+        const location = await getUserLocation();
+        setUbicacionObtenida(location);
+        if(getLocation)
+          getLocation(location);
       }
     } catch (error) {
       console.error('Error al solicitar permisos:', error);
@@ -25,7 +28,8 @@ const Ubicacion = () => {
   async function getUserLocation() {
     try {
       const location = await Location.getCurrentPositionAsync({});
-      console.log('Ubicación del usuario:', location);
+      //console.log('Ubicación del usuario:', location);
+      return true;
     } catch (error) {
       console.error('Error al obtener la ubicación:', error);
     }

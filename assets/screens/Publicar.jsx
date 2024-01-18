@@ -6,7 +6,7 @@ import { Feather } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { db } from '../../fb/firebase-config';
 import { ref, getDownloadURL, getStorage, uploadBytes, deleteObject } from 'firebase/storage';
-import { collection, addDoc, serverTimestamp, updateDoc, doc, getDoc, deleteDoc, FieldValue, deleteField } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, updateDoc, doc, getDoc, deleteDoc, deleteField } from 'firebase/firestore';
 import { useNavigation } from '@react-navigation/native';
 import { useUser } from '../../fb/DatosUsers';
 
@@ -35,7 +35,6 @@ const Publicar = ({ route }) => {
       const { params } = route;
       if (params) {
         const { noticiaId } = params;
-        console.log('id recibio para editar:', noticiaId);
         setNoticiaId(noticiaId);
         if (noticiaId) {
           const noticiaRef = collection(db, 'noticias');
@@ -137,7 +136,6 @@ const Publicar = ({ route }) => {
         tipo_letra: italica ? 'italic' : 'normal',
         texto: text,
       });
-      //console.log(coleccionRef.id);
       if (coleccionRef) {
         if (imagenUri) {
           const imagenSubida = await subirImagen(coleccionRef, imagenUri);
@@ -145,23 +143,18 @@ const Publicar = ({ route }) => {
             await deleteDoc(coleccionRef);
           }
         }
-        //const noticiasLeidasRef = await getDoc(collection(db,'usuarios',usuario.))
       } else {
         console.error('Error al obtener la referencia del nuevo documento');
       }
-      //NoticiaNueva(usuario.id,coleccionRef.id);
       navegacion.navigate('Noticias', { screen: 'Noticias' });
     } catch (error) {
       console.error('Error al enviar datos:', error);
     }
   };
 
-  //arreglar: si elimino la imagen en modo edicion y hago post sin imagen nueva, se mantiene la imagen inicial.
   const onSendEdit = async (noticiaId, new_titulo, new_asunto, alignAsunto, alignTexto, new_texto, new_imagen, prev_imagen) => {
     const noticiaRef = doc(db, 'noticias', noticiaId);
     try {
-      console.log('imagen previa: ',prev_imagen);
-      console.log('nueva imagen: ', new_imagen);
       if (prev_imagen && new_imagen) {
         await updateDoc(noticiaRef, {
           align_asunto: alignAsunto,
@@ -175,15 +168,12 @@ const Publicar = ({ route }) => {
         const storage = getStorage();
         const imagenRef = ref(storage, prev_imagen);
         subirImagen(noticiaRef, new_imagen);
-        console.log('imagen actualizada');
         try {
-          await deleteObject(imagenRef);
-          console.log('imagen eliminada!');
+          await deleteObject(imagenRef); 
         } catch (error) {
           console.log('no se pudo eliminar la imagen ' + error);
         }
       } else if (prev_imagen && !new_imagen) {
-        console.log('entra a if sin imagen nueva');
         await updateDoc(noticiaRef, {
           align_asunto: alignAsunto,
           align_texto: alignTexto,
@@ -197,7 +187,6 @@ const Publicar = ({ route }) => {
         const imagenRef = ref(storage, prev_imagen);
         try {
           await deleteObject(imagenRef);
-          console.log('imagen eliminada!');
         } catch (error) {
           console.log('no se pudo eliminar la imagen ' + error);
         }
@@ -212,7 +201,6 @@ const Publicar = ({ route }) => {
           tipo_letra: italica ? 'italic' : 'normal',
         });
       }
-      console.log('noticia editada con exito.');
       navegacion.navigate('Noticias', { screen: 'Noticias' });
     } catch (error) {
       console.log('hubo un erro al actualizar los datos: ' + error);

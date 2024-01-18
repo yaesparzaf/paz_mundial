@@ -1,12 +1,12 @@
-import { View, Text } from 'react-native'
-import React from 'react'
-import Ubicacion from '../componentes/Ubicacion'
+import { View, Text, SafeAreaView, ActivityIndicator } from 'react-native'
+import React, { useState } from 'react'
+import Videos from '../componentes/Videos'
 
 const Meditar = () => {
   return (
-    <View>
-     <Ubicacion/>
-    </View>
+    <SafeAreaView style={{ flex: 1 }}>
+      <Videos />
+    </SafeAreaView>
   )
 }
 

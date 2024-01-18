@@ -24,7 +24,7 @@ const Noticias = () => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Publicaciones />
-      {usuario && usuario.rol === 'admin' && <FloatButton />}
+      {usuario && usuario.rol === 'admin' && <FloatButton  pantalla="N"/>}
     </SafeAreaView>
   );
 };

@@ -1,48 +1,34 @@
-//const apiKey = "AIzaSyAWSs96Vfv5skthhcwKiob9HKskRrxkco4";
-//const playlistId = "et6qEl6rxlI";
-import React, { useState, useEffect } from "react";
-import { View, Text } from "react-native";
-import YouTube from 'react-native-youtube-iframe';
-import axios from "axios";
-
-const apiKey = "AIzaSyAWSs96Vfv5skthhcwKiob9HKskRrxkco4";
-const videoId = "et6qEl6rxlI"; // Reemplaza esto con el ID de tu video de YouTube
+import { View, ActivityIndicator } from 'react-native'
+import React, { useState } from 'react'
+import Ubicacion from '../componentes/Ubicacion'
+import VideoYT from './VideoYT'
+import FloatButton from './FloatButton'
+import { useUser } from '../../fb/DatosUsers'
 
 const Videos = () => {
-  const [videoInfo, setVideoInfo] = useState(null);
-
-  useEffect(() => {
-    axios
-      .get(
-        `https://www.googleapis.com/youtube/v3/videos?key=${apiKey}&part=snippet&id=${videoId}`
-      )
-      .then((response) => {
-        if (response.data.items.length > 0) {
-          setVideoInfo(response.data.items[0].snippet);
-        } else {
-          console.error("No se encontró información del video.");
-        }
-      })
-      .catch((error) => {
-        console.error("Error al obtener información del video de YouTube:", error);
-      });
-  }, []);
-
-  return (
-    <View style={{ flex: 1 }}>
-      {videoInfo ? (
-        <View style={{ flex: 1 }}>
-          <Text>{videoInfo.title}</Text>
-          <YouTube
-            videoId={videoId}
-            height={200}
-          />
+    const {usuario} =useUser();
+    const [ubicacion, setUbicacion] = useState(null);
+    const [loading, setLoading] = useState(true)
+    const obtenerUbicacion = async (ubicacion) => {
+        setUbicacion(ubicacion);
+        if (ubicacion)
+            setLoading(false);
+    };
+    return (
+        <View style={{flex:1}}>
+            <Ubicacion getLocation={obtenerUbicacion} />
+            {loading ? (
+                <ActivityIndicator size="large" color="#40E0D0" style={{ flex: 1, alignItems: 'center' }} />
+            ) : (
+                ubicacion && (
+                    <View style={{ flex: 1 }}>
+                        <VideoYT />
+                    </View>
+                )
+            )}
+            {usuario && usuario.rol === 'admin' && <FloatButton pantalla="V"/>}
         </View>
-      ) : (
-        <Text>Cargando...</Text>
-      )}
-    </View>
-  );
-};
+    )
+}
 
-export default Videos;
+export default Videos
