@@ -8,7 +8,7 @@ const FloatButton = ({pantalla}) => {
   const navegarAPublicar = () => {
     console.log('al presionar: ',pantalla);
     if (pantalla === 'V') {
-      //navegacion.navigate('EditVideos');
+      navegacion.navigate('MeditarEdit');
     } else if(pantalla ==='N'){
       navegacion.navigate('Publicar');
     }

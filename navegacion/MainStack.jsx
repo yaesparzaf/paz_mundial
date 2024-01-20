@@ -14,6 +14,7 @@ import Foro from '../assets/screens/Foro';
 import Perfil from '../assets/screens/Perfil';
 import Publicar from '../assets/screens/Publicar';
 import NoticiaInfo from '../assets/screens/NoticiaInfo';
+import MeditarEdit from '../assets/screens/MeditarEdit';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -91,6 +92,7 @@ function TabStack() {
       <Stack.Screen name='NoticiaInfo' component={NoticiaInfo} options={{
         title: 'Noticia',
       }} />
+      <Stack.Screen name='MeditarEdit' component={MeditarEdit} options={{title: 'Editar Videos'}}/>
     </Stack.Navigator>
   )
 }
