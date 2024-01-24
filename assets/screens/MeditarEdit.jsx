@@ -1,13 +1,13 @@
-import { View, Text } from 'react-native'
-import React from 'react'
-import VideosEdit from '../componentes/VideosEdit'
+import { SafeAreaView } from "react-native";
+import React from "react";
+import VideosEdit from "../componentes/VideosEdit";
 
 const MeditarEdit = () => {
   return (
-    <View>
-      <VideosEdit/>
-    </View>
-  )
-}
+    <SafeAreaView style={{ flex: 1 }}>
+      <VideosEdit />
+    </SafeAreaView>
+  );
+};
 
-export default MeditarEdit
+export default MeditarEdit;

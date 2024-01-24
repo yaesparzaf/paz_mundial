@@ -276,7 +276,6 @@ const Publicar = ({ route }) => {
               fontStyle: italica ? 'italic' : 'normal'
             }]}
             value={asunto}
-            //al enviar la publicacion, hay que enviar que tipo de letra se eligio.
             onChangeText={(newAsunto) => {
               if (editar) { setPublicar(newAsunto && (newAsunto.length > 0)); }
               setAsunto(newAsunto);
