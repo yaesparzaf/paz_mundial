@@ -7,33 +7,34 @@ import { useUser } from "../../fb/DatosUsers";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../fb/firebase-config";
 
-export const getVideos = async () => {
-    const coleccionRef = collection(db, "meditar");
-    const coleccionDocs = await getDocs(coleccionRef);
-    if (!coleccionDocs.empty){
-        console.log('entro al if')
-        const datosVideos = coleccionDocs.docs.map(doc => doc.data());
-      return datosVideos;
-    }else{
-        console.log('entro al else')
-        return [];
-    }
-  };
-
 const Videos = () => {
   const { usuario } = useUser();
   const [ubicacion, setUbicacion] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [videosId, setVideosId] = useState([]);
 
   useEffect(() => {
-    
+    const getVideos = async () => {
+      try {
+        const coleccionRef = collection(db, "meditar");
+        const coleccionDocs = await getDocs(coleccionRef);
+        if (!coleccionDocs.empty) {
+          const datosVideos = coleccionDocs.docs.map((doc) => doc.data());
+          setVideosId(datosVideos);
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
     getVideos();
-  },[]);
+  }, []);
 
   const obtenerUbicacion = async (ubicacion) => {
     setUbicacion(ubicacion);
-    if (ubicacion) setLoading(false);
   };
+
   return (
     <View style={{ flex: 1 }}>
       <Ubicacion getLocation={obtenerUbicacion} />
@@ -44,10 +45,13 @@ const Videos = () => {
           style={{ flex: 1, alignItems: "center" }}
         />
       ) : (
-        ubicacion && (
-          <View style={{ flex: 1 }}>
-            <VideoYT />
-            {usuario && usuario.rol === "admin" && <FloatButton pantalla="V" />}
+        ubicacion && usuario &&(
+          <View
+            style={{ flex: 1, flexDirection: "column"}}
+          >
+            <VideoYT video={videosId[0]} />
+            <VideoYT video={videosId[1]} />
+            {usuario.rol === "admin" && <FloatButton pantalla="V" />}
           </View>
         )
       )}
