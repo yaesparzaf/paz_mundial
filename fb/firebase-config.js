@@ -26,8 +26,9 @@ const db = initializeFirestore(app,{
 /*initializeAuth(auth, {
   persistence: getReactNativePersistence(ReactNativeAsyncStorage),
 });*/
-
-export { app, auth, db };
+const yt = Constants.expoConfig.extra.ytKey;
+const mapbox = Constants.expoConfig.extra.mapboxKey;
+export { app, auth, db,yt,mapbox };
 
 //IOS 133476762148-5ec612ukt96ohs88frg5emcaila6hff7.apps.googleusercontent.com
 

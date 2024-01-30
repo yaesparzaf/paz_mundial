@@ -10,9 +10,11 @@ import React, { useEffect, useState } from "react";
 import { collection, doc, getDocs, updateDoc } from "firebase/firestore";
 import { db } from "../../fb/firebase-config";
 import { useNavigation } from "@react-navigation/native";
+import { useVideoContext } from "./MeditarContext";
 //import queryString from "query-string";
 
 const VideosEdit = () => {
+  const {videoACahe} =useVideoContext();
   const navegacion = useNavigation();
   const [loading, setLoading] = useState(true);
   const [video1Url, setVideo1Url] = useState();
@@ -69,6 +71,8 @@ const VideosEdit = () => {
           video_id:datosUrl2[1]
         });
         console.log('se actualizaron los datos con exito');
+       // videoACahe(datosUrl1[1]);
+        //videoACahe(datosUrl2[1]);
         navegacion.navigate('Meditar');
       } catch (error) {
         console.error("hubo un error al actualizar los enlaces. ", error);

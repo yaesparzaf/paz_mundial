@@ -5,10 +5,10 @@ const videosContext = createContext({});
 
 export const MeditarContext = ({ children }) => {
   const [cacheVideo, setCacheVideo] = useState({});
-  const videoACache = (videoId, videoInfo) => {
+  const videoACache = (videoId) => {
     setCacheVideo((prevCache) => ({
       ...prevCache,
-      [videoId]: videoInfo,
+      [videoId]: true,
     }));
   };
   return (

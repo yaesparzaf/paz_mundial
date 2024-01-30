@@ -28,7 +28,7 @@ const Ubicacion = ({getLocation}) => {
   async function getUserLocation() {
     try {
       const location = await Location.getCurrentPositionAsync({});
-      //console.log('Ubicación del usuario:', location);
+      console.log('Ubicación del usuario:', location);
       return true;
     } catch (error) {
       console.error('Error al obtener la ubicación:', error);

@@ -5,7 +5,7 @@ const Entrenamiento = () => {
   return (
     <View>
       <Text>Entrenamiento</Text>
-      <Videos/>
+      {/*<Videos/>*/}
     </View>
   )
 }

@@ -33,8 +33,10 @@ const Videos = () => {
 
   const obtenerUbicacion = async (ubicacion) => {
     setUbicacion(ubicacion);
+    console.log('entro a buscar ubicacion: ',ubicacion)
   };
 
+  console.log(loading,ubicacion);
   return (
     <View style={{ flex: 1 }}>
       <Ubicacion getLocation={obtenerUbicacion} />
@@ -45,13 +47,13 @@ const Videos = () => {
           style={{ flex: 1, alignItems: "center" }}
         />
       ) : (
-        ubicacion && usuario &&(
+        // ubicacion && 
+        usuario &&(
           <View
             style={{ flex: 1, flexDirection: "column"}}
           >
             <VideoYT video={videosId[0]} />
             <VideoYT video={videosId[1]} />
-            {usuario.rol === "admin" && <FloatButton pantalla="V" />}
           </View>
         )
       )}

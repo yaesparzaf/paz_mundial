@@ -36,6 +36,8 @@ export default{
       messagingSenderId:process.env.MESSAGING_SENDER_ID,
       appId:process.env.APP_ID,
       measurementId:process.env.MEASUREMENT_ID,
+      mapboxKey: process.env.MAPBOX_KEY,
+      ytKey: process.env.YT_KEY,
       "eas": {
         "projectId": "c5ae49d6-b741-4651-b952-a551736728f1"
       }
