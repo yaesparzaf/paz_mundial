@@ -4,38 +4,35 @@ import YouTube from "react-native-youtube-iframe";
 import axios from "axios";
 import { useVideoContext } from "./MeditarContext";
 import { yt } from "../../fb/firebase-config";
+import PutCache from "../cache/PutCache";
+import GetCache from "../cache/GetCache";
 
 const VideoYT = React.memo(({ video }) => {
   const [videoInfo, setVideoInfo] = useState(null);
   const [videoId, setVideoId] = useState(video.video_id);
-  const {cacheVideo, videoACache, setCacheVideo} = useVideoContext();
-  const [precargaVideo, setPrecargaVideo] = useState({});
+  //const {cacheVideo, videoACache, setCacheVideo} = useVideoContext();
+  //const [precargaVideo, setPrecargaVideo] = useState({});
 
   useEffect(() => {
     const getVideo = async () => {
-      if (videoId !== "") {
-        const cacheInfo = cacheVideo[videoId];
-        const precargaInfo = precargaVideo[videoId];
-        //console.log("Esto se recibió de la caché:", cacheInfo);
-        if (cacheInfo) {
-          //console.log("Esto se recibió de la caché:", cacheInfo);
-        } else if (precargaInfo) {
-          setVideoInfo(precargaInfo);
+      if (videoId && videoId !== "") {
+        console.log('id:',videoId);
+        const videoEnCache = await GetCache({key: String(videoId)});
+        console.log('cache recibida: ',videoEnCache);
+        if (videoEnCache) {
+          //console.log("Esto se recibió de la caché:", videoEnCache);
+          setVideoInfo(videoEnCache);
         } else {
           try {
-            console.log('entro al try')
+            console.log('entro a la solicitud');
             const response = await axios.get(
               `https://www.googleapis.com/youtube/v3/videos?key=${yt}&part=snippet&id=${videoId}`
             );
             if (response.data.items.length > 0) {
               const newInfo = response.data.items[0].snippet;
-              setVideoInfo((prevInfo) =>
-                prevInfo !== newInfo ? newInfo : prevInfo
-              );
-              setCacheVideo((prevCache) => ({
-                ...prevCache,
-                [videoId]: newInfo,
-              }));
+              setVideoInfo(newInfo);
+              console.log('id:',videoId);
+              PutCache({key: String(videoId), datos:newInfo});
             } else {
               console.error("No se encontró información del video.");
             }
@@ -49,7 +46,8 @@ const VideoYT = React.memo(({ video }) => {
       }
     };
     getVideo();
-  }, [videoId,cacheVideo,setCacheVideo,precargaVideo]);
+  }, [videoId]);
+
   return (
     <View style={{ flex: 1, marginTop: 5 }}>
       {videoInfo ? (
