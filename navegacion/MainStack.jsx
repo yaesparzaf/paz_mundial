@@ -22,7 +22,7 @@ const Stack = createStackNavigator();
 function Mytabs() {
   const navigacion = useNavigation();
   return (
-    <Tab.Navigator initialRouteName='Meditar'
+    <Tab.Navigator initialRouteName='Noticias'
       screenOptions={{
         tabBarActiveTintColor: '#40E0D0',
         headerTitleStyle: {
@@ -53,12 +53,14 @@ function Mytabs() {
         }}
       />
       <Tab.Screen name='Meditar' component={Meditar}
-        options={{
+        options={({navigation}) => ({
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="meditation" size={size} color={color} />
+            <TouchableOpacity onPress={()=>navigation.reset({ routes: [{ name: 'Meditar' }] })}>
+              <MaterialCommunityIcons name="meditation" size={size} color={color} />
+            </TouchableOpacity>
           ),
           headerShown: false
-        }}
+        })}
       />
       <Tab.Screen name='notificaciones' component={Notificaciones}
         options={{

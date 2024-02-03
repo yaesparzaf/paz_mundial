@@ -92,6 +92,7 @@ const Info = ({ item, rol, usuario_id }) => {
     //if(nueva)
     //setNueva(true);
     addLeida(info.id);
+    console.log(info)
     navegacion.navigate('NoticiaInfo', { info });
   };
   const toggleOpciones = () => {

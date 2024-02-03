@@ -9,10 +9,12 @@ const SocialBotones = (nombre) => {
         
         try{
             const isSupported = await Linking.canOpenURL(AppFbUrl);
-            if(isSupported)
+            if(isSupported){
                 await Linking.openURL(AppFbUrl);
-            else
+            console.log('lanzo: app');
+            }else{
                 await Linking.openURL(WebFbUrl);
+            }
         }catch(error){
             console.log('Error al abrir la aplicacion: '+error);
         }

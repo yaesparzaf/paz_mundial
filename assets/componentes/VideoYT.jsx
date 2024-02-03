@@ -29,7 +29,11 @@ const VideoYT = React.memo(({ video }) => {
               `https://www.googleapis.com/youtube/v3/videos?key=${yt}&part=snippet&id=${videoId}`
             );
             if (response.data.items.length > 0) {
-              const newInfo = response.data.items[0].snippet;
+              const newInfo = {
+                tittle: response.data.items[0].snippet.title,
+                url: `https://www.youtube.com/watch?v=${videoId}`,
+                categoryId:response.data.items[0].snippet.categoryId,
+              }
               setVideoInfo(newInfo);
               console.log('id:',videoId);
               PutCache({key: String(videoId), datos:newInfo});

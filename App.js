@@ -8,13 +8,9 @@ function App() {
   //const earth = require('./assets/earth.mp4');
   return (
     <AuthenticatedUserProvider>
-      <MeditarContext> 
         <MainStack/>
-      </MeditarContext>
         <DatosUsers/>
     </AuthenticatedUserProvider>
-      
-    
   );
 }
 export default App;
