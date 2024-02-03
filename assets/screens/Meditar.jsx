@@ -3,6 +3,7 @@ import {
   SafeAreaView,
   ActivityIndicator,
   ScrollView,
+  TouchableOpacity,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useUser } from "../../fb/DatosUsers";
@@ -16,7 +17,7 @@ const Meditar = () => {
 
  // console.log("loading afuera ", isLoading);
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "blue" }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
       {/* {isLoading ? (
         <ActivityIndicator
           size="large"
@@ -25,7 +26,7 @@ const Meditar = () => {
         />
       ) : ( */}
         <ScrollView>
-          <View style={{ flex: 0.5, backgroundColor: "red" }}>
+          <View style={{ flex: 0.5, backgroundColor: "white" }}>
             <Videos />
           </View>
           <View>

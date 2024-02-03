@@ -22,7 +22,8 @@ const Noticias = () => {
     );
   }
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1 , backgroundColor: 'red'}}>
+      <View><Text>hols</Text></View>
       <Publicaciones />
       {usuario && usuario.rol === 'admin' && <FloatButton  pantalla="N"/>}
     </SafeAreaView>
@@ -33,6 +34,7 @@ const styles = StyleSheet.create({
   scrollViewContent: {
     alignItems: 'center',
     paddingBottom: 20,
+    
   },
 });
 

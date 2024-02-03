@@ -10,14 +10,13 @@ const NoticiaInfo = ({ route }) => {
             <ScrollView>
                 <View style={styles.header_cont}>
                     <Text style={styles.autor_publicacion}>{autor}</Text>
-                    
                 </View>
                 <View style={styles.info_cont}>
                     <Text style={styles.titulo_publicacion}>{titulo}</Text>
-                    <Text style={[styles.asunto_publicacion,{textAlign:align_asunto, fontStyle:tipo_letra}]}>{asunto}</Text>
+                    <Text style={[styles.asunto_publicacion, { textAlign: align_asunto, fontStyle: tipo_letra }]}>{asunto}</Text>
                 </View>
                 <View style={styles.texto_cont}>
-                    <Text style={[styles.texto_publicacion,{textAlign:align_texto}]}>{texto}</Text>
+                    <Text style={[styles.texto_publicacion, { textAlign: align_texto }]}>{texto}</Text>
                 </View>
                 {imagen !== null && (
                     <View style={styles.imagen_cont}>
@@ -73,7 +72,7 @@ const styles = StyleSheet.create({
         height: 500,
         resizeMode: 'cover',
         marginBottom: 10,
-        marginTop:20,
+        marginTop: 20,
     },
     fechaTexto: {
         fontSize: 12,

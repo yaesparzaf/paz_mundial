@@ -12,6 +12,7 @@ import Notificaciones from '../assets/screens/Notificaciones';
 import Meditar from '../assets/screens/Meditar';
 import Foro from '../assets/screens/Foro';
 import Perfil from '../assets/screens/Perfil';
+import Login from '../assets/componentes/Login';
 import Publicar from '../assets/screens/Publicar';
 import NoticiaInfo from '../assets/screens/NoticiaInfo';
 import MeditarEdit from '../assets/screens/MeditarEdit';
@@ -79,14 +80,14 @@ function TabStack() {
       <Stack.Screen name="MainTabs" component={Mytabs} options={{
         title: 'Por la paz mundial',
         headerRight: () => (
-          <TouchableOpacity onPress={() => navigation.navigate('Perfil')} style={styles.account}>
+          <TouchableOpacity onPress={() => navigation.navigate('Login')} style={styles.account}>
             <MaterialIcons name="account-circle" size={30} color="black" />
             <Text style={styles.account_text}>Mi cuenta</Text>
           </TouchableOpacity>
         ),
         headerStyle: { backgroundColor: 'white' }
       }} />
-      <Stack.Screen name="Perfil" component={Perfil} options={{ headerStyle: { backgroundColor: 'cyan' } }} />
+      <Stack.Screen name="Login" component={Login} options={{ headerStyle: { backgroundColor: 'cyan' } }} />
       <Stack.Screen name="Foro" component={Foro} />
       <Stack.Screen name='Publicar' component={Publicar} options={{ title: 'Crear noticia' }} />
       <Stack.Screen name='NoticiaInfo' component={NoticiaInfo} options={{

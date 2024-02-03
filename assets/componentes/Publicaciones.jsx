@@ -49,6 +49,7 @@ const Info = ({ item, rol, usuario_id }) => {
   const [nueva, setNueva] = useState();
   const navegacion = useNavigation();
   const fecha = item.fecha ? item.fecha.toDate() : null;
+  console.log('Eyyyyyyyyyyyyyyyyyyyyyy',fecha);
   //item = { id: item.id, titulo: item.titulo, asunto: item.asunto, autor: item.autor, imagen: item.imagen, texto: item.texto };
   //console.log(item);
 
@@ -187,7 +188,7 @@ const styles = StyleSheet.create({
   fechaTexto: {
     fontSize: 12,
     color: '#888',
-    marginTop: 0
+    marginTop: -10
   },
   menu_publicacion: {
     flexDirection: 'row-reverse',

@@ -1,4 +1,4 @@
-import { View, ActivityIndicator } from "react-native";
+import { View, ActivityIndicator, TouchableOpacity,Text } from "react-native";
 import React, { useEffect, useState } from "react";
 import Ubicacion from "../componentes/Ubicacion";
 import VideoYT from "./VideoYT";
@@ -6,6 +6,7 @@ import FloatButton from "./FloatButton";
 import { useUser } from "../../fb/DatosUsers";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../fb/firebase-config";
+import RemoveCache from "../cache/RemoveCache";
 
 const Videos = () => {
   const { usuario } = useUser();
@@ -36,7 +37,10 @@ const Videos = () => {
     console.log('entro a buscar ubicacion: ',ubicacion)
   };
 
-  console.log(loading,ubicacion);
+  const eliminarCache = async() =>{
+    await RemoveCache({key:String(videosId[1])});
+  };
+  //console.log(loading,ubicacion);
   return (
     <View style={{ flex: 1 }}>
       <Ubicacion getLocation={obtenerUbicacion} />
@@ -54,6 +58,11 @@ const Videos = () => {
           >
             <VideoYT video={videosId[0]} />
             <VideoYT video={videosId[1]} />
+            <TouchableOpacity 
+            
+            onPress={()=>eliminarCache()}>
+              <Text>Eliminar cache</Text>
+            </TouchableOpacity>
           </View>
         )
       )}
