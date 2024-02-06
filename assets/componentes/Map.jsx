@@ -12,7 +12,7 @@ const Map = () => {
   const personasMeditando = 1000;
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container3}>
       <MapView
         style={styles.map}
         minZoomLevel={1}
@@ -28,7 +28,7 @@ const Map = () => {
         <Marker coordinate={generateRandomCoordinate()} />
         <Marker coordinate={generateRandomCoordinate()} />
       </MapView>
-      <View style={styles.textContainer}>
+      <View style={styles.textContainer3}>
         <Text style={styles.texto}>{personasMeditando}</Text>
         <Text style={styles.titulo}>personas meditando ahora</Text>
       </View>
@@ -37,7 +37,7 @@ const Map = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
+  container3: {
     flex: 1,
     backgroundColor: "#fff",
     alignItems: "center",

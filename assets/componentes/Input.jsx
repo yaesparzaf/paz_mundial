@@ -11,7 +11,7 @@ const Input = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container2}>
       <TextInput
         style={styles.input}
         multiline={true}
@@ -32,11 +32,11 @@ const Input = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
+  container2: {
     flexDirection: "row",
     alignItems: "flex-end",
     padding: 8,
-    backgroundColor:"#ffffff",
+    backgroundColor: "#ffffff",
   },
   input: {
     flex: 1,
