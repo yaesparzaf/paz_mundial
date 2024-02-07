@@ -7,7 +7,7 @@ import { yt } from "../../fb/firebase-config";
 import PutCache from "../cache/PutCache";
 import GetCache from "../cache/GetCache";
 
-const VideoYT = React.memo(({ video }) => {
+const VideoYT = React.memo(({ video,meditar }) => {
   const [videoInfo, setVideoInfo] = useState(null);
   const [videoId, setVideoId] = useState(video.video_id);
   //const {cacheVideo, videoACache, setCacheVideo} = useVideoContext();
@@ -52,6 +52,8 @@ const VideoYT = React.memo(({ video }) => {
     getVideo();
   }, [videoId]);
 
+  console.log('esto trae meditar: ',meditar)
+
   return (
     <View style={{ flex: 1, marginTop: 5 }}>
       {videoInfo ? (
@@ -63,6 +65,16 @@ const VideoYT = React.memo(({ video }) => {
             resizeMode: "contain",
           }}
         >
+          {meditar ? (
+            //con el play poner a true "meditar" en la coleccion del usuario
+           <YouTube
+           videoId={videoId}
+           height={270}
+           initialPlayerParams={{
+             controls: 0,
+           }}
+         /> 
+          ):(
           <YouTube
             videoId={videoId}
             height={270}
@@ -70,6 +82,7 @@ const VideoYT = React.memo(({ video }) => {
               controls: 0,
             }}
           />
+          )}
           <TouchableOpacity
             style={{ position: "absolute", top: 0, width: "100%", height: 55 }}
           />

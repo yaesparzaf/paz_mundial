@@ -7,6 +7,7 @@ import { useUser } from "../../fb/DatosUsers";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../fb/firebase-config";
 import RemoveCache from "../cache/RemoveCache";
+import GetAlls from "../cache/GetAlls";
 
 const Videos = () => {
   const { usuario } = useUser();
@@ -36,6 +37,9 @@ const Videos = () => {
     console.log('esto se envia: ',videosId[0]);
     await RemoveCache({key:String(videosId[0].video_id)});
   };
+  const mostrarCache = async() =>{
+    await GetAlls();
+  };
   //console.log(loading,ubicacion);
   return (
     <View style={{ flex: 1 }}>
@@ -52,11 +56,14 @@ const Videos = () => {
             style={{ flex: 1, flexDirection: "column"}}
           >
             <VideoYT video={videosId[0]} />
-            <VideoYT video={videosId[1]} />
+            <VideoYT video={videosId[1]} meditar={true}/>
             <TouchableOpacity 
-            
             onPress={()=>eliminarCache()}>
               <Text>Eliminar cache</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+            onPress={()=>mostrarCache()}>
+              <Text>Mostrar cache</Text>
             </TouchableOpacity>
           </View>
         )
