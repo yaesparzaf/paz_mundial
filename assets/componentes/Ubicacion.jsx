@@ -32,15 +32,15 @@ const Ubicacion = ({ getLocation }) => {
 
   async function getUserLocation() {
     try {
-      const location = await Location.getCurrentPositionAsync({});
-      // const location = {
-      //   coords: {
-      //     accuracy: 14.17199993133545,
-      //     altitude: 1904.9000244140625,
-      //     latitude: 19.6807101,
-      //     longitude: -101.1856651,
-      //   },
-      // };
+     // const location = await Location.getCurrentPositionAsync({});
+      const location = {
+        coords: {
+          accuracy: 14.17199993133545,
+          altitude: 1904.9000244140625,
+          latitude: 19.6807101,
+          longitude: -101.1856651,
+        },
+      };
       console.log("Ubicación del usuario:", location);
       try {
         const coleccionRef = collection(db, "meditando");

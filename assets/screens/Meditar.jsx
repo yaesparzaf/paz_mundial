@@ -13,11 +13,13 @@ import Videos, { notLoading } from "../componentes/Videos";
 import Ubicacion from "../componentes/Ubicacion";
 import Map from "../componentes/Map";
 import PermisosUbi from "./PermisosUbi";
+import Contador from "../../fb/Contador";
 
 const Meditar = () => {
   const { usuario } = useUser();
   const [ubicacion, setUbicacion] = useState(null);
   const [reload, setReload] = useState(false);
+  const [contador, setContador] = useState();
 
   const obtenerUbicacion = async (ubicacion) => {
     setUbicacion(ubicacion);
@@ -29,16 +31,25 @@ const Meditar = () => {
       setReload(!reload);
     }
   };
+  const obtContador = async (isContador) => {
+    if (isContador || !isContador) {
+      console.log("isContador: ", isContador);
+     const total_usuarios = await Contador();
+     setContador(total_usuarios);
+    }
+  };
+
   return (
     <>
       <Ubicacion getLocation={obtenerUbicacion} />
       {ubicacion ? (
-        <SafeAreaView style={{ flex: 1, backgroundColor: "blue" }}>
+        <SafeAreaView style={{ flex: 1,}}>
           <ScrollView>
             <View style={{ flex: 0.5, backgroundColor: "red" }}>
-              <Videos />
+              <Videos CambioCont={obtContador} />
             </View>
             <View>
+              <Text>Personas meditando ahora:{contador} </Text>
               <Map />
             </View>
           </ScrollView>
