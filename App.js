@@ -1,16 +1,29 @@
-import { SafeAreaView,StyleSheet} from 'react-native';
+import React, { useState } from 'react';
+import { SafeAreaView, StyleSheet } from 'react-native';
 import MainStack from './navegacion/MainStack';
-import {AuthenticatedUserProvider, DatosUsers} from './fb/DatosUsers';
-import { MeditarContext } from './assets/componentes/MeditarContext';
-
+import { AuthenticatedUserProvider } from './fb/DatosUsers';
+import Login from './assets/componentes/Login'; // Importa tu componente de inicio de sesión
 
 function App() {
-  //const earth = require('./assets/earth.mp4');
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
   return (
     <AuthenticatedUserProvider>
-        <MainStack/>
-        <DatosUsers/>
+      <SafeAreaView style={styles.container}>
+        {isAuthenticated ? (
+          <MainStack />
+        ) : (
+          <Login onLogin={() => setIsAuthenticated(true)} />
+        )}
+      </SafeAreaView>
     </AuthenticatedUserProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});
+
 export default App;

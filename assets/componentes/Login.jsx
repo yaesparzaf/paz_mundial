@@ -1,140 +1,218 @@
+import React, { useState } from "react";
 import {
-  View,
   Text,
+  View,
   SafeAreaView,
   StyleSheet,
   TextInput,
   TouchableOpacity,
-  Platform,
-  ScrollView,
   Image,
+  Alert,
 } from "react-native";
-import React, { useState } from "react";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import auth from "../../fb/firebase-config";
-const earth = require("../tierra.jpg");
-import Map from "../componentes/Map";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { Ionicons, FontAwesome } from "@expo/vector-icons";
+import ContadorAnimado from "./ContadorAnimado";
+import { db } from "../../fb/firebase-config";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
-const Login = () => {
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
+const Login = ({ onLogin }) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  /*const onLogin = () => {
-        if (email !== "" && password !== "") {
-            signInWithEmailAndPassword(auth, email, password)
-                .then(() => console.log("inicio de sesión exitoso"))
-                .catch((err) => console.log("login error " + err.message));
+  const handleLogin = async () => {
+    try {
+      const authInstance = getAuth();
+      await signInWithEmailAndPassword(authInstance, email, password);
+      console.log("Inicio sesión", email, password);
+      onLogin(); // Llama a la función onLogin para indicar que el usuario ha iniciado sesión
+    } catch (error) {
+      console.error("Error al iniciar sesión:", error.message);
+      Alert.alert("Error", "Usuario o contraseña incorrectos");
+    }
+  };
 
-        }
-    }*/
+  const handleRegisterEmail = () => {
+    // Lógica para registrar mediante correo electrónico
+  };
+
+  const handleRegisterGoogle = () => {
+    // Lógica para registrar mediante Google
+  };
+
+  const handleRegisterMicrosoft = () => {
+    // Lógica para registrar mediante Microsoft
+  };
+
   return (
-    <ScrollView>
-      <View style={styles.login}>
-        <View>
-          <Map />
-        </View>
-        <View style={styles.cont_leyenda}>
-          <Text style={styles.leyenda}>
-            Medita, entrénate, únete a nuestra comunidad.
+    <KeyboardAwareScrollView
+      contentContainerStyle={styles.container}
+      extraScrollHeight={150}
+    >
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.content}>
+          <Image
+            source={require("../../assets/Planet.gif")}
+            style={styles.gif}
+          />
+          <View style={styles.textContainer}>
+            <ContadorAnimado numero={8} />
+            <Text style={styles.titulo}>personas meditando ahora</Text>
+          </View>
+          <Text style={styles.bienvenida}>
+            ¡Bienvenido de vuelta! ¿Listo para ingresar?
           </Text>
-        </View>
-        <SafeAreaView style={styles.cont_input}>
           <TextInput
-            style={styles.input}
+            style={[styles.input, { color: "white" }]}
             placeholder="Ingresa tu email"
+            placeholderTextColor="gray"
             autoCapitalize="none"
             autoCorrect={false}
-            textContentType="emailAddress"
-            autoFocus={true}
+            keyboardType="email-address"
             value={email}
-            onChangeText={(text) => setEmail(text)}
-          ></TextInput>
+            onChangeText={setEmail}
+          />
           <TextInput
-            style={styles.input}
+            style={[styles.input, { color: "white" }]}
             placeholder="Contraseña"
+            placeholderTextColor="gray"
             autoCapitalize="none"
             autoCorrect={false}
             secureTextEntry={true}
-            textContentType="password"
-            autoFocus={true}
             value={password}
-            onChangeText={(text) => setPassword(text)}
-          ></TextInput>
-          <TouchableOpacity
-            style={{
-              height: 50,
-              width: 300,
-              alignItems: "center",
-              justifyContent: "center",
-              borderRadius: 15,
-              backgroundColor: "cyan",
-            }}
-            onPress={console.log("se presiono un boton")}
-          >
-            <Text style={{ fontSize: 20 }}>ingresar</Text>
+            onChangeText={setPassword}
+          />
+          <TouchableOpacity style={styles.button} onPress={handleLogin}>
+            <Text style={styles.buttonText}>Ingresar</Text>
           </TouchableOpacity>
-        </SafeAreaView>
-      </View>
-    </ScrollView>
+          <Text style={styles.registro}>
+            ¿Nuevo? ¡Regístrate ahora y únete!
+          </Text>
+          <View style={styles.registerSection}>
+            {/* <TouchableOpacity
+              style={styles.registerButton}
+              onPress={handleRegisterEmail}
+            >
+              <Ionicons name="mail" size={24} color="white" />
+            </TouchableOpacity> */}
+            <TouchableOpacity
+              style={styles.registerButton}
+              onPress={handleRegisterGoogle}
+            >
+              <FontAwesome name="google" size={24} color="white" />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.registerButton}
+              onPress={handleRegisterMicrosoft}
+            >
+              <FontAwesome name="windows" size={24} color="white" />
+            </TouchableOpacity>
+          </View>
+        </View>
+      </SafeAreaView>
+      <View style={styles.extraSpace} />
+    </KeyboardAwareScrollView>
   );
 };
 
 const styles = StyleSheet.create({
-  login: {
-    flex: 1,
-  },
-  cont_tierra: {
+  container: {
+    flexGrow: 1,
+    justifyContent: "center",
     alignItems: "center",
-    justifyContent: "start",
-    backgroundColor: "Black",
+    backgroundColor: "#081526",
+  },
+  extraSpace: {
+    height: 400, // Altura del espacio extra
+    backgroundColor: "yellow", // Color de fondo del espacio extra
+  },
+  safeArea: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  content: {
+    alignItems: "center",
+    width: "80%",
   },
   gif: {
-    width: 300,
+    width: 500,
     height: 300,
     resizeMode: "contain",
-    //backgroundColor: 'blue',
   },
-  cont_leyenda: {
-    alignItems: "center",
-    justifyContent: "center",
-    //width:400,
-    backgroundColor: "green",
+  bienvenida: {
+    textAlign: "center",
+    fontSize: 30,
+    fontWeight: "bold",
+    color: "white",
+    marginVertical: 20,
   },
-  cont_input: {
-    flex: 1,
-    alignItems: "center",
-    marginTop: 10,
+  registro: {
+    textAlign: "center",
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "white",
+    marginVertical: 20,
   },
   input: {
     height: 50,
-    width: "80%",
-    borderColor: "gray",
+    width: 300,
+    borderColor: "#ffffff",
+    color: "white",
     borderWidth: 1,
     marginBottom: 20,
-    paddingLeft: 10,
-    paddingRight: 10,
+    paddingHorizontal: 10,
     borderRadius: 10,
+    fontSize: 16, // Tamaño de texto fijo
   },
-  cont_btn: {
-    flex: 0.2,
-    //backgroundColor:'red'
-  },
-  continua_btn: {
+  button: {
+    height: 50,
+    width: 300,
     alignItems: "center",
     justifyContent: "center",
-    width: 350,
-    height: 50,
-    borderRadius: 20,
-    marginBottom: 10,
-    backgroundColor: "#40E0D0",
+    borderRadius: 10,
+    backgroundColor: "#1E82D9",
+    marginBottom: 20,
   },
-  texto_centrado: {
+  buttonText: {
     fontSize: 20,
+    color: "white",
   },
-  leyenda: {
-    textAlign: "center",
-    fontSize: 25,
+  registerSection: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    width: 100,
+  },
+  registerButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    backgroundColor: "#ff",
+    marginBottom: 20,
+  },
+  registerButtonText: {
+    fontSize: 16,
+    color: "white",
+    marginLeft: 10,
+  },
+  textContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  titulo: {
+    fontSize: 18,
     fontWeight: "bold",
+    padding: 10,
+    marginRight: 10,
+    color: "white",
+  },
+  texto: {
+    fontSize: 18,
+    color: "#56A5B2",
   },
 });
 

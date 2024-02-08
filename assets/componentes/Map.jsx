@@ -3,13 +3,12 @@ import { StyleSheet, View, Text } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 
 const Map = () => {
+  const personasMeditando = 1000;
   const generateRandomCoordinate = () => {
     const randomLat = Math.random() * (90 - -90) + -90;
     const randomLng = Math.random() * (180 - -180) + -180;
     return { latitude: randomLat, longitude: randomLng };
   };
-
-  const personasMeditando = 1000;
 
   return (
     <View style={styles.container3}>
@@ -28,7 +27,7 @@ const Map = () => {
         <Marker coordinate={generateRandomCoordinate()} />
         <Marker coordinate={generateRandomCoordinate()} />
       </MapView>
-      <View style={styles.textContainer3}>
+      <View style={styles.textContainer}>
         <Text style={styles.texto}>{personasMeditando}</Text>
         <Text style={styles.titulo}>personas meditando ahora</Text>
       </View>
@@ -55,7 +54,6 @@ const styles = StyleSheet.create({
   titulo: {
     fontSize: 20,
     fontWeight: "bold",
-    // backgroundColor: "#f2f2f2",
     padding: 10,
     marginRight: 10,
   },
