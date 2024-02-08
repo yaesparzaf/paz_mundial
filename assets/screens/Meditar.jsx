@@ -80,10 +80,10 @@ const Meditar = () => {
       {ubicacion ? (
         <SafeAreaView style={{ flex: 1 }}>
           <ScrollView>
-            <View style={{ flex: 0.5, backgroundColor: "red" }}>
+            <View style={{ flex: 0.5 }}>
               <Videos />
             </View>
-            <View>
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
               <Text>Personas meditando ahora:{contador} </Text>
               <Map />
             </View>
