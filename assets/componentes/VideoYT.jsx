@@ -8,7 +8,7 @@ import PutCache from "../cache/PutCache";
 import GetCache from "../cache/GetCache";
 
 
-const VideoYT = React.memo(({ video,meditar, setMeditar }) => {
+const VideoYT = React.memo(({ video }) => {
   const [videoInfo, setVideoInfo] = useState(null);
   const [videoId, setVideoId] = useState(video.video_id);
   //const {cacheVideo, videoACache, setCacheVideo} = useVideoContext();
@@ -17,15 +17,12 @@ const VideoYT = React.memo(({ video,meditar, setMeditar }) => {
   useEffect(() => {
     const getVideo = async () => {
       if (videoId && videoId !== "") {
-        console.log('id:',videoId);
         const videoEnCache = await GetCache({key: String(videoId)});
-        console.log('cache recibida: ',videoEnCache);
         if (videoEnCache) {
           //console.log("Esto se recibió de la caché:", videoEnCache);
           setVideoInfo(videoEnCache);
         } else {
           try {
-            console.log('entro a la solicitud');
             const response = await axios.get(
               `https://www.googleapis.com/youtube/v3/videos?key=${yt}&part=snippet&id=${videoId}`
             );
@@ -36,7 +33,6 @@ const VideoYT = React.memo(({ video,meditar, setMeditar }) => {
                 categoryId:response.data.items[0].snippet.categoryId,
               }
               setVideoInfo(newInfo);
-              console.log('id:',videoId);
               PutCache({key: String(videoId), datos:newInfo});
             } else {
               console.error("No se encontró información del video.");
@@ -64,24 +60,6 @@ const VideoYT = React.memo(({ video,meditar, setMeditar }) => {
             resizeMode: "contain",
           }}
         >
-          {meditar ? (
-            //con el play poner a true "meditar" en la coleccion del usuario
-           <YouTube
-           videoId={videoId}
-           height={270}
-           initialPlayerParams={{
-             controls: 0,
-           }}
-           onReady={()=>{console.log('video listo')}}
-            onChangeState = {(evento)=>{
-              if(evento === 'playing'){
-                setMeditar(true);
-              }else if(evento === 'paused'){
-                setMeditar(false);
-              }
-            }}
-         /> 
-          ):(
           <YouTube
             videoId={videoId}
             height={270}
@@ -89,7 +67,6 @@ const VideoYT = React.memo(({ video,meditar, setMeditar }) => {
               controls: 0,
             }}
           />
-          )}
           <TouchableOpacity
             style={{ position: "absolute", top: 0, width: "100%", height: 55 }}
           />

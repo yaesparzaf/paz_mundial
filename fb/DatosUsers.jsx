@@ -44,8 +44,8 @@ export  function DatosUsers() {
           return false;
         }
       }
-      //const usernameABuscar = 'brian';
-      //const correoABuscar = 'yamil@fundaciondespertar.com';
+      // const usernameABuscar = 'Brian';
+      // const correoABuscar = 'brian@gmail.com';
       const usernameABuscar = 'Yamil';
       const correoABuscar = 'yamilya.esparza25@gmail.com';
       fetchUser(usernameABuscar, correoABuscar);
