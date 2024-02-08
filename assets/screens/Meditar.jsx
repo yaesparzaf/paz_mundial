@@ -7,8 +7,6 @@ import {
   Text,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { collection, doc, getDoc, updateDoc } from "firebase/firestore";
-import { db } from "../../fb/firebase-config";
 import { useUser } from "../../fb/DatosUsers";
 import FloatButton from "../componentes/FloatButton";
 import Videos, { notLoading } from "../componentes/Videos";
@@ -17,6 +15,7 @@ import Map from "../componentes/Map";
 import PermisosUbi from "./PermisosUbi";
 import Contador from "../../fb/Contador";
 import { useFocusEffect } from "@react-navigation/native";
+import OnMeditar from "../componentes/OnMeditar";
 
 const Meditar = () => {
   const { usuario } = useUser();
@@ -26,31 +25,16 @@ const Meditar = () => {
 
   useFocusEffect(
     React.useCallback(() => {
-     
-      const OnMeditar = async (isMeditar) => {
-        const usuario_id = usuario.id;
-        console.log("id: ", usuario_id);
-        console.log("recibe: ", isMeditar);
-        try {
-          const coleccionRef = collection(db, "meditando");
-          const docRef = doc(coleccionRef,usuario_id);
-          const docEdit = await getDoc(docRef);
-          //if (doc.exist()) {
-            await updateDoc(docRef, {
-              meditando: isMeditar,
-            });
-            await obtContador();
-            console.log("se actualizaron los datos");
-         // }
-        } catch (error) {
-          console.error("hubo un error en: ", error);
-        }
+      const PersonasMeditando = async()=>{
+        OnMeditar(true,usuario.id);
+        const totalPersonas = await Contador();
+        setContador(totalPersonas);
       };
-      OnMeditar(true);
+      PersonasMeditando();
       console.log("enfoque en pantalla");
       console.log("Perosnas meditando: ",contador);
       return () => {
-        OnMeditar(false);
+        PersonasMeditando();
         console.log("se cambio de pantalla.Perosnas meditando: ",contador);
 
       };
@@ -60,11 +44,6 @@ const Meditar = () => {
   const obtenerUbicacion = async (ubicacion) => {
     setUbicacion(ubicacion);
     console.log("entro a buscar ubicacion: ", ubicacion);
-  };
-
-  const obtContador = async () => {
-    const total_usuarios = await Contador();
-    setContador(total_usuarios);
   };
 
   const onReload = (reset) => {

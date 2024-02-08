@@ -44,10 +44,10 @@ export  function DatosUsers() {
           return false;
         }
       }
-      // const usernameABuscar = 'Brian';
-      // const correoABuscar = 'brian@gmail.com';
-      const usernameABuscar = 'Yamil';
-      const correoABuscar = 'yamilya.esparza25@gmail.com';
+      const usernameABuscar = 'Brian';
+      const correoABuscar = 'brian@gmail.com';
+      // const usernameABuscar = 'Yamil';
+      // const correoABuscar = 'yamilya.esparza25@gmail.com';
       fetchUser(usernameABuscar, correoABuscar);
     }, [setUsuario]);
   
