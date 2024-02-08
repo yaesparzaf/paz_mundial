@@ -25,16 +25,16 @@ const Meditar = () => {
 
   useFocusEffect(
     React.useCallback(() => {
-      const PersonasMeditando = async()=>{
-        OnMeditar(true,usuario.id);
+      const PersonasMeditando = async(estaMeditando)=>{
+        OnMeditar(estaMeditando,usuario.id);
         const totalPersonas = await Contador();
         setContador(totalPersonas);
       };
-      PersonasMeditando();
+      PersonasMeditando(true);
       console.log("enfoque en pantalla");
       console.log("Perosnas meditando: ",contador);
       return () => {
-        PersonasMeditando();
+        PersonasMeditando(false);
         console.log("se cambio de pantalla.Perosnas meditando: ",contador);
 
       };
