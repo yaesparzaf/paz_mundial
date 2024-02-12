@@ -3,11 +3,12 @@ import { View, Text, StyleSheet, ScrollView, KeyboardAvoidingView, } from "react
 import { GiftedChat } from 'react-native-gifted-chat';
 import { collection, onSnapshot, query, orderBy, addDoc } from 'firebase/firestore';
 import { db } from '../../fb/firebase-config';
-import { useUser } from '../../fb/DatosUsers';
+import { contexUser } from '../../fb/AuthenticatedUserProvider';
+
 const Foro = ({ route }) => {
   const [messages, setMessages] = useState([]);
   const { name_foro } = route.params;
-  const { usuario } = useUser();
+  const { usuario } = contexUser();
 
   const initialLoadRef = useRef(false);
 

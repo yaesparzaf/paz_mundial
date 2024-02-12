@@ -23,6 +23,7 @@ const VideoYT = React.memo(({ video }) => {
           setVideoInfo(videoEnCache);
         } else {
           try {
+            console.log('entro a buscar a axios')
             const response = await axios.get(
               `https://www.googleapis.com/youtube/v3/videos?key=${yt}&part=snippet&id=${videoId}`
             );

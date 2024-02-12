@@ -2,8 +2,10 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const PutCache = async ({ key, datos }) => {
   try {
-    if (key !== null)
-         await AsyncStorage.setItem(key, JSON.stringify(datos));
+    if (key !== null) {
+     await AsyncStorage.setItem(key, JSON.stringify(datos));
+      console.log('datos ingresados: ',datos);
+    }
   } catch (error) {
     console.error("hubo un error al almacenar: ", error);
   }

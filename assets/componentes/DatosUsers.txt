@@ -2,10 +2,10 @@ import React, { useLayoutEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { getFirestore, collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../../firebase-config';
-import { useUser } from '../MainStack';
+import { contexUser } from '../MainStack';
 
 export default function DatosUsers() {
-  const { usuario, setUsuario } = useUser();
+  const { usuario, setUsuario } = contexUser();
   
   useLayoutEffect(() => {
     async function fetchUser(nombre, email) {

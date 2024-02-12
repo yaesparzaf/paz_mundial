@@ -1,11 +1,19 @@
 import React, { useEffect, useState } from "react";
 import * as Location from "expo-location";
-import { useUser } from "../../fb/DatosUsers";
-import { addDoc, collection, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+} from "firebase/firestore";
 import { db } from "../../fb/firebase-config";
+import PutCache from "../cache/PutCache";
+import { contexUser } from "../../fb/AuthenticatedUserProvider";
 
 const Ubicacion = ({ getLocation }) => {
-  const { usuario } = useUser();
+  const { usuario } = contexUser();
   const [ubicacionObtenida, setUbicacionObtenida] = useState(null);
 
   useEffect(() => {
@@ -32,44 +40,40 @@ const Ubicacion = ({ getLocation }) => {
 
   async function getUserLocation() {
     try {
-     // const location = await Location.getCurrentPositionAsync({});
+      // const location = await Location.getCurrentPositionAsync({});
       const location = {
         coords: {
-          accuracy: 14.17199993133545,
-          altitude: 1904.9000244140625,
           latitude: 19.6807101,
           longitude: -101.1856651,
         },
       };
-      console.log("Ubicación del usuario:", location);
+      const location_copy = location;
       try {
         const coleccionRef = collection(db, "meditando");
-        const docRef = await getDoc(doc(coleccionRef, usuario.id));
-        if (docRef.exists()) {
-          //   await updateDoc(docRef,{
-          //     longitud:docRef.coords.altitude,
-          //   })
+        const docRef = doc(coleccionRef, usuario.id);
+        const docEdit = await getDoc(docRef);
+        if (docEdit.exists()) {
+          console.log("ya existe: ");
+          await updateDoc(docRef, {
+            latitud: location.coords.latitude,
+            longitud: location.coords.longitude,
+          });
+          console.log("se actualizo la ubicacion");
         } else {
-          console.log(
-            "no existe referencia al usuario: ",
-            location.coords.altitude
-          );
-          //const coleccionRef = collection(db, "meditando");
-          const meditandoRef = doc(db,'meditando',usuario.id);
-          await setDoc(meditandoRef,
-            {
-              id: usuario.id,
-              latitud: location.coords.latitude,
-              longitud: location.coords.longitude,
-            }
-          );
-          console.log(meditandoRef)
+          const meditandoRef = doc(db, "meditando", usuario.id);
+          await setDoc(meditandoRef, {
+            id: usuario.id,
+            latitud: location.coords.latitude,
+            longitud: location.coords.longitude,
+          });
+          console.log(meditandoRef);
           if (meditandoRef) {
             console.log('se añadio a "meditando"');
           }
         }
+        //PutCache({key: 'ubicacion',datos: location_copy.coords});
       } catch (error) {
-        console.error('hubo un error al añadir a la coleccion',error)
+        console.error("hubo un error al añadir a la coleccion", error);
       }
       return true;
     } catch (error) {

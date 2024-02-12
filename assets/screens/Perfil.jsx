@@ -1,9 +1,10 @@
 import { View, Text, Image, StyleSheet } from 'react-native';
 import React from 'react';
-import { useUser } from '../../fb/DatosUsers';
+import { contexUser } from '../../fb/AuthenticatedUserProvider';
+
 
 const Perfil = () => {
-  const { usuario, setUsuario } = useUser();
+  const { usuario, setUsuario } = contexUser();
   console.log(usuario);
 
   return (

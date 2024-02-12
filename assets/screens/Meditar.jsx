@@ -6,19 +6,19 @@ import {
   TouchableOpacity,
   Text,
 } from "react-native";
-import React, { useEffect, useState } from "react";
-import { useUser } from "../../fb/DatosUsers";
+import React, {useState } from "react";
 import FloatButton from "../componentes/FloatButton";
-import Videos, { notLoading } from "../componentes/Videos";
+import Videos from "../componentes/Videos";
 import Ubicacion from "../componentes/Ubicacion";
 import Map from "../componentes/Map";
 import PermisosUbi from "./PermisosUbi";
 import Contador from "../../fb/Contador";
 import { useFocusEffect } from "@react-navigation/native";
 import OnMeditar from "../componentes/OnMeditar";
+import { contexUser } from "../../fb/AuthenticatedUserProvider";
 
 const Meditar = () => {
-  const { usuario } = useUser();
+  const { usuario } = contexUser();
   const [ubicacion, setUbicacion] = useState(null);
   const [reload, setReload] = useState(false);
   const [contador, setContador] = useState();

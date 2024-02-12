@@ -1,15 +1,15 @@
 import { View, ActivityIndicator, TouchableOpacity, Text } from "react-native";
 import React, { useEffect, useState } from "react";
 import VideoYT from "./VideoYT";
-import { useUser } from "../../fb/DatosUsers";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../fb/firebase-config";
 import RemoveCache from "../cache/RemoveCache";
 import GetAlls from "../cache/GetAlls";
+import { contexUser } from "../../fb/AuthenticatedUserProvider";
 //import OnMeditar from "../../fb/OnMeditar";
 
 const Videos = () => {
-  const { usuario } = useUser();
+  const { usuario } = contexUser();
   const [loading, setLoading] = useState(true);
   const [videosId, setVideosId] = useState([]);
 

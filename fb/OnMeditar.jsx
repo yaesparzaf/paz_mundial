@@ -1,11 +1,11 @@
 import { View, Text } from "react-native";
 import React from "react";
-import { useUser } from "./DatosUsers";
+import { contexUser } from "./DatosUsers";
 import { collection, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "./firebase-config";
 
 const OnMeditar = async ({isMeditar}) => {
-  const { usuario } = useUser();
+  const { usuario } = contexUser();
   const usuario_id = usuario.id;
   console.log('id: ',usuario_id);
   console.log('recibe: ',isMeditar);
