@@ -5,6 +5,8 @@ import FloatButton from "../componentes/FloatButton";
 import Publicaciones from "../componentes/Publicaciones";
 import { contexUser } from "../../fb/AuthenticatedUserProvider";
 import RemoveCache from "../cache/RemoveCache";
+import GetAlls from "../cache/GetAlls";
+import RemoveAlls from "../cache/RemoveAlls";
 
 const Noticias = () => {
   const { usuario } = contexUser();
@@ -26,8 +28,14 @@ const Noticias = () => {
       <SafeAreaView style={{ flex: 1 }}>
         <Publicaciones datos_usuario={usuario} />
         {usuario.rol === "admin" && <FloatButton pantalla="N" />}
-        <TouchableOpacity onPress={()=>RemoveCache("usuario")}>
+        <TouchableOpacity onPress={()=>GetAlls()}>
+          <Text>mostrar cache</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={()=>RemoveCache({key:"usuario"})}>
           <Text>eliminar cache user</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={()=>RemoveAlls()}>
+          <Text>eliminar toda la cache</Text>
         </TouchableOpacity>
       </SafeAreaView>
     );

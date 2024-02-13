@@ -36,22 +36,6 @@ const Login = ({ onLogin }) => {
     getContador();
   }, [contador]);
 
-  useEffect(() => {
-    if (haveDatos) {
-      console.log("A CACHE: ", haveDatos);
-      PutCache({ key: "usuario", datos: usuario })
-        .then(() => {
-          setUsuario(datos);
-          onLogin(true);
-        })
-        .catch((error) => {
-          console.error("Error al poner en caché:", error);
-        });
-    }
-  }, [haveDatos]);
-  
-
-
   const handleLogin = async () => {
     try {
       console.log("entro en handlelogin");
@@ -64,12 +48,20 @@ const Login = ({ onLogin }) => {
       setUid(get_uid);
       console.log("esto se envia a uid: ", get_uid);
 
-      // Espera a que se obtengan los datos del usuario después de iniciar sesión
-      await DatosUsers({ usuario_id: get_uid }).then((datos) => {
-        console.log("esto llega de DatosUser: ", datos);
-        setUsuario(datos);
-        setHaveDatos(true);
-      });
+         // Espera a que se obtengan los datos del usuario después de iniciar sesión
+         const datos = await DatosUsers({ usuario_id: get_uid });
+         console.log("esto llega de DatosUser: ", datos);
+         //if (datos) {
+           setHaveDatos(true);
+          
+         //}
+         console.log("haveDatos: ", haveDatos);
+         if (haveDatos) {
+           console.log("A CACHE: ", haveDatos);
+           await PutCache({ key: "usuario", datos: datos });
+           setUsuario(datos);
+           onLogin(true);
+         }
     } catch (error) {
       console.error("Error al iniciar sesión:", error);
       Alert.alert("Error", "Usuario o contraseña incorrectos");
