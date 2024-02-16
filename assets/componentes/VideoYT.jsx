@@ -7,6 +7,7 @@ import { yt } from "../../fb/firebase-config";
 import PutCache from "../cache/PutCache";
 import GetCache from "../cache/GetCache";
 
+
 const VideoYT = React.memo(({ video }) => {
   const [videoInfo, setVideoInfo] = useState(null);
   const [videoId, setVideoId] = useState(video.video_id);
@@ -16,15 +17,13 @@ const VideoYT = React.memo(({ video }) => {
   useEffect(() => {
     const getVideo = async () => {
       if (videoId && videoId !== "") {
-        console.log('id:',videoId);
         const videoEnCache = await GetCache({key: String(videoId)});
-        console.log('cache recibida: ',videoEnCache);
         if (videoEnCache) {
           //console.log("Esto se recibió de la caché:", videoEnCache);
           setVideoInfo(videoEnCache);
         } else {
           try {
-            console.log('entro a la solicitud');
+            console.log('entro a buscar a axios')
             const response = await axios.get(
               `https://www.googleapis.com/youtube/v3/videos?key=${yt}&part=snippet&id=${videoId}`
             );
@@ -35,7 +34,6 @@ const VideoYT = React.memo(({ video }) => {
                 categoryId:response.data.items[0].snippet.categoryId,
               }
               setVideoInfo(newInfo);
-              console.log('id:',videoId);
               PutCache({key: String(videoId), datos:newInfo});
             } else {
               console.error("No se encontró información del video.");
@@ -53,13 +51,13 @@ const VideoYT = React.memo(({ video }) => {
   }, [videoId]);
 
   return (
-    <View style={{ flex: 1, marginTop: 10 }}>
+    <View style={{ flex: 1, marginTop: 5 }}>
       {videoInfo ? (
         <View
           style={{
             flex: 1,
             alignSelf: "center",
-            width: "90%",
+            width: "95%",
             resizeMode: "contain",
           }}
         >

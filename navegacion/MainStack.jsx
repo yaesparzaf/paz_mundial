@@ -6,7 +6,15 @@ import React, {
   useLayoutEffect,
 } from "react";
 //import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
+import {
+  View,
+  TouchableOpacity,
+  Text,
+  SafeAreaView,
+  StyleSheet,
+  StatusBar,
+  ActivityIndicator,
+} from "react-native";
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -23,10 +31,15 @@ import Notificaciones from "../assets/screens/Notificaciones";
 import Meditar from "../assets/screens/Meditar";
 import Foro from "../assets/screens/Foro";
 import Perfil from "../assets/screens/Perfil";
-import Login from "../assets/componentes/Login";
 import Publicar from "../assets/screens/Publicar";
 import NoticiaInfo from "../assets/screens/NoticiaInfo";
 import MeditarEdit from "../assets/screens/MeditarEdit";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { auth } from "../fb/firebase-config";
+import Login from "../assets/componentes/Login";
+import SignUp from "../assets/componentes/SignUp";
+import { AuthenticatedUserContex } from "../fb/AuthenticatedUserProvider";
+import GetCache from "../assets/cache/GetCache";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -123,10 +136,10 @@ function TabStack() {
         name="MainTabs"
         component={Mytabs}
         options={{
-          title: "Regreso",
+          title: "Por la paz mundial",
           headerRight: () => (
             <TouchableOpacity
-              onPress={() => navigation.navigate("Login")}
+              onPress={() => navigation.navigate("Perfil")}
               style={styles.account}
             >
               <MaterialIcons name="account-circle" size={30} color="black" />
@@ -137,12 +150,9 @@ function TabStack() {
         }}
       />
       <Stack.Screen
-        name="Login"
-        component={Login}
-        options={{
-          headerStyle: { backgroundColor: "#1E82D9" },
-          headerTintColor: "white",
-        }}
+        name="Perfil"
+        component={Perfil}
+        options={{ headerStyle: { backgroundColor: "white" } }}
       />
       <Stack.Screen name="Foro" component={Foro} />
       <Stack.Screen
@@ -167,14 +177,111 @@ function TabStack() {
 }
 
 const MainStack = () => {
+  const { usuario, setUsuario } = useContext(AuthenticatedUserContex);
+  const [loading, setLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const authInstance = getAuth();
+  const [isLoading, setIsLoading] = useState(true); // Nuevo estado para el indicador de carga
+
+  useEffect(() => {
+    const logeado = onAuthStateChanged(
+      authInstance,
+      async (authenticatedUser) => {
+        const usuario_cache = await GetCache({ key: "usuario" });
+        authenticatedUser && usuario_cache
+          ? setUsuario(usuario_cache)
+          : setUsuario(null);
+        console.log("que es authenticatedUser: ", authenticatedUser);
+        console.log("setUsuario: ", usuario);
+      }
+    );
+    return () => logeado();
+  }, []);
+
+  useEffect(() => {
+    setIsAuthenticated(usuario !== null);
+  }, [usuario]);
+
+  //const usuario_cache =async()=>{}
+  const isLogin = async (onLogin) => {
+    console.log("esto recibe onLogin: ", onLogin);
+    if (onLogin) {
+      setIsAuthenticated(true);
+      setLoading(false);
+    }
+  };
+
+  const [showSignUp, setShowSignUp] = useState(false);
+
+  const handleLogin = () => {
+    setIsAuthenticated(true);
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+  };
+
+  const handleBackToLogin = () => {
+    setShowSignUp(false);
+  };
+
+  const handleShowSignUp = () => {
+    setShowSignUp(true);
+  };
+
+  console.log("rol del usuario en mainstack: ", usuario);
+  console.log("loading: ", loading);
   return (
-    <NavigationContainer>
-      <TabStack />
-    </NavigationContainer>
+    /* <NavigationContainer>
+      <SafeAreaView style={styles.container}>
+        {isAuthenticated ? <TabStack /> : <Login onLogin={isLogin} />}
+      </SafeAreaView>
+    </NavigationContainer> */
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+      <NavigationContainer>
+        <Stack.Navigator>
+          {isAuthenticated ? (
+            <Stack.Screen
+              name="Tabs"
+              component={TabStack}
+              options={{ headerShown: false }}
+            />
+          ) : (
+            <Stack.Screen
+              name={showSignUp ? "Registrate" : "Login"}
+              options={{
+                headerShown: false,
+                cardStyle: { backgroundColor: "lightblue" },
+              }}
+            >
+              {(props) =>
+                showSignUp ? (
+                  <SignUp
+                    {...props}
+                    onLogin={isLogin}
+                    onBack={handleBackToLogin}
+                  />
+                ) : (
+                  <Login
+                    {...props}
+                    onLogin={handleLogin}
+                    onShowSignUp={handleShowSignUp}
+                  />
+                )
+              }
+            </Stack.Screen>
+          )}
+        </Stack.Navigator>
+      </NavigationContainer>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   account: {
     alignItems: "center",
     marginRight: 5,

@@ -1,18 +1,17 @@
-import React, { useState } from "react";
-import { View, Image, Text, StyleSheet, TouchableOpacity } from "react-native";
-import * as ImagePicker from "expo-image-picker";
-import { FontAwesome5 } from "@expo/vector-icons";
+import React, { useState } from 'react';
+import { View, Image, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
+import { FontAwesome5 } from '@expo/vector-icons';
 
 const Galeria = () => {
   const [imageUri, setImageUri] = useState(null);
 
   const abrirGaleria = async () => {
     try {
-      const { status } =
-        await ImagePicker.requestMediaLibraryPermissionsAsync();
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
-      if (status !== "granted") {
-        console.log("Permiso denegado para acceder a la galería");
+      if (status !== 'granted') {
+        console.log('Permiso denegado para acceder a la galería');
         return;
       }
 
@@ -24,17 +23,16 @@ const Galeria = () => {
       });
 
       if (!result.canceled) {
-        const selectedAsset =
-          result.assets && result.assets.length > 0 ? result.assets[0] : null;
+        const selectedAsset = result.assets && result.assets.length > 0 ? result.assets[0] : null;
         setImageUri(selectedAsset ? selectedAsset.uri : null);
       }
     } catch (error) {
-      console.error("Error al abrir la galería: ", error);
+      console.error('Error al abrir la galería: ', error);
     }
   };
 
   return (
-    <View style={styles.container1}>
+    <View style={styles.container}>
       <View style={styles.content}>
         <TouchableOpacity style={styles.up_fv} onPress={abrirGaleria}>
           <FontAwesome5 name="photo-video" size={24} color="black" />
@@ -47,15 +45,15 @@ const Galeria = () => {
 };
 
 const styles = StyleSheet.create({
-  container1: {
+  container: {
     flex: 1,
   },
   content: {
-    alignItems: "flex-start",
+    alignItems: 'flex-start',
   },
   up_fv: {
-    width: "35%",
-    flexDirection: "row",
+    width: '35%',
+    flexDirection: 'row',
     padding: 10,
   },
   image: {

@@ -8,11 +8,12 @@ import { db } from '../../fb/firebase-config';
 import { ref, getDownloadURL, getStorage, uploadBytes, deleteObject } from 'firebase/storage';
 import { collection, addDoc, serverTimestamp, updateDoc, doc, getDoc, deleteDoc, deleteField } from 'firebase/firestore';
 import { useNavigation } from '@react-navigation/native';
-import { useUser } from '../../fb/DatosUsers';
+import { contexUser } from '../../fb/AuthenticatedUserProvider';
+
 
 const Publicar = ({ route }) => {
 
-  const { usuario, setUsuario } = useUser();
+  const { usuario, setUsuario } = contexUser();
   const [titulo, setTitulo] = React.useState();
   const [asunto, setAsunto] = useState('');
   const [text, onChangeText] = React.useState('');

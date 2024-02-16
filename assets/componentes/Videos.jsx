@@ -1,16 +1,15 @@
-import { View, ActivityIndicator, TouchableOpacity,Text } from "react-native";
+import { View, ActivityIndicator, TouchableOpacity, Text } from "react-native";
 import React, { useEffect, useState } from "react";
-import Ubicacion from "../componentes/Ubicacion";
 import VideoYT from "./VideoYT";
-import FloatButton from "./FloatButton";
-import { useUser } from "../../fb/DatosUsers";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../fb/firebase-config";
 import RemoveCache from "../cache/RemoveCache";
+import GetAlls from "../cache/GetAlls";
+import { contexUser } from "../../fb/AuthenticatedUserProvider";
+//import OnMeditar from "../../fb/OnMeditar";
 
 const Videos = () => {
-  const { usuario } = useUser();
-  const [ubicacion, setUbicacion] = useState(null);
+  const { usuario } = contexUser();
   const [loading, setLoading] = useState(true);
   const [videosId, setVideosId] = useState([]);
 
@@ -20,7 +19,7 @@ const Videos = () => {
         const coleccionRef = collection(db, "meditar");
         const coleccionDocs = await getDocs(coleccionRef);
         if (!coleccionDocs.empty) {
-          const datosVideos = coleccionDocs.docs.map((doc) => doc.data());
+          const datosVideos = coleccionDocs.docs.map((documento) => documento.data());
           setVideosId(datosVideos);
         }
       } catch (error) {
@@ -32,18 +31,16 @@ const Videos = () => {
     getVideos();
   }, []);
 
-  const obtenerUbicacion = async (ubicacion) => {
-    setUbicacion(ubicacion);
-    console.log('entro a buscar ubicacion: ',ubicacion)
+  const eliminarCache = async () => {
+    console.log("esto se envia: ", videosId[0]);
+    await RemoveCache({ key: String(videosId[0].video_id) });
+  };
+  const mostrarCache = async () => {
+    await GetAlls();
   };
 
-  const eliminarCache = async() =>{
-    await RemoveCache({key:String(videosId[1])});
-  };
-  //console.log(loading,ubicacion);
   return (
     <View style={{ flex: 1 }}>
-      <Ubicacion getLocation={obtenerUbicacion} />
       {loading ? (
         <ActivityIndicator
           size="large"
@@ -51,17 +48,15 @@ const Videos = () => {
           style={{ flex: 1, alignItems: "center" }}
         />
       ) : (
-        // ubicacion && 
-        usuario &&(
-          <View
-            style={{ flex: 1, flexDirection: "column"}}
-          >
-            <VideoYT video={videosId[0]} />
-            <VideoYT video={videosId[1]} />
-            <TouchableOpacity 
-            
-            onPress={()=>eliminarCache()}>
+        usuario && (
+          <View style={{ flex: 1, flexDirection: "column" }}>
+            <VideoYT video={videosId[0]}/>
+            <VideoYT video={videosId[1]}/>
+            <TouchableOpacity onPress={() => eliminarCache()}>
               <Text>Eliminar cache</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => mostrarCache()}>
+              <Text>Mostrar cache</Text>
             </TouchableOpacity>
           </View>
         )

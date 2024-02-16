@@ -1,40 +1,48 @@
 import { View, Text, Image, StyleSheet } from "react-native";
 import React from "react";
-import { useUser } from "../../fb/DatosUsers";
+import { contexUser } from "../../fb/AuthenticatedUserProvider";
 
 const Perfil = () => {
-  const { usuario, setUsuario } = useUser();
+  const { usuario, setUsuario } = contexUser();
   console.log(usuario);
 
   return (
-    <View style={styles.container4}>
+    <View style={styles.container}>
       <View style={styles.image_cont}>
         <Image
           source={{
-            uri: "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp",
+            uri: usuario.image,
           }}
           style={styles.profileImage}
           resizeMode="cover"
+          onError={() => {
+            console.log("Error al cargar la imagen");
+          }}
         />
       </View>
       <View style={styles.data_cont}>
         <Text style={styles.data_title}>Nombre</Text>
         <Text style={styles.data_info}>{usuario.nombre}</Text>
         <Text style={styles.data_title}>Correo</Text>
-        <Text style={styles.data_info}>{usuario.email}</Text>
+        <Text style={styles.data_info}>{usuario.email || usuario.correo}</Text>
+        <Text style={styles.data_title}>No. Telefono</Text>
+        <Text style={styles.data_info}>
+          {usuario.telefono || usuario.correo}
+        </Text>
       </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container4: {
+  container: {
     flex: 1,
     alignItems: "center",
+
     backgroundColor: "white",
   },
   image_cont: {
-    borderWidth: 3,
+    borderWidth: 1,
     borderColor: "black",
     borderRadius: 100,
     marginBottom: 20,
@@ -49,8 +57,9 @@ const styles = StyleSheet.create({
   data_cont: {
     flex: 0.4,
     width: "90%",
-    marginTop: 10,
+    marginTop: 20,
     justifyContent: "space-around",
+
     //backgroundColor:'red'
   },
   profileName: {
@@ -66,6 +75,8 @@ const styles = StyleSheet.create({
   },
   data_info: {
     fontSize: 17,
+    marginTop: 30,
+    marginBottom: 30,
   },
 });
 

@@ -5,10 +5,8 @@ import { useNavigation } from '@react-navigation/native';
 import { collection, deleteDoc, doc, getDoc, getDocs, where } from 'firebase/firestore';
 import { deleteObject, getStorage, ref } from 'firebase/storage';
 import { db } from '../../fb/firebase-config';
-import { useUser } from '../../fb/DatosUsers';
 
 const OpcionesUD = ({ onClose, noticiaId, imagenUrl }) => {
-    const { usuario } = useUser();
     const navegacion = useNavigation();
     const pressEditar = () => {
         navegacion.navigate('Publicar', { noticiaId });

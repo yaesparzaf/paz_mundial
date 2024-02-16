@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Text,
   View,
@@ -10,37 +10,99 @@ import {
   Alert,
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { Ionicons, FontAwesome } from "@expo/vector-icons";
+import { FontAwesome } from "@expo/vector-icons";
 import ContadorAnimado from "./ContadorAnimado";
-import { db } from "../../fb/firebase-config";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import Contador from "../../fb/Contador";
+import { contexUser } from "../../fb/AuthenticatedUserProvider";
+import DatosUsers from "../../fb/DatosUsers";
+import PutCache from "../cache/PutCache";
+import GetAlls from "../cache/GetAlls";
+import Icon from "react-native-vector-icons/FontAwesome";
+import * as Google from "expo-auth-session/providers/google";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const Login = ({ onLogin }) => {
+const Login = ({ onLogin, onShowSignUp }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [contador, setContador] = useState(null);
+  const [uid, setUid] = useState();
+  const authInstance = getAuth();
+  const { usuario, setUsuario } = contexUser({});
+  const [haveDatos, setHaveDatos] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [userInfo, setUserInfo] = React.useState(null);
+  const [request, response, promtAsyn] = Google.useAuthRequest({
+    androidClientId:
+      "133476762148-48idlu4v6elrn8t14v1msb7gbrvka3cc.apps.googleusercontent.com",
+  });
 
-  const handleLogin = async () => {
+  const getLocalUser = async () => {
+    const data = await AsyncStorage.getItem("@user");
+    if (!data) return null;
+    return JSON.parse(data);
+  };
+
+  const getUserInfo = async (token) => {
+    if (!token) return;
     try {
-      const authInstance = getAuth();
-      await signInWithEmailAndPassword(authInstance, email, password);
-      console.log("Inicio sesión", email, password);
-      onLogin(); // Llama a la función onLogin para indicar que el usuario ha iniciado sesión
-    } catch (error) {
-      console.error("Error al iniciar sesión:", error.message);
-      Alert.alert("Error", "Usuario o contraseña incorrectos");
+      const response = await fetch(
+        "https://www.googleapis.com/userinfo/v2/me",
+        {
+          headers: { Authorization: "Bearer ${token}" },
+        }
+      );
+      const user = await request.json();
+      await AsyncStorage.setItem("@user", JSON.stringify(user));
+      setUserInfo(user);
+    } catch (e) {
+      console.log(e);
     }
   };
 
-  const handleRegisterEmail = () => {
-    // Lógica para registrar mediante correo electrónico
+  const toggleShowPassword = () => {
+    setShowPassword(!showPassword);
   };
 
-  const handleRegisterGoogle = () => {
-    // Lógica para registrar mediante Google
-  };
+  useEffect(() => {
+    const getContador = async () => {
+      const total_personas = await Contador();
+      console.log("get contador: ", total_personas);
+      setContador(total_personas);
+    };
+    getContador();
+  }, [contador]);
 
-  const handleRegisterMicrosoft = () => {
-    // Lógica para registrar mediante Microsoft
+  const handleLogin = async () => {
+    try {
+      console.log("entro en handlelogin");
+      const response = await signInWithEmailAndPassword(
+        authInstance,
+        email,
+        password
+      );
+      const get_uid = response.user.uid;
+      setUid(get_uid);
+      console.log("esto se envia a uid: ", get_uid);
+
+      // Espera a que se obtengan los datos del usuario después de iniciar sesión
+      const datos = await DatosUsers({ usuario_id: get_uid });
+      console.log("esto llega de DatosUser: ", datos);
+      //if (datos) {
+      setHaveDatos(true);
+
+      //}
+      console.log("haveDatos: ", haveDatos);
+      if (haveDatos) {
+        console.log("A CACHE: ", haveDatos);
+        await PutCache({ key: "usuario", datos: datos });
+        setUsuario(datos);
+        onLogin(true);
+      }
+    } catch (error) {
+      console.error("Error al iniciar sesión:", error);
+      Alert.alert("Error", "Usuario o contraseña incorrectos");
+    }
   };
 
   return (
@@ -48,21 +110,18 @@ const Login = ({ onLogin }) => {
       contentContainerStyle={styles.container}
       extraScrollHeight={150}
     >
-      <SafeAreaView style={styles.safeArea}>
-        <View style={styles.content}>
-          <Image
-            source={require("../../assets/Planet.gif")}
-            style={styles.gif}
-          />
+      <View style={styles.content}>
+        <Image source={require("../../assets/Planet.gif")} style={styles.gif} />
+        <View style={styles.formContainer}>
           <View style={styles.textContainer}>
-            <ContadorAnimado numero={8} />
+            <ContadorAnimado numero={contador} />
             <Text style={styles.titulo}>personas meditando ahora</Text>
           </View>
           <Text style={styles.bienvenida}>
             ¡Bienvenido de vuelta! ¿Listo para ingresar?
           </Text>
           <TextInput
-            style={[styles.input, { color: "white" }]}
+            style={[styles.input]}
             placeholder="Ingresa tu email"
             placeholderTextColor="gray"
             autoCapitalize="none"
@@ -71,45 +130,40 @@ const Login = ({ onLogin }) => {
             value={email}
             onChangeText={setEmail}
           />
-          <TextInput
-            style={[styles.input, { color: "white" }]}
-            placeholder="Contraseña"
-            placeholderTextColor="gray"
-            autoCapitalize="none"
-            autoCorrect={false}
-            secureTextEntry={true}
-            value={password}
-            onChangeText={setPassword}
-          />
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <TextInput
+              style={[styles.input, { color: "black", paddingRight: 40 }]}
+              placeholder="Contraseña"
+              placeholderTextColor="gray"
+              autoCapitalize="none"
+              autoCorrect={false}
+              secureTextEntry={!showPassword}
+              value={password}
+              onChangeText={setPassword}
+            />
+            <TouchableOpacity
+              onPress={toggleShowPassword}
+              style={{ position: "absolute", right: 20, bottom: 36 }}
+            >
+              <Icon
+                name={showPassword ? "eye" : "eye-slash"}
+                size={18}
+                color="gray"
+              />
+            </TouchableOpacity>
+          </View>
           <TouchableOpacity style={styles.button} onPress={handleLogin}>
             <Text style={styles.buttonText}>Ingresar</Text>
           </TouchableOpacity>
           <Text style={styles.registro}>
-            ¿Nuevo? ¡Regístrate ahora y únete!
+            ¿Nuevo? ¡
+            <Text style={styles.registroLink} onPress={onShowSignUp}>
+              Regístrate{" "}
+            </Text>
+            ahora y únete!
           </Text>
-          <View style={styles.registerSection}>
-            {/* <TouchableOpacity
-              style={styles.registerButton}
-              onPress={handleRegisterEmail}
-            >
-              <Ionicons name="mail" size={24} color="white" />
-            </TouchableOpacity> */}
-            <TouchableOpacity
-              style={styles.registerButton}
-              onPress={handleRegisterGoogle}
-            >
-              <FontAwesome name="google" size={24} color="white" />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.registerButton}
-              onPress={handleRegisterMicrosoft}
-            >
-              <FontAwesome name="windows" size={24} color="white" />
-            </TouchableOpacity>
-          </View>
         </View>
-      </SafeAreaView>
-      <View style={styles.extraSpace} />
+      </View>
     </KeyboardAwareScrollView>
   );
 };
@@ -117,13 +171,18 @@ const Login = ({ onLogin }) => {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#081526",
-  },
-  extraSpace: {
-    height: 400, // Altura del espacio extra
-    backgroundColor: "yellow", // Color de fondo del espacio extra
+    backgroundColor: "#fff",
+    ...Platform.select({
+      ios: {
+        height: "100%",
+        width: "100%",
+      },
+      android: {
+        minHeight: "100%", // Para asegurar que el contenedor tenga al menos el 100% de la altura
+        width: "100%",
+      },
+    }),
   },
   safeArea: {
     flex: 1,
@@ -131,72 +190,58 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   content: {
+    position: "relative",
     alignItems: "center",
     width: "80%",
   },
   gif: {
-    width: 500,
+    position: "relative",
+    width: "140%",
     height: 300,
     resizeMode: "contain",
+    marginTop: "0%", // Añade esta línea para subir la imagen un 10%
   },
   bienvenida: {
     textAlign: "center",
-    fontSize: 30,
+    fontSize: 20,
     fontWeight: "bold",
-    color: "white",
+    color: "#000",
     marginVertical: 20,
   },
   registro: {
     textAlign: "center",
-    fontSize: 18,
+    fontSize: 15,
     fontWeight: "bold",
-    color: "white",
+    color: "#000",
     marginVertical: 20,
+    marginBottom: 50,
+  },
+  registroLink: {
+    color: "#3981BF", // Cambia el color del enlace
   },
   input: {
     height: 50,
-    width: 300,
-    borderColor: "#ffffff",
-    color: "white",
+    width: "90%",
+    borderColor: "#000",
+    color: "#000",
     borderWidth: 1,
     marginBottom: 20,
     paddingHorizontal: 10,
-    borderRadius: 10,
-    fontSize: 16, // Tamaño de texto fijo
+    borderRadius: 20,
+    fontSize: 14, // Tamaño de texto fijo
   },
   button: {
     height: 50,
-    width: 300,
+    width: "90%",
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 10,
-    backgroundColor: "#1E82D9",
+    borderRadius: 20,
+    backgroundColor: "#3981BF",
     marginBottom: 20,
   },
   buttonText: {
     fontSize: 20,
-    color: "white",
-  },
-  registerSection: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    width: 100,
-  },
-  registerButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 10,
-    backgroundColor: "#ff",
-    marginBottom: 20,
-  },
-  registerButtonText: {
-    fontSize: 16,
-    color: "white",
-    marginLeft: 10,
+    color: "#fff",
   },
   textContainer: {
     flexDirection: "row",
@@ -207,12 +252,25 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     padding: 10,
-    marginRight: 10,
-    color: "white",
+    marginRight: 1,
+    color: "#000",
   },
-  texto: {
-    fontSize: 18,
-    color: "#56A5B2",
+  formContainer: {
+    position: "absolute",
+    top: "70%",
+    width: "105%",
+    backgroundColor: "#fff",
+    borderRadius: 30,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 10,
+    padding: 15,
+    alignItems: "center",
   },
 });
 
