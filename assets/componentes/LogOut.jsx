@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import React from "react";
 import { contexUser } from "../../fb/AuthenticatedUserProvider";
 import { signOut } from "firebase/auth";
@@ -19,12 +19,29 @@ const LogOut = () => {
     }
   };
   return (
-    <View>
-      <TouchableOpacity onPress={cerrarSesion}>
-        <Text>Cerrar Sesión</Text>
+    <View style={styles.container}>
+      <TouchableOpacity onPress={cerrarSesion} style={styles.button}>
+        <Text style={styles.buttonText}>Cerrar Sesión</Text>
       </TouchableOpacity>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    alignItems: "center",
+    marginTop: 20,
+  },
+  button: {
+    backgroundColor: "#FC441D",
+    borderRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+  },
+  buttonText: {
+    color: "white",
+    fontWeight: "bold",
+  },
+});
 
 export default LogOut;

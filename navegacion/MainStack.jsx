@@ -1,11 +1,4 @@
-import React, {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  useLayoutEffect,
-} from "react";
-//import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import React, { createContext, useContext, useEffect, useState } from "react";
 import {
   View,
   TouchableOpacity,
@@ -14,6 +7,9 @@ import {
   StyleSheet,
   StatusBar,
   ActivityIndicator,
+  DrawerLayoutAndroid,
+  Image,
+  Dimensions,
 } from "react-native";
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -40,65 +36,172 @@ import Login from "../assets/componentes/Login";
 import SignUp from "../assets/componentes/SignUp";
 import { AuthenticatedUserContex } from "../fb/AuthenticatedUserProvider";
 import GetCache from "../assets/cache/GetCache";
+import { contexUser } from "../fb/AuthenticatedUserProvider";
+import {
+  createDrawerNavigator,
+  DrawerContentScrollView,
+  DrawerItemList,
+  DrawerItem,
+} from "@react-navigation/drawer";
+import LinearGradient from "react-native-linear-gradient";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
+const Drawer = createDrawerNavigator();
 
-function Mytabs() {
-  const navigacion = useNavigation();
+function CustomDrawerContent(props) {
+  const { usuario, setUsuario } = contexUser();
   return (
-    <Tab.Navigator
+    <DrawerContentScrollView {...props}>
+      <View style={styles.profileContainer}>
+        <View style={styles.imageContainer}>
+          <Image
+            source={{
+              uri: usuario.image,
+            }}
+            style={styles.profileImage}
+            resizeMode="cover"
+            onError={() => {
+              console.log("Error al cargar la imagen");
+            }}
+          />
+        </View>
+        <View style={styles.textContainer}>
+          <Text style={styles.userName}>{usuario.nombre}</Text>
+          <Text style={styles.userRole}>{usuario.rol}</Text>
+        </View>
+      </View>
+      <DrawerItemList {...props} />
+    </DrawerContentScrollView>
+  );
+}
+
+function MyTabs() {
+  const tam = Dimensions.get("window").width * 0.05;
+  const col = "#fff";
+  return (
+    <Drawer.Navigator
       initialRouteName="Noticias"
       screenOptions={{
-        tabBarActiveTintColor: "#40E0D0",
+        drawerActiveTintColor: "#fff",
+        drawerInactiveTintColor: "#000",
+
         headerTitleStyle: {
-          fontSize: 10,
+          fontSize: 24, // Ajusta el tamaño del texto del título
+          color: "#fff",
+          fontWeight: "bold",
+        },
+        headerStyle: {
+          backgroundColor: "#00ADEF", // Color de fondo de la barra de navegación superior
+          borderBottomLeftRadius: 40, // Agrega un radio de borde en la esquina inferior izquierda
+          borderBottomRightRadius: 40, // Agrega un radio de borde en la esquina inferior derecha
+          height: 80, // Ajusta la altura de la barra de navegación superior
+        },
+        drawerStyle: {
+          backgroundColor: "#00ADEF",
         },
       }}
+      drawerContent={(props) => <CustomDrawerContent {...props} />}
     >
-      <Tab.Screen
+      <Drawer.Screen
+        name="Perfil"
+        component={Perfil}
+        options={{
+          drawerLabelStyle: {
+            color: "#fff",
+            fontSize: 14,
+          },
+          drawerItemStyle: {
+            marginBottom: 2,
+            marginTop: 2,
+            borderRadius: 100,
+            backgroundColor: "#47C8FF",
+          },
+          drawerIcon: ({ color, size }) => (
+            <Ionicons name="person" size={tam} color={col} />
+          ),
+        }}
+      />
+      <Drawer.Screen
         name="Noticias"
         component={Noticias}
         options={{
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="newspaper-outline" size={size} color={color} />
+          drawerLabelStyle: {
+            color: "#fff",
+            fontSize: 14,
+          },
+          drawerItemStyle: {
+            marginBottom: 2,
+            marginTop: 2,
+            borderRadius: 100,
+            backgroundColor: "#47C8FF",
+          },
+          drawerIcon: ({ color, size }) => (
+            <Ionicons name="newspaper-outline" size={tam} color={col} />
           ),
-          headerShown: false,
         }}
       />
-      <Tab.Screen
+      <Drawer.Screen
         name="Comunidad"
         component={Comunidad}
         options={{
-          tabBarIcon: ({ color, size }) => (
+          drawerLabelStyle: {
+            color: "#fff",
+            fontSize: 14,
+          },
+          drawerItemStyle: {
+            marginBottom: 2,
+            marginTop: 2,
+            borderRadius: 100,
+            backgroundColor: "#47C8FF",
+          },
+          drawerIcon: ({ color, size }) => (
             <MaterialCommunityIcons
               name="account-group"
-              size={size}
-              color={color}
+              size={tam}
+              color={col}
             />
           ),
-          headerShown: false,
         }}
       />
-      <Tab.Screen
+      <Drawer.Screen
         name="Entrenamiento"
         component={Entrenamiento}
         options={{
-          tabBarIcon: ({ color, size }) => (
+          drawerLabelStyle: {
+            color: "#fff",
+            fontSize: 14,
+          },
+          drawerItemStyle: {
+            marginBottom: 2,
+            marginTop: 2,
+            borderRadius: 100,
+            backgroundColor: "#47C8FF",
+          },
+          drawerIcon: ({ color, size }) => (
             <MaterialCommunityIcons
               name="head-cog-outline"
-              size={size}
-              color={color}
+              size={tam}
+              color={col}
             />
           ),
-          headerShown: false,
         }}
       />
-      <Tab.Screen
+      <Drawer.Screen
         name="Meditar"
         component={Meditar}
         options={({ navigation }) => ({
-          tabBarIcon: ({ color, size }) => (
+          drawerLabelStyle: {
+            color: "#fff",
+            fontSize: 14,
+          },
+          drawerItemStyle: {
+            marginBottom: 2,
+            marginTop: 2,
+            borderRadius: 100,
+            backgroundColor: "#47C8FF",
+          },
+          drawerIcon: ({ color, size }) => (
             <TouchableOpacity
               onPress={() =>
                 navigation.reset({ routes: [{ name: "Meditar" }] })
@@ -106,47 +209,56 @@ function Mytabs() {
             >
               <MaterialCommunityIcons
                 name="meditation"
-                size={size}
-                color={color}
+                size={tam}
+                color={col}
               />
             </TouchableOpacity>
           ),
-          headerShown: false,
         })}
       />
-      <Tab.Screen
-        name="notificaciones"
+      <Drawer.Screen
+        name="Notificaciones"
         component={Notificaciones}
         options={{
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="notifications" size={size} color={color} />
+          drawerLabelStyle: {
+            color: "#fff",
+            fontSize: 14,
+          },
+          drawerItemStyle: {
+            marginBottom: 2,
+            marginTop: 2,
+            borderRadius: 100,
+            backgroundColor: "#47C8FF",
+          },
+          drawerIcon: ({ color, size }) => (
+            <Ionicons name="notifications" size={tam} color={col} />
           ),
-          headerShown: false,
         }}
       />
-    </Tab.Navigator>
+    </Drawer.Navigator>
   );
 }
 
 function TabStack() {
   const navigation = useNavigation();
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={{
+        headerStyle: {
+          backgroundColor: "#00ADEF", // Color de fondo de la barra de navegación superior
+        },
+        headerTintColor: "#fff", // Color del texto en la barra de navegación superior
+        headerTitleStyle: {
+          fontWeight: "bold",
+        },
+      }}
+    >
       <Stack.Screen
         name="MainTabs"
-        component={Mytabs}
+        component={MyTabs}
         options={{
-          title: "Por la paz mundial",
-          headerRight: () => (
-            <TouchableOpacity
-              onPress={() => navigation.navigate("Perfil")}
-              style={styles.account}
-            >
-              <MaterialIcons name="account-circle" size={30} color="black" />
-              <Text style={styles.account_text}>Mi cuenta</Text>
-            </TouchableOpacity>
-          ),
-          headerStyle: { backgroundColor: "white" },
+          headerStyle: { backgroundColor: "#fff" },
+          headerShown: false,
         }}
       />
       <Stack.Screen
@@ -178,65 +290,23 @@ function TabStack() {
 
 const MainStack = () => {
   const { usuario, setUsuario } = useContext(AuthenticatedUserContex);
-  const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const authInstance = getAuth();
-  const [isLoading, setIsLoading] = useState(true); // Nuevo estado para el indicador de carga
 
   useEffect(() => {
-    const logeado = onAuthStateChanged(
-      authInstance,
-      async (authenticatedUser) => {
-        const usuario_cache = await GetCache({ key: "usuario" });
-        authenticatedUser && usuario_cache
-          ? setUsuario(usuario_cache)
-          : setUsuario(null);
-        console.log("que es authenticatedUser: ", authenticatedUser);
-        console.log("setUsuario: ", usuario);
-      }
-    );
-    return () => logeado();
+    const unsubscribe = onAuthStateChanged(auth, async (authenticatedUser) => {
+      const usuario_cache = await GetCache({ key: "usuario" });
+      authenticatedUser && usuario_cache
+        ? setUsuario(usuario_cache)
+        : setUsuario(null);
+    });
+    return () => unsubscribe();
   }, []);
 
   useEffect(() => {
     setIsAuthenticated(usuario !== null);
   }, [usuario]);
 
-  //const usuario_cache =async()=>{}
-  const isLogin = async (onLogin) => {
-    console.log("esto recibe onLogin: ", onLogin);
-    if (onLogin) {
-      setIsAuthenticated(true);
-      setLoading(false);
-    }
-  };
-
-  const [showSignUp, setShowSignUp] = useState(false);
-
-  const handleLogin = () => {
-    setIsAuthenticated(true);
-  };
-
-  const handleLogout = () => {
-    setIsAuthenticated(false);
-  };
-
-  const handleBackToLogin = () => {
-    setShowSignUp(false);
-  };
-
-  const handleShowSignUp = () => {
-    setShowSignUp(true);
-  };
-
-  console.log("rol del usuario en mainstack: ", usuario);
-  console.log("loading: ", loading);
   return (
-    /* <NavigationContainer>
-      <SafeAreaView style={styles.container}>
-        {isAuthenticated ? <TabStack /> : <Login onLogin={isLogin} />}
-      </SafeAreaView>
-    </NavigationContainer> */
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#fff" />
       <NavigationContainer>
@@ -249,28 +319,10 @@ const MainStack = () => {
             />
           ) : (
             <Stack.Screen
-              name={showSignUp ? "Registrate" : "Login"}
-              options={{
-                headerShown: false,
-                cardStyle: { backgroundColor: "lightblue" },
-              }}
-            >
-              {(props) =>
-                showSignUp ? (
-                  <SignUp
-                    {...props}
-                    onLogin={isLogin}
-                    onBack={handleBackToLogin}
-                  />
-                ) : (
-                  <Login
-                    {...props}
-                    onLogin={handleLogin}
-                    onShowSignUp={handleShowSignUp}
-                  />
-                )
-              }
-            </Stack.Screen>
+              name="Authentication"
+              component={Login}
+              options={{ headerShown: false }}
+            />
           )}
         </Stack.Navigator>
       </NavigationContainer>
@@ -289,5 +341,35 @@ const styles = StyleSheet.create({
   account_text: {
     fontSize: 10,
   },
+  profileContainer: {
+    backgroundColor: "#0092d2",
+    height: 150,
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: -20,
+  },
+  imageContainer: {
+    marginRight: 20,
+    marginLeft: 10,
+  },
+  textContainer: {
+    flexDirection: "column",
+  },
+  profileImage: {
+    width: 60,
+    height: 60,
+    borderRadius: 50,
+  },
+  userName: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  userRole: {
+    fontSize: 13,
+    color: "#fff",
+    fontWeight: "300",
+  },
 });
+
 export default MainStack;

@@ -1,6 +1,7 @@
 import { View, Text, Image, StyleSheet } from "react-native";
 import React from "react";
 import { contexUser } from "../../fb/AuthenticatedUserProvider";
+import LogOut from "../componentes/LogOut";
 
 const Perfil = () => {
   const { usuario, setUsuario } = contexUser();
@@ -30,6 +31,7 @@ const Perfil = () => {
           {usuario.telefono || usuario.correo}
         </Text>
       </View>
+      <LogOut />
     </View>
   );
 };

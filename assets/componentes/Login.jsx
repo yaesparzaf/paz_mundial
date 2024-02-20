@@ -32,32 +32,11 @@ const Login = ({ onLogin, onShowSignUp }) => {
   const [haveDatos, setHaveDatos] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [userInfo, setUserInfo] = React.useState(null);
-  const [request, response, promtAsyn] = Google.useAuthRequest({
-    androidClientId:
-      "133476762148-48idlu4v6elrn8t14v1msb7gbrvka3cc.apps.googleusercontent.com",
-  });
 
   const getLocalUser = async () => {
     const data = await AsyncStorage.getItem("@user");
     if (!data) return null;
     return JSON.parse(data);
-  };
-
-  const getUserInfo = async (token) => {
-    if (!token) return;
-    try {
-      const response = await fetch(
-        "https://www.googleapis.com/userinfo/v2/me",
-        {
-          headers: { Authorization: "Bearer ${token}" },
-        }
-      );
-      const user = await request.json();
-      await AsyncStorage.setItem("@user", JSON.stringify(user));
-      setUserInfo(user);
-    } catch (e) {
-      console.log(e);
-    }
   };
 
   const toggleShowPassword = () => {

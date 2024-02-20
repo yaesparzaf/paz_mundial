@@ -77,21 +77,21 @@ const SignUp = ({ onBack }) => {
 
   return (
     <View style={styles.container}>
-      <Image source={require("../meditar1.jpg")} style={styles.gif} />
+      {/* <Image source={require("../meditar1.jpg")} style={styles.gif} /> */}
       {/* <Image source={require("../meditar2.png")} style={styles.gif} /> */}
-      {/* <Image source={require("../3.png")} style={styles.gif} /> */}
+      <Image source={require("../3.png")} style={styles.gif} />
       <View style={styles.formContainer}>
         <TextInput
           style={styles.input}
           placeholder="Nombre"
-          placeholderTextColor="#A9A9A9"
+          placeholderTextColor="#fff"
           value={nombre}
           onChangeText={setNombre}
         />
         <TextInput
           style={styles.input}
           placeholder="Email electrónico"
-          placeholderTextColor="#A9A9A9"
+          placeholderTextColor="#fff"
           keyboardType="email-address"
           value={email}
           onChangeText={setEmail}
@@ -99,7 +99,7 @@ const SignUp = ({ onBack }) => {
         <TextInput
           style={[styles.input, errorpassword && styles.errorInput]}
           placeholder="Contraseña"
-          placeholderTextColor="#A9A9A9"
+          placeholderTextColor="#fff"
           secureTextEntry={true}
           value={password}
           onChangeText={setPassword}
@@ -107,7 +107,7 @@ const SignUp = ({ onBack }) => {
         <TextInput
           style={[styles.input, errorpassword && styles.errorInput]}
           placeholder="Confirmar contraseña"
-          placeholderTextColor="#A9A9A9"
+          placeholderTextColor="#fff"
           secureTextEntry={true}
           value={confirmarpassword}
           onChangeText={(text) => {
@@ -121,7 +121,7 @@ const SignUp = ({ onBack }) => {
         <TextInput
           style={styles.input}
           placeholder="Número de teléfono"
-          placeholderTextColor="#A9A9A9"
+          placeholderTextColor="#fff"
           keyboardType="phone-pad"
           value={telefono}
           onChangeText={setTelefono}
@@ -145,7 +145,7 @@ const SignUp = ({ onBack }) => {
   );
 };
 //Diseño Paloma
-/* const styles = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     height: "100%",
     flex: 1,
@@ -222,7 +222,7 @@ const SignUp = ({ onBack }) => {
   errorInput: {
     borderColor: "red",
   },
-}); */
+});
 
 //Diseño Logo
 /* const styles = StyleSheet.create({
@@ -305,7 +305,7 @@ const SignUp = ({ onBack }) => {
 }); */
 
 //Diseño minimalist
-const styles = StyleSheet.create({
+/* const styles = StyleSheet.create({
   container: {
     height: "100%",
     flex: 1,
@@ -382,6 +382,6 @@ const styles = StyleSheet.create({
   errorInput: {
     borderColor: "red",
   },
-});
+}); */
 
 export default SignUp;
