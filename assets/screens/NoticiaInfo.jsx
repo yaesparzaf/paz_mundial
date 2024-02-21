@@ -1,85 +1,109 @@
-import { View, Text, SafeAreaView, StyleSheet, Image, ScrollView } from 'react-native'
-import React from 'react'
+import React from "react";
+import {
+  View,
+  Text,
+  SafeAreaView,
+  StyleSheet,
+  Image,
+  ScrollView,
+} from "react-native";
 
 const NoticiaInfo = ({ route }) => {
-    const { params } = route;
-    console.log(params.info)
-    const { align_asunto, align_texto, asunto, autor, fecha, imagen, texto, tipo_letra, titulo } = params?.info || {};
-    return (
-        <SafeAreaView style={styles.contenedor}>
-            <ScrollView>
-                <View style={styles.header_cont}>
-                    <Text style={styles.autor_publicacion}>{autor}</Text>
-                    
-                </View>
-                <View style={styles.info_cont}>
-                    <Text style={styles.titulo_publicacion}>{titulo}</Text>
-                    <Text style={[styles.asunto_publicacion,{textAlign:align_asunto, fontStyle:tipo_letra}]}>{asunto}</Text>
-                </View>
-                <View style={styles.texto_cont}>
-                    <Text style={[styles.texto_publicacion,{textAlign:align_texto}]}>{texto}</Text>
-                </View>
-                {imagen !== null && (
-                    <View style={styles.imagen_cont}>
-                        <Image source={{ uri: imagen }} style={styles.imagenPublicacion} />
-                    </View>
-                )}
-            </ScrollView>
-        </SafeAreaView>
-    )
-}
+  const { params } = route;
+  console.log(params.info);
+  const {
+    align_asunto,
+    align_texto,
+    asunto,
+    autor,
+    fecha,
+    imagen,
+    texto,
+    tipo_letra,
+    titulo,
+  } = params?.info || {};
+  return (
+    <SafeAreaView style={styles.container}>
+      <ScrollView>
+        <View style={styles.postContainer}>
+          <View style={styles.header}>
+            <Text style={styles.author}>{autor}</Text>
+            <Text style={styles.date}>
+              {fecha && fecha.toDate().toLocaleDateString()}
+            </Text>
+          </View>
+          <View style={styles.content}>
+            <Text style={styles.title}>{titulo}</Text>
+            <Text
+              style={[
+                styles.subject,
+                { textAlign: align_asunto, fontStyle: tipo_letra },
+              ]}
+            >
+              {asunto}
+            </Text>
+            <Text
+              style={[
+                styles.text,
+                { textAlign: align_texto, fontStyle: tipo_letra },
+              ]}
+            >
+              {texto}
+            </Text>
+            {imagen && <Image source={{ uri: imagen }} style={styles.image} />}
+          </View>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  );
+};
 
 const styles = StyleSheet.create({
-    contenedor: {
-        flex: 1,
-        backgroundColor: 'white'
-    },
-    header_cont: {
-        margin: 5,
-        flexDirection: 'row',
-        marginHorizontal: 15,
-        //backgroundColor:'green'
-    },
-    titulo_publicacion: {
-        fontSize: 20,
-        fontWeight: 'bold',
-    },
-    asunto_publicacion: {
-        fontSize: 18,
-    },
-    autor_publicacion: {
-        fontSize: 15,
-        fontWeight: 'bold',
-        marginBottom: 5,
-        marginRight: 10
-    },
-    texto_publicacion: {
-        fontSize: 16,
-        textAlign: 'justify',
-    },
-    info_cont: {
-        margin: 5,
-        marginHorizontal: 15,
-    },
-    texto_cont: {
-        marginHorizontal: 10,
-        marginHorizontal: 25,
-    },
-    imagen_cont: {
-        alignItems: 'center'
-    },
-    imagenPublicacion: {
-        width: '90%',
-        height: 500,
-        resizeMode: 'cover',
-        marginBottom: 10,
-        marginTop:20,
-    },
-    fechaTexto: {
-        fontSize: 12,
-        color: '#888',
-        marginTop: 2
-    },
-})
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+  },
+  postContainer: {
+    backgroundColor: "#fff",
+    borderBottomWidth: 1,
+    borderBottomColor: "#ddd",
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  author: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginRight: 10,
+  },
+  date: {
+    fontSize: 12,
+    color: "#888",
+  },
+  content: {},
+  title: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  subject: {
+    fontSize: 16,
+    marginBottom: 10,
+  },
+  text: {
+    fontSize: 16,
+    marginBottom: 10,
+  },
+  image: {
+    width: "100%",
+    height: 400,
+    borderRadius: 10,
+    marginBottom: 10,
+  },
+});
 
-export default NoticiaInfo
+export default NoticiaInfo;

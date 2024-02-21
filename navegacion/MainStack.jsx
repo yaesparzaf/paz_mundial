@@ -12,6 +12,7 @@ import {
   Text,
   SafeAreaView,
   StyleSheet,
+  StatusBar,
   ActivityIndicator,
 } from "react-native";
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
@@ -36,6 +37,7 @@ import MeditarEdit from "../assets/screens/MeditarEdit";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { auth } from "../fb/firebase-config";
 import Login from "../assets/componentes/Login";
+import SignUp from "../assets/componentes/SignUp";
 import { AuthenticatedUserContex } from "../fb/AuthenticatedUserProvider";
 import GetCache from "../assets/cache/GetCache";
 
@@ -150,7 +152,7 @@ function TabStack() {
       <Stack.Screen
         name="Perfil"
         component={Perfil}
-        options={{ headerStyle: { backgroundColor: "cyan" } }}
+        options={{ headerStyle: { backgroundColor: "white" } }}
       />
       <Stack.Screen name="Foro" component={Foro} />
       <Stack.Screen
@@ -170,6 +172,13 @@ function TabStack() {
         component={MeditarEdit}
         options={{ title: "Editar Videos" }}
       />
+      <Stack.Screen
+        name="Login"
+        component={Login}
+        options={{
+          headerShown: false,
+        }}
+      />
     </Stack.Navigator>
   );
 }
@@ -179,11 +188,13 @@ const MainStack = () => {
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const authInstance = getAuth();
+  const [isLoading, setIsLoading] = useState(true); // Nuevo estado para el indicador de carga
+
   useEffect(() => {
     const logeado = onAuthStateChanged(
       authInstance,
       async (authenticatedUser) => {
-        const usuario_cache = await GetCache({key: "usuario"});
+        const usuario_cache = await GetCache({ key: "usuario" });
         authenticatedUser && usuario_cache
           ? setUsuario(usuario_cache)
           : setUsuario(null);
@@ -206,14 +217,71 @@ const MainStack = () => {
       setLoading(false);
     }
   };
+
+  const [showSignUp, setShowSignUp] = useState(false);
+
+  const handleLogin = () => {
+    setIsAuthenticated(true);
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+  };
+
+  const handleBackToLogin = () => {
+    setShowSignUp(false);
+  };
+
+  const handleShowSignUp = () => {
+    setShowSignUp(true);
+  };
+
   console.log("rol del usuario en mainstack: ", usuario);
   console.log("loading: ", loading);
   return (
-    <NavigationContainer>
+    /* <NavigationContainer>
       <SafeAreaView style={styles.container}>
         {isAuthenticated ? <TabStack /> : <Login onLogin={isLogin} />}
       </SafeAreaView>
-    </NavigationContainer>
+    </NavigationContainer> */
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+      <NavigationContainer>
+        <Stack.Navigator>
+          {isAuthenticated ? (
+            <Stack.Screen
+              name="Tabs"
+              component={TabStack}
+              options={{ headerShown: false }}
+            />
+          ) : (
+            <Stack.Screen
+              name={showSignUp ? "Registrate" : "Login"}
+              options={{
+                headerShown: false,
+                cardStyle: { backgroundColor: "lightblue" },
+              }}
+            >
+              {(props) =>
+                showSignUp ? (
+                  <SignUp
+                    {...props}
+                    onLogin={isLogin}
+                    onBack={handleBackToLogin}
+                  />
+                ) : (
+                  <Login
+                    {...props}
+                    onLogin={handleLogin}
+                    onShowSignUp={handleShowSignUp}
+                  />
+                )
+              }
+            </Stack.Screen>
+          )}
+        </Stack.Navigator>
+      </NavigationContainer>
+    </SafeAreaView>
   );
 };
 
