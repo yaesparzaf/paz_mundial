@@ -76,132 +76,80 @@ function CustomDrawerContent(props) {
   );
 }
 
+function MyDrawer() {}
+
 function MyTabs() {
   const tam = Dimensions.get("window").width * 0.05;
-  const col = "#fff";
   return (
-    <Drawer.Navigator
+    <Tab.Navigator
       initialRouteName="Noticias"
       screenOptions={{
-        drawerActiveTintColor: "#fff",
-        drawerInactiveTintColor: "#000",
-
+        tabBarActiveTintColor: "#00adef",
+        tabBarInactiveTintColor: "gray",
         headerTitleStyle: {
-          fontSize: 24, // Ajusta el tamaño del texto del título
-          color: "#fff",
+          fontSize: 20, // Ajusta el tamaño del texto del título
+          color: "#000000",
           fontWeight: "bold",
         },
         headerStyle: {
-          backgroundColor: "#00ADEF", // Color de fondo de la barra de navegación superior
-          borderBottomLeftRadius: 40, // Agrega un radio de borde en la esquina inferior izquierda
-          borderBottomRightRadius: 40, // Agrega un radio de borde en la esquina inferior derecha
-          height: 80, // Ajusta la altura de la barra de navegación superior
-        },
-        drawerStyle: {
-          backgroundColor: "#00ADEF",
+          backgroundColor: "#ffffff", // Color de fondo de la barra de navegación superior
+          height: 60, // Ajusta la altura de la barra de navegación superior
         },
       }}
-      drawerContent={(props) => <CustomDrawerContent {...props} />}
     >
-      <Drawer.Screen
+      <Tab.Screen
         name="Perfil"
         component={Perfil}
         options={{
-          drawerLabelStyle: {
-            color: "#fff",
-            fontSize: 14,
-          },
-          drawerItemStyle: {
-            marginBottom: 2,
-            marginTop: 2,
-            borderRadius: 100,
-            backgroundColor: "#47C8FF",
-          },
-          drawerIcon: ({ color, size }) => (
-            <Ionicons name="person" size={tam} color={col} />
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="person" size={tam} color={color} />
           ),
+          headerShown: true,
         }}
       />
-      <Drawer.Screen
+      <Tab.Screen
         name="Noticias"
         component={Noticias}
         options={{
-          drawerLabelStyle: {
-            color: "#fff",
-            fontSize: 14,
-          },
-          drawerItemStyle: {
-            marginBottom: 2,
-            marginTop: 2,
-            borderRadius: 100,
-            backgroundColor: "#47C8FF",
-          },
-          drawerIcon: ({ color, size }) => (
-            <Ionicons name="newspaper-outline" size={tam} color={col} />
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="newspaper-outline" size={tam} color={color} />
           ),
+          headerShown: true,
         }}
       />
-      <Drawer.Screen
+      <Tab.Screen
         name="Comunidad"
         component={Comunidad}
         options={{
-          drawerLabelStyle: {
-            color: "#fff",
-            fontSize: 14,
-          },
-          drawerItemStyle: {
-            marginBottom: 2,
-            marginTop: 2,
-            borderRadius: 100,
-            backgroundColor: "#47C8FF",
-          },
-          drawerIcon: ({ color, size }) => (
+          tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons
               name="account-group"
               size={tam}
-              color={col}
+              color={color}
             />
           ),
+          headerShown: true,
         }}
       />
-      <Drawer.Screen
+      <Tab.Screen
         name="Entrenamiento"
         component={Entrenamiento}
         options={{
-          drawerLabelStyle: {
-            color: "#fff",
-            fontSize: 14,
-          },
-          drawerItemStyle: {
-            marginBottom: 2,
-            marginTop: 2,
-            borderRadius: 100,
-            backgroundColor: "#47C8FF",
-          },
-          drawerIcon: ({ color, size }) => (
+          tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons
               name="head-cog-outline"
               size={tam}
-              color={col}
+              color={color}
             />
           ),
+          headerShown: true,
         }}
       />
-      <Drawer.Screen
+      <Tab.Screen
         name="Meditar"
         component={Meditar}
         options={({ navigation }) => ({
-          drawerLabelStyle: {
-            color: "#fff",
-            fontSize: 14,
-          },
-          drawerItemStyle: {
-            marginBottom: 2,
-            marginTop: 2,
-            borderRadius: 100,
-            backgroundColor: "#47C8FF",
-          },
-          drawerIcon: ({ color, size }) => (
+          tabBarIcon: ({ color, size }) => (
             <TouchableOpacity
               onPress={() =>
                 navigation.reset({ routes: [{ name: "Meditar" }] })
@@ -210,32 +158,24 @@ function MyTabs() {
               <MaterialCommunityIcons
                 name="meditation"
                 size={tam}
-                color={col}
+                color={color}
               />
             </TouchableOpacity>
           ),
+          headerShown: true,
         })}
       />
-      <Drawer.Screen
+      <Tab.Screen
         name="Notificaciones"
         component={Notificaciones}
         options={{
-          drawerLabelStyle: {
-            color: "#fff",
-            fontSize: 14,
-          },
-          drawerItemStyle: {
-            marginBottom: 2,
-            marginTop: 2,
-            borderRadius: 100,
-            backgroundColor: "#47C8FF",
-          },
-          drawerIcon: ({ color, size }) => (
-            <Ionicons name="notifications" size={tam} color={col} />
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="notifications" size={tam} color={color} />
           ),
+          headerShown: true,
         }}
       />
-    </Drawer.Navigator>
+    </Tab.Navigator>
   );
 }
 
@@ -257,8 +197,18 @@ function TabStack() {
         name="MainTabs"
         component={MyTabs}
         options={{
+          title: "Por la paz mundial",
+          headerRight: () => (
+            <TouchableOpacity
+              onPress={() => navigation.navigate("Perfil")}
+              style={styles.account}
+            >
+              <MaterialIcons name="account-circle" size={30} color="black" />
+              <Text style={styles.account_text}>Mi cuenta</Text>
+            </TouchableOpacity>
+          ),
           headerStyle: { backgroundColor: "#fff" },
-          headerShown: false,
+          headerTitleStyle: { color: "#000", fontSize: 24, fontWeight: "bold" },
         }}
       />
       <Stack.Screen
