@@ -5,6 +5,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { auth } from "../fb/firebase-config";
 import Login from "../assets/componentes/Login";
+import SignUp from "../assets/componentes/SignUp";
 import { AuthenticatedUserContex } from "../fb/AuthenticatedUserProvider";
 import GetCache from "../assets/cache/GetCache";
 import MyDrawer from "./MyDrawer";
@@ -63,11 +64,6 @@ const MainStack = () => {
   };
 
   return (
-    /* <NavigationContainer>
-      <SafeAreaView style={styles.container}>
-        {isAuthenticated ? <TabStack /> : <Login onLogin={isLogin} />}
-      </SafeAreaView>
-    </NavigationContainer> */
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#fff" />
       <NavigationContainer>

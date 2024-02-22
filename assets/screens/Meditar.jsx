@@ -19,7 +19,7 @@ import { contexUser } from "../../fb/AuthenticatedUserProvider";
 
 const Meditar = () => {
   const { usuario } = contexUser();
-  const [ubicacion, setUbicacion] = useState(null);
+  const [ubicacion, setUbicacion] = useState(false);
   const [reload, setReload] = useState(false);
   const [contador, setContador] = useState();
 
@@ -51,7 +51,8 @@ const Meditar = () => {
   return (
     <>
       <Ubicacion getLocation={obtenerUbicacion} />
-      {ubicacion ? (
+      {console.log(ubicacion)}
+      {ubicacion !== null && ubicacion !== false ? (
         <SafeAreaView style={{ flex: 1 }}>
           <ScrollView>
             <View style={{ flex: 0.5 }}>
@@ -64,7 +65,7 @@ const Meditar = () => {
                 alignItems: "center",
               }}
             >
-              <Text>Personas meditando ahora:{contador} </Text>
+              <Text>Personas meditando ahora: {contador} </Text>
               <Map />
             </View>
           </ScrollView>
