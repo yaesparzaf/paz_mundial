@@ -7,7 +7,6 @@ const Input = () => {
 
   const handleSend = () => {
     // Lógica para enviar el texto
-    console.log("Texto enviado:", text);
   };
 
   return (
@@ -36,7 +35,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "flex-end",
     padding: 8,
-    backgroundColor:"#ffffff",
+    backgroundColor: "#ffffff",
   },
   input: {
     flex: 1,

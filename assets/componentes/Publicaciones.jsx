@@ -25,7 +25,7 @@ import OpcionesUD from "./OpcionesUD";
 import { contexUser } from "../../fb/AuthenticatedUserProvider";
 
 //import { LinearGradient } from 'expo-linear-gradient';
-const Publicaciones = ({datos_usuario}) => {
+const Publicaciones = ({ datos_usuario }) => {
   //const { usuario } = contexUser();
   const usuario = datos_usuario;
   const [loading, setLoading] = useState(true);
@@ -33,9 +33,8 @@ const Publicaciones = ({datos_usuario}) => {
   const [noticiaLeida, setNoticiaLeida] = useState();
 
   useEffect(() => {
-    console.log('contexto del usuario pasado: ', usuario);
     if (usuario) {
-      const q = query(collection(db, 'noticias'));
+      const q = query(collection(db, "noticias"));
       const subscripcion = onSnapshot(q, (snapshot) => {
         const newPublicacion = snapshot.docs.map((doc) => ({
           id: doc.id,
@@ -47,7 +46,6 @@ const Publicaciones = ({datos_usuario}) => {
       });
       return () => {
         subscripcion();
-        console.log('Suscripción limpiada');
       };
     } else {
       setLoading(false);
@@ -55,29 +53,37 @@ const Publicaciones = ({datos_usuario}) => {
   }, [usuario]);
 
   if (loading) {
-    return <ActivityIndicator size="large" color="#40E0D0" style={{ flex: 1, alignItems: 'center' }} />;
+    return (
+      <ActivityIndicator
+        size="large"
+        color="#40E0D0"
+        style={{ flex: 1, alignItems: "center" }}
+      />
+    );
   }
   return (
     <FlatList
       data={publicaciones}
       keyExtractor={(item) => item.id.toString()}
-      renderItem={({ item }) => <Info item={item} rol={usuario ? usuario.rol : ''} usuario_id={usuario ? usuario.id : ''}
-      />}
+      renderItem={({ item }) => (
+        <Info
+          item={item}
+          rol={usuario ? usuario.rol : ""}
+          usuario_id={usuario ? usuario.id : ""}
+        />
+      )}
     />
   );
 };
-
 
 const Info = ({ item, rol, usuario_id }) => {
   const [mostrarOpciones, setMostrarOpciones] = useState(false);
   const [nueva, setNueva] = useState();
   const navegacion = useNavigation();
   const fecha = item.fecha ? item.fecha.toDate() : null;
-  console.log('esto recibe info: ',usuario_id, rol);
   useEffect(() => {
     const NuevaNoticia = async () => {
       try {
-        console.log("usuario logeado recibido: ", usuario_id);
         const coleccionRef = collection(
           db,
           "usuarios",
@@ -91,9 +97,7 @@ const Info = ({ item, rol, usuario_id }) => {
           (doc) => doc.data().noticia_id === item.id
         );
         setNueva(!noticia_leida);
-      } catch (error) {
-        console.log("hubo un error en la solicitud", error);
-      }
+      } catch (error) {}
     };
     NuevaNoticia();
   }, [usuario_id, item.id]);
@@ -128,13 +132,11 @@ const Info = ({ item, rol, usuario_id }) => {
     //if(nueva)
     //setNueva(true);
     addLeida(info.id);
-    console.log(info);
     navegacion.navigate("NoticiaInfo", { info });
   };
   const toggleOpciones = () => {
     setMostrarOpciones(!mostrarOpciones);
   };
-  //console.log('nueva: ',nueva);
   return (
     usuario_id && (
       <View style={styles.publicacionContainer}>

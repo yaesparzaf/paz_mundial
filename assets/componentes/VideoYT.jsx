@@ -7,7 +7,6 @@ import { yt } from "../../fb/firebase-config";
 import PutCache from "../cache/PutCache";
 import GetCache from "../cache/GetCache";
 
-
 const VideoYT = React.memo(({ video }) => {
   const [videoInfo, setVideoInfo] = useState(null);
   const [videoId, setVideoId] = useState(video.video_id);
@@ -17,13 +16,11 @@ const VideoYT = React.memo(({ video }) => {
   useEffect(() => {
     const getVideo = async () => {
       if (videoId && videoId !== "") {
-        const videoEnCache = await GetCache({key: String(videoId)});
+        const videoEnCache = await GetCache({ key: String(videoId) });
         if (videoEnCache) {
-          //console.log("Esto se recibió de la caché:", videoEnCache);
           setVideoInfo(videoEnCache);
         } else {
           try {
-            console.log('entro a buscar a axios')
             const response = await axios.get(
               `https://www.googleapis.com/youtube/v3/videos?key=${yt}&part=snippet&id=${videoId}`
             );
@@ -31,10 +28,10 @@ const VideoYT = React.memo(({ video }) => {
               const newInfo = {
                 tittle: response.data.items[0].snippet.title,
                 url: `https://www.youtube.com/watch?v=${videoId}`,
-                categoryId:response.data.items[0].snippet.categoryId,
-              }
+                categoryId: response.data.items[0].snippet.categoryId,
+              };
               setVideoInfo(newInfo);
-              PutCache({key: String(videoId), datos:newInfo});
+              PutCache({ key: String(videoId), datos: newInfo });
             } else {
               console.error("No se encontró información del video.");
             }

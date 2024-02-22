@@ -24,7 +24,6 @@ const Ubicacion = ({ getLocation }) => {
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
-        console.log("Permisos no concedidos");
         return false;
       } else {
         const location = await getUserLocation();
@@ -53,12 +52,10 @@ const Ubicacion = ({ getLocation }) => {
         const docRef = doc(coleccionRef, usuario.id);
         const docEdit = await getDoc(docRef);
         if (docEdit.exists()) {
-          console.log("ya existe: ");
           await updateDoc(docRef, {
             latitud: location.coords.latitude,
             longitud: location.coords.longitude,
           });
-          console.log("se actualizo la ubicacion");
         } else {
           const meditandoRef = doc(db, "meditando", usuario.id);
           await setDoc(meditandoRef, {
@@ -66,9 +63,7 @@ const Ubicacion = ({ getLocation }) => {
             latitud: location.coords.latitude,
             longitud: location.coords.longitude,
           });
-          console.log(meditandoRef);
           if (meditandoRef) {
-            console.log('se añadio a "meditando"');
           }
         }
         //PutCache({key: 'ubicacion',datos: location_copy.coords});

@@ -1,9 +1,27 @@
-import React, { useCallback, useLayoutEffect, useState, useRef, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, KeyboardAvoidingView, } from "react-native";
-import { GiftedChat } from 'react-native-gifted-chat';
-import { collection, onSnapshot, query, orderBy, addDoc } from 'firebase/firestore';
-import { db } from '../../fb/firebase-config';
-import { contexUser } from '../../fb/AuthenticatedUserProvider';
+import React, {
+  useCallback,
+  useLayoutEffect,
+  useState,
+  useRef,
+  useEffect,
+} from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  KeyboardAvoidingView,
+} from "react-native";
+import { GiftedChat } from "react-native-gifted-chat";
+import {
+  collection,
+  onSnapshot,
+  query,
+  orderBy,
+  addDoc,
+} from "firebase/firestore";
+import { db } from "../../fb/firebase-config";
+import { contexUser } from "../../fb/AuthenticatedUserProvider";
 
 const Foro = ({ route }) => {
   const [messages, setMessages] = useState([]);
@@ -13,10 +31,9 @@ const Foro = ({ route }) => {
   const initialLoadRef = useRef(false);
 
   useEffect(() => {
-    //console.log(initialLoadRef+" "+initialLoadRef.current);
     if (!initialLoadRef.current) {
-      const CollectionMen = collection(db, 'foros', name_foro, 'Mensajes');
-      const q = query(CollectionMen, orderBy('fecha', 'desc'));
+      const CollectionMen = collection(db, "foros", name_foro, "Mensajes");
+      const q = query(CollectionMen, orderBy("fecha", "desc"));
       const unsubscribe = onSnapshot(q, (snapshot) => {
         setMessages(
           snapshot.docs.map((doc) => ({
@@ -37,18 +54,28 @@ const Foro = ({ route }) => {
     }
   }, [name_foro]);
 
-  const onSend = useCallback((newMessages = []) => {
-    setMessages((previousMessages) => GiftedChat.append(previousMessages, newMessages));
-    const { user, _id: msj_id, createdAt: fecha, text: mensaje } = newMessages[0];
-    const { name: autor, _id: autor_id } = user;
-    addDoc(collection(db, 'foros', name_foro, 'Mensajes'), {
-      autor,
-      autor_id,
-      fecha,
-      mensaje,
-      msj_id,
-    });
-  }, [name_foro]);
+  const onSend = useCallback(
+    (newMessages = []) => {
+      setMessages((previousMessages) =>
+        GiftedChat.append(previousMessages, newMessages)
+      );
+      const {
+        user,
+        _id: msj_id,
+        createdAt: fecha,
+        text: mensaje,
+      } = newMessages[0];
+      const { name: autor, _id: autor_id } = user;
+      addDoc(collection(db, "foros", name_foro, "Mensajes"), {
+        autor,
+        autor_id,
+        fecha,
+        mensaje,
+        msj_id,
+      });
+    },
+    [name_foro]
+  );
 
   return (
     <GiftedChat

@@ -32,11 +32,31 @@ const Login = ({ onLogin, onShowSignUp }) => {
   const [haveDatos, setHaveDatos] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [userInfo, setUserInfo] = React.useState(null);
+  const datos = {};
+  const [request, response, promtAsyn] = Google.useAuthRequest({
+    androidClientId:
+      "133476762148-48idlu4v6elrn8t14v1msb7gbrvka3cc.apps.googleusercontent.com",
+  });
 
   const getLocalUser = async () => {
     const data = await AsyncStorage.getItem("@user");
     if (!data) return null;
     return JSON.parse(data);
+  };
+
+  const getUserInfo = async (token) => {
+    if (!token) return;
+    try {
+      const response = await fetch(
+        "https://www.googleapis.com/userinfo/v2/me",
+        {
+          headers: { Authorization: "Bearer ${token}" },
+        }
+      );
+      const user = await request.json();
+      await AsyncStorage.setItem("@user", JSON.stringify(user));
+      setUserInfo(user);
+    } catch (e) {}
   };
 
   const toggleShowPassword = () => {
@@ -46,15 +66,22 @@ const Login = ({ onLogin, onShowSignUp }) => {
   useEffect(() => {
     const getContador = async () => {
       const total_personas = await Contador();
-      console.log("get contador: ", total_personas);
       setContador(total_personas);
     };
     getContador();
   }, [contador]);
 
+  useEffect(() => {
+    const aCache = async () => {
+      if (haveDatos) {
+        onLogin(true);
+      }
+    };
+    aCache();
+  }, [haveDatos]);
+
   const handleLogin = async () => {
     try {
-      console.log("entro en handlelogin");
       const response = await signInWithEmailAndPassword(
         authInstance,
         email,
@@ -62,22 +89,10 @@ const Login = ({ onLogin, onShowSignUp }) => {
       );
       const get_uid = response.user.uid;
       setUid(get_uid);
-      console.log("esto se envia a uid: ", get_uid);
-
-      // Espera a que se obtengan los datos del usuario después de iniciar sesión
       const datos = await DatosUsers({ usuario_id: get_uid });
-      console.log("esto llega de DatosUser: ", datos);
-      //if (datos) {
       setHaveDatos(true);
-
-      //}
-      console.log("haveDatos: ", haveDatos);
-      if (haveDatos) {
-        console.log("A CACHE: ", haveDatos);
-        await PutCache({ key: "usuario", datos: datos });
-        setUsuario(datos);
-        onLogin(true);
-      }
+      await PutCache({ key: "usuario", datos: datos });
+      setUsuario(datos);
     } catch (error) {
       console.error("Error al iniciar sesión:", error);
       Alert.alert("Error", "Usuario o contraseña incorrectos");

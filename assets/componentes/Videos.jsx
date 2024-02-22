@@ -19,7 +19,9 @@ const Videos = () => {
         const coleccionRef = collection(db, "meditar");
         const coleccionDocs = await getDocs(coleccionRef);
         if (!coleccionDocs.empty) {
-          const datosVideos = coleccionDocs.docs.map((documento) => documento.data());
+          const datosVideos = coleccionDocs.docs.map((documento) =>
+            documento.data()
+          );
           setVideosId(datosVideos);
         }
       } catch (error) {
@@ -32,7 +34,6 @@ const Videos = () => {
   }, []);
 
   const eliminarCache = async () => {
-    console.log("esto se envia: ", videosId[0]);
     await RemoveCache({ key: String(videosId[0].video_id) });
   };
   const mostrarCache = async () => {
@@ -50,14 +51,8 @@ const Videos = () => {
       ) : (
         usuario && (
           <View style={{ flex: 1, flexDirection: "column" }}>
-            <VideoYT video={videosId[0]}/>
-            <VideoYT video={videosId[1]}/>
-            <TouchableOpacity onPress={() => eliminarCache()}>
-              <Text>Eliminar cache</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => mostrarCache()}>
-              <Text>Mostrar cache</Text>
-            </TouchableOpacity>
+            <VideoYT video={videosId[0]} />
+            <VideoYT video={videosId[1]} />
           </View>
         )
       )}
