@@ -1,35 +1,40 @@
 import { View, Text, Image, StyleSheet } from "react-native";
 import React from "react";
 import { contexUser } from "../../fb/AuthenticatedUserProvider";
+import LogOut from "../componentes/LogOut";
 
 const Perfil = () => {
   const { usuario, setUsuario } = contexUser();
-  console.log(usuario);
 
   return (
     <View style={styles.container}>
-      <View style={styles.image_cont}>
-        <Image
-          source={{
-            uri: usuario.image,
-          }}
-          style={styles.profileImage}
-          resizeMode="cover"
-          onError={() => {
-            console.log("Error al cargar la imagen");
-          }}
-        />
-      </View>
-      <View style={styles.data_cont}>
-        <Text style={styles.data_title}>Nombre</Text>
-        <Text style={styles.data_info}>{usuario.nombre}</Text>
-        <Text style={styles.data_title}>Correo</Text>
-        <Text style={styles.data_info}>{usuario.email || usuario.correo}</Text>
-        <Text style={styles.data_title}>No. Telefono</Text>
-        <Text style={styles.data_info}>
-          {usuario.telefono || usuario.correo}
-        </Text>
-      </View>
+      {usuario !== null && (
+        <>
+          <View style={styles.image_cont}>
+            <Image
+              source={{
+                uri: usuario.image,
+              }}
+              style={styles.profileImage}
+              resizeMode="cover"
+              onError={() => {}}
+            />
+          </View>
+          <View style={styles.data_cont}>
+            <Text style={styles.data_title}>Nombre</Text>
+            <Text style={styles.data_info}>{usuario.nombre}</Text>
+            <Text style={styles.data_title}>Correo</Text>
+            <Text style={styles.data_info}>
+              {usuario.email || usuario.correo}
+            </Text>
+            <Text style={styles.data_title}>No. Telefono</Text>
+            <Text style={styles.data_info}>
+              {usuario.telefono || usuario.correo}
+            </Text>
+          </View>
+        </>
+      )}
+      <LogOut />
     </View>
   );
 };

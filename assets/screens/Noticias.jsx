@@ -11,7 +11,7 @@ const Noticias = () => {
   const [loading, setLoading] = useState(true);
 
   const mostrarCache = async () => {
-     GetAlls();
+    GetAlls();
   };
 
   useEffect(() => {
@@ -30,35 +30,11 @@ const Noticias = () => {
       <SafeAreaView style={{ flex: 1 }}>
         <Publicaciones datos_usuario={usuario} />
         {usuario.rol === "admin" && <FloatButton pantalla="N" />}
-        <TouchableOpacity onPress={() => RemoveCache({key:"usuario"})}>
-          <Text>eliminar cache user</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={mostrarCache}>
-          <Text>Mostrar cache user</Text>
-        </TouchableOpacity>
       </SafeAreaView>
     );
   }
 };
 
-/*
-return (
-    <>
-      {loading ? (
-        <SafeAreaView style={{ flex: 1 }}>
-          <View>
-            <Text>Cargando...</Text>
-          </View>
-        </SafeAreaView>
-      ) : (
-        <SafeAreaView style={{ flex: 1 }}>
-          <Publicaciones />
-          {usuario.rol === "admin" && <FloatButton pantalla="N" />}
-        </SafeAreaView>
-      )}
-    </>
-  );
-*/
 const styles = StyleSheet.create({
   scrollViewContent: {
     alignItems: "center",

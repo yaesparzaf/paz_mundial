@@ -10,7 +10,6 @@ import {
 
 const NoticiaInfo = ({ route }) => {
   const { params } = route;
-  console.log(params.info);
   const {
     align_asunto,
     align_texto,

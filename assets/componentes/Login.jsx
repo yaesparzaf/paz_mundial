@@ -56,9 +56,7 @@ const Login = ({ onLogin, onShowSignUp }) => {
       const user = await request.json();
       await AsyncStorage.setItem("@user", JSON.stringify(user));
       setUserInfo(user);
-    } catch (e) {
-      console.log(e);
-    }
+    } catch (e) {}
   };
 
   const toggleShowPassword = () => {
@@ -68,7 +66,6 @@ const Login = ({ onLogin, onShowSignUp }) => {
   useEffect(() => {
     const getContador = async () => {
       const total_personas = await Contador();
-      console.log("get contador: ", total_personas);
       setContador(total_personas);
     };
     getContador();
@@ -77,7 +74,6 @@ const Login = ({ onLogin, onShowSignUp }) => {
   useEffect(() => {
     const aCache = async () => {
       if (haveDatos) {
-        console.log("A CACHE: ", haveDatos, "con: ", datos);
         onLogin(true);
       }
     };
@@ -86,7 +82,6 @@ const Login = ({ onLogin, onShowSignUp }) => {
 
   const handleLogin = async () => {
     try {
-      console.log("entro en handlelogin");
       const response = await signInWithEmailAndPassword(
         authInstance,
         email,
@@ -94,14 +89,10 @@ const Login = ({ onLogin, onShowSignUp }) => {
       );
       const get_uid = response.user.uid;
       setUid(get_uid);
-      console.log("esto se envia a uid: ", get_uid);
       const datos = await DatosUsers({ usuario_id: get_uid });
-      console.log("esto llega de DatosUser: ", datos);
-      console.log("haveDatos1: ", haveDatos);
       setHaveDatos(true);
       await PutCache({ key: "usuario", datos: datos });
       setUsuario(datos);
-      console.log("haveDatos2: ", haveDatos);
     } catch (error) {
       console.error("Error al iniciar sesión:", error);
       Alert.alert("Error", "Usuario o contraseña incorrectos");

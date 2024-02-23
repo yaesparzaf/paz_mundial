@@ -14,7 +14,7 @@ import { useVideoContext } from "./MeditarContext";
 //import queryString from "query-string";
 
 const VideosEdit = () => {
-  const {videoACahe} =useVideoContext();
+  const { videoACahe } = useVideoContext();
   const navegacion = useNavigation();
   const [loading, setLoading] = useState(true);
   const [video1Url, setVideo1Url] = useState();
@@ -51,34 +51,28 @@ const VideosEdit = () => {
   };
 
   const onActualizar = async (video1_id, video2_id) => {
-   
     const datosUrl1 = getId(video1Url);
     const datosUrl2 = getId(video2Url);
     if (datosUrl1 !== null && datosUrl2 !== null) {
-      console.log("se obtuvieron los datos");
-      console.log(datosUrl1[1]);
-      console.log(datosUrl2[1]);
       //enviar datos a los archivos en firebase
       try {
         const video1_ref = doc(db, "meditar", video1_id);
         const video2_ref = doc(db, "meditar", video2_id);
-        await updateDoc(video1_ref,{
-          url:datosUrl1[0],
-          video_id: datosUrl1[1]
+        await updateDoc(video1_ref, {
+          url: datosUrl1[0],
+          video_id: datosUrl1[1],
         });
-        await updateDoc(video2_ref,{
-          url:datosUrl2[0],
-          video_id:datosUrl2[1]
+        await updateDoc(video2_ref, {
+          url: datosUrl2[0],
+          video_id: datosUrl2[1],
         });
-        console.log('se actualizaron los datos con exito');
-       // videoACahe(datosUrl1[1]);
+        // videoACahe(datosUrl1[1]);
         //videoACahe(datosUrl2[1]);
-        navegacion.navigate('Meditar');
+        navegacion.navigate("Meditar");
       } catch (error) {
         console.error("hubo un error al actualizar los enlaces. ", error);
       }
     }
-    //console.log('no se valido');
   };
 
   return (

@@ -4,20 +4,25 @@ import React from "react";
 import { useNavigation } from "@react-navigation/native";
 
 const ForosBtn = () => {
-  const foros=['PoderMental','Hipnosis'];
-  const navigacion =useNavigation();
+  const foros = ["PoderMental", "Hipnosis"];
+  const navigacion = useNavigation();
   const botonPresionado = (name_foro) => {
     // Acción al presionar el botón "Foro 1"
-    console.log('Botón '+name_foro+' presionado');
-    navigacion.navigate('Foro',{name_foro});
+    navigacion.navigate("Foro", { name_foro });
   };
   return (
     <View>
-      <TouchableOpacity style={styles.foros} onPress={() => botonPresionado(foros[0])}>
+      <TouchableOpacity
+        style={styles.foros}
+        onPress={() => botonPresionado(foros[0])}
+      >
         <Text style={styles.titulo_btn}>Poder mental</Text>
-        <Text style={{marginLeft:10,}}>Poderes mentales</Text>
+        <Text style={{ marginLeft: 10 }}>Poderes mentales</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.foros} onPress={() => botonPresionado(foros[1])}>
+      <TouchableOpacity
+        style={styles.foros}
+        onPress={() => botonPresionado(foros[1])}
+      >
         <Text style={styles.titulo_btn}>Hipnosis</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.foros} onPress={botonPresionado}>
@@ -41,7 +46,7 @@ const styles = StyleSheet.create({
     borderColor: "#00FFFF",
   },
   titulo_btn: {
-    marginLeft:10,
+    marginLeft: 10,
     fontSize: 16,
     fontWeight: "bold",
   },

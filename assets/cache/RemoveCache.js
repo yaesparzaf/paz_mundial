@@ -6,7 +6,6 @@ const RemoveCache = async ({ key }) => {
   if (key !== null) {
     try {
       await AsyncStorage.removeItem(key);
-      console.log("se elimino de cache");
     } catch (error) {
       console.error("no se pudo eliminar de cache");
     }
