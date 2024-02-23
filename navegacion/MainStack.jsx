@@ -1,11 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
-import { SafeAreaView, StyleSheet, StatusBar } from "react-native";
+import { SafeAreaView, StyleSheet, StatusBar, Image } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { auth } from "../fb/firebase-config";
 import Login from "../assets/componentes/Login";
-import SignUp from "../assets/componentes/SignUp";
 import { AuthenticatedUserContex } from "../fb/AuthenticatedUserProvider";
 import GetCache from "../assets/cache/GetCache";
 import MyDrawer from "./MyDrawer";
@@ -15,7 +14,6 @@ const Stack = createStackNavigator();
 
 const MainStack = () => {
   const { usuario, setUsuario } = useContext(AuthenticatedUserContex);
-  const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const authInstance = getAuth();
   const [isLoading, setIsLoading] = useState(true); // Nuevo estado para el indicador de carga
@@ -28,6 +26,7 @@ const MainStack = () => {
         authenticatedUser && usuario_cache
           ? setUsuario(usuario_cache)
           : setUsuario(null);
+        setIsLoading(false);
       }
     );
     return () => logeado();
@@ -41,7 +40,6 @@ const MainStack = () => {
   const isLogin = async (onLogin) => {
     if (onLogin) {
       setIsAuthenticated(true);
-      setLoading(false);
     }
   };
 
@@ -62,7 +60,16 @@ const MainStack = () => {
   const handleShowSignUp = () => {
     setShowSignUp(true);
   };
-
+  if (isLoading) {
+    return (
+      <SafeAreaView style={styles.loading_container}>
+        <Image
+          style={styles.loading}
+          source={require("../assets/splash.png")}
+        />
+      </SafeAreaView>
+    );
+  }
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#fff" />
@@ -108,6 +115,16 @@ const MainStack = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  loading_container: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    // backgroundColor:'red'
+  },
+  loading: {
+    width: "100%",
+    height: 700,
   },
 });
 

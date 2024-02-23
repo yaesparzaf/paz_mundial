@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
     margin: 20,
     right: 10,
     bottom: 20,
-    backgroundColor: "cyan",
+    backgroundColor: "#00ADEF",
   },
 });
 export default FloatButton;

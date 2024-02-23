@@ -13,7 +13,6 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import { FontAwesome } from "@expo/vector-icons";
 import ContadorAnimado from "./ContadorAnimado";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import Contador from "../../fb/Contador";
 import { contexUser } from "../../fb/AuthenticatedUserProvider";
 import DatosUsers from "../../fb/DatosUsers";
 import PutCache from "../cache/PutCache";
@@ -21,11 +20,12 @@ import GetAlls from "../cache/GetAlls";
 import Icon from "react-native-vector-icons/FontAwesome";
 import * as Google from "expo-auth-session/providers/google";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import useContador from "../../fb/useContador";
 
 const Login = ({ onLogin, onShowSignUp }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [contador, setContador] = useState(null);
+  const contador = useContador();
   const [uid, setUid] = useState();
   const authInstance = getAuth();
   const { usuario, setUsuario } = contexUser({});
@@ -63,13 +63,13 @@ const Login = ({ onLogin, onShowSignUp }) => {
     setShowPassword(!showPassword);
   };
 
-  useEffect(() => {
-    const getContador = async () => {
-      const total_personas = await Contador();
-      setContador(total_personas);
-    };
-    getContador();
-  }, [contador]);
+  // useEffect(() => {
+  //   const getContador = async () => {
+  //     const total_personas = await Contador();
+  //     setContador(total_personas);
+  //   };
+  //   getContador();
+  // }, [contador]);
 
   useEffect(() => {
     const aCache = async () => {
