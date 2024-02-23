@@ -13,7 +13,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import { FontAwesome } from "@expo/vector-icons";
 import ContadorAnimado from "./ContadorAnimado";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import Contador from "../../fb/Contador";
+import Contador from "../../fb/useContador";
 import { contexUser } from "../../fb/AuthenticatedUserProvider";
 import DatosUsers from "../../fb/DatosUsers";
 import PutCache from "../cache/PutCache";

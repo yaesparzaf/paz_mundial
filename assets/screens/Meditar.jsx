@@ -6,36 +6,34 @@ import {
   TouchableOpacity,
   Text,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import FloatButton from "../componentes/FloatButton";
 import Videos from "../componentes/Videos";
 import Ubicacion from "../componentes/Ubicacion";
 import Map from "../componentes/Map";
 import PermisosUbi from "./PermisosUbi";
-import Contador from "../../fb/Contador";
 import { useFocusEffect } from "@react-navigation/native";
 import OnMeditar from "../componentes/OnMeditar";
 import { contexUser } from "../../fb/AuthenticatedUserProvider";
+import useContador from "../../fb/useContador";
 
 const Meditar = () => {
   const { usuario } = contexUser();
   const [ubicacion, setUbicacion] = useState(null);
   const [reload, setReload] = useState(false);
-  const [contador, setContador] = useState();
+  const contador = useContador();
 
   useFocusEffect(
-    React.useCallback(() => {
+    useCallback(() => {
       const PersonasMeditando = async (estaMeditando) => {
         OnMeditar(estaMeditando, usuario.id);
-        const totalPersonas = await Contador();
-        setContador(totalPersonas);
       };
       PersonasMeditando(true);
 
       return () => {
         PersonasMeditando(false);
       };
-    }, [contador])
+    }, [])
   );
 
   const obtenerUbicacion = async (ubicacion) => {
