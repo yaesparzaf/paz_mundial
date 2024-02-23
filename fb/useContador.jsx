@@ -18,7 +18,7 @@ const useContador = () => {
     const unsubscribe = onSnapshot(consulta, actualizarContador);
 
     return () => unsubscribe();
-  }, [total]);
+  }, []);
 
   return total;
 };
