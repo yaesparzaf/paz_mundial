@@ -14,7 +14,6 @@ const Stack = createStackNavigator();
 
 const MainStack = () => {
   const { usuario, setUsuario } = useContext(AuthenticatedUserContex);
-  const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const authInstance = getAuth();
   const [isLoading, setIsLoading] = useState(true); // Nuevo estado para el indicador de carga
