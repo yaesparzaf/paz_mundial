@@ -1,11 +1,15 @@
-import { View, Text, Image, StyleSheet } from "react-native";
+import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import React from "react";
 import { contexUser } from "../../fb/AuthenticatedUserProvider";
 import LogOut from "../componentes/LogOut";
+import { useNavigation } from "@react-navigation/native";
 
 const Perfil = () => {
   const { usuario, setUsuario } = contexUser();
-
+  const navegacion = useNavigation();
+  const onNavegacion = ()=>{
+    navegacion.navigate("PerfilEdit");
+  }
   return (
     <View style={styles.container}>
       {usuario !== null && (
@@ -19,6 +23,11 @@ const Perfil = () => {
               resizeMode="cover"
               onError={() => {}}
             />
+          </View>
+          <View style={styles.boton_cont}>
+            <TouchableOpacity style={styles.boton_edit} onPress={onNavegacion}>
+              <Text>Editar</Text>
+            </TouchableOpacity>
           </View>
           <View style={styles.data_cont}>
             <Text style={styles.data_title}>Nombre</Text>
@@ -59,13 +68,20 @@ const styles = StyleSheet.create({
     height: 200,
     borderRadius: 75,
   },
+  boton_cont:{
+    alignContent:'flex-end',
+    alignItems:'flex-end',
+    justifyContent:'flex-end'
+  },  
+  boton_edit:{
+    width:'100%',
+    backgroundColor:'red'
+  },
   data_cont: {
     flex: 0.4,
     width: "90%",
     marginTop: 20,
     justifyContent: "space-around",
-
-    //backgroundColor:'red'
   },
   profileName: {
     fontSize: 20,

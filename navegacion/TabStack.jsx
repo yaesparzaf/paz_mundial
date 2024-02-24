@@ -10,6 +10,7 @@ import NoticiaInfo from "../assets/screens/NoticiaInfo";
 import MeditarEdit from "../assets/screens/MeditarEdit";
 import MyTabs from "./MyTabs";
 import Login from "../assets/componentes/Login";
+import PerfilEdit from "../assets/screens/PerfilEdit";
 
 const Stack = createStackNavigator();
 
@@ -19,9 +20,9 @@ const TabStack = () => {
     <Stack.Navigator
       screenOptions={{
         headerStyle: {
-          backgroundColor: "#00ADEF", // Color de fondo de la barra de navegación superior
+          backgroundColor: "#00ADEF",
         },
-        headerTintColor: "#fff", // Color del texto en la barra de navegación superior
+        headerTintColor: "#fff",
         headerTitleStyle: {
           fontWeight: "bold",
         },
@@ -41,15 +42,27 @@ const TabStack = () => {
               <Text style={styles.account_text}>Mi cuenta</Text>
             </TouchableOpacity>
           ),
-          headerStyle: { backgroundColor: "#fff" },
+          headerStyle: { backgroundColor: "#ffffff" },
           headerTitleStyle: { color: "#000", fontSize: 24, fontWeight: "bold" },
         }}
       />
-      <Stack.Screen
+      {/* <Stack.Screen
         name="Perfil"
         component={Perfil}
-        options={{ headerStyle: { backgroundColor: "white" } }}
+        options={{
+          title: "Mi Perfil", // Título del encabezado
+          headerStyle: { backgroundColor: "red" }, // Estilo del fondo del encabezado
+          headerTintColor: "white", // Color del texto del encabezado
+          headerTitleStyle: { fontWeight: "bold" }, // Estilo del título del encabezado
+        }}
+      /> */}
+
+      <Stack.Screen
+        name="PerfilEdit"
+        component={PerfilEdit}
+        options={{ title: "Editar Perfil" }}
       />
+
       <Stack.Screen name="Foro" component={Foro} />
       <Stack.Screen
         name="Publicar"

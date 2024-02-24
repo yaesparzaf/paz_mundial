@@ -11,6 +11,7 @@ import {
 import { db } from "../../fb/firebase-config";
 import PutCache from "../cache/PutCache";
 import { contexUser } from "../../fb/AuthenticatedUserProvider";
+import { Alert } from "react-native"; // Importar Alert desde react-native
 
 const Ubicacion = ({ getLocation }) => {
   const { usuario } = contexUser();
@@ -24,6 +25,10 @@ const Ubicacion = ({ getLocation }) => {
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
+        Alert.alert(
+          "Permisos necesarios",
+          "Para acceder a este apartado, necesitas activar los permisos de ubicación."
+        );
         return false;
       } else {
         const location = await getUserLocation();
@@ -31,47 +36,52 @@ const Ubicacion = ({ getLocation }) => {
         if (getLocation) getLocation(location);
       }
     } catch (error) {
-      console.error("Error al solicitar permisos:", error);
+      Alert.alert("Error", "No se pudieron obtener los permisos de ubicación");
     }
   }
 
   async function getUserLocation() {
     try {
       const location = await Location.getCurrentPositionAsync({});
-      // const location = {
-      //   coords: {
-      //     latitude: 19.6807101,
-      //     longitude: -101.1856651,
-      //   },
-      // };
+      console.log(location);
+      /* const location = {
+        coords: {
+          latitude: 19.6807101,
+          longitude: -101.1856651,
+        },
+      }; */
       const location_copy = location;
-      
-      const coleccionRef = collection(db, "meditando");
-      const docRef = doc(coleccionRef, usuario.id);
-      const docEdit = await getDoc(docRef);
-      
-      if (docEdit.exists()) {
-        await updateDoc(docRef, {
-          latitud: location.coords.latitude,
-          longitud: location.coords.longitude,
-        });
-      } else {
-        const meditandoRef = doc(db, "meditando", usuario.id);
-        await setDoc(meditandoRef, {
-          id: usuario.id,
-          latitud: location.coords.latitude,
-          longitud: location.coords.longitude,
-        });
-        if (meditandoRef) {
-          // Do something
+      try {
+        const coleccionRef = collection(db, "meditando");
+        const docRef = doc(coleccionRef, usuario.id);
+        const docEdit = await getDoc(docRef);
+        if (docEdit.exists()) {
+          await updateDoc(docRef, {
+            latitud: location.coords.latitude,
+            longitud: location.coords.longitude,
+          });
+        } else {
+          const meditandoRef = doc(db, "meditando", usuario.id);
+          await setDoc(meditandoRef, {
+            id: usuario.id,
+            latitud: location.coords.latitude,
+            longitud: location.coords.longitude,
+          });
+          if (meditandoRef) {
+          }
         }
+        //PutCache({key: 'ubicacion',datos: location_copy.coords});
+      } catch (error) {
+        Alert.alert("Error", "Hubo un error al añadir a la colección");
       }
-      //PutCache({key: 'ubicacion',datos: location_copy.coords});
       return true;
     } catch (error) {
-      console.error("Error al obtener la ubicación o al añadir a la colección:", error);
+      Alert.alert(
+        "Oops, algo falta...",
+        "Para sumergirte en la meditación, necesitamos acceso a tu ubicación. Actívalos para comenzar tu viaje hacia la paz interior."
+      );
     }
   }
-}  
+};
 
 export default Ubicacion;

@@ -67,6 +67,8 @@ const MyDrawer = () => {
             marginTop: 2,
             borderRadius: 100,
           },
+          headerTitle:"Perfil",
+          headerTitleStyle:{color:"#000000",fontWeight:'bold'},
           drawerIcon: ({ color, size }) => (
             <Ionicons name="person" size={tam} color={col} />
           ),

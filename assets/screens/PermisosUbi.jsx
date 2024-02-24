@@ -1,13 +1,13 @@
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import React, { useEffect, useState } from "react";
 
-const PermisosUbi = ({getUbi}) => {
-    const [getUbicacion,setGetUbicacion] =useState(false);
+const PermisosUbi = ({ getUbi }) => {
+  const [getUbicacion, setGetUbicacion] = useState(false);
 
-    const onGetUbi = () =>{
-        setGetUbicacion(true);
-        getUbi(true);
-    }
+  const onGetUbi = () => {
+    setGetUbicacion(true);
+    getUbi(true);
+  };
   return (
     <View style={styles.cont}>
       <View>
@@ -19,9 +19,7 @@ const PermisosUbi = ({getUbi}) => {
           con tu meditación
         </Text>
       </View>
-      <TouchableOpacity style={styles.permisos_btn}
-        onPress={()=> onGetUbi()}
-      >
+      <TouchableOpacity style={styles.permisos_btn} onPress={() => onGetUbi()}>
         <Text>Activar ubicación</Text>
       </TouchableOpacity>
     </View>
@@ -30,34 +28,34 @@ const PermisosUbi = ({getUbi}) => {
 
 const styles = StyleSheet.create({
   cont: {
-    flex:0.5,
-    alignItems:'center',
+    flex: 0.5,
+    alignItems: "center",
     justifyContent: "space-around",
     //backgroundColor:'yellow',
-    marginBottom:70
+    marginBottom: 70,
   },
-  leyenda_cont:{
-    margin:10,
+  leyenda_cont: {
+    margin: 10,
     //backgroundColor:'red'
   },
-  leyenda_text:{
-    fontSize:18,
-    textAlign:'center'
-  },    
+  leyenda_text: {
+    fontSize: 18,
+    textAlign: "center",
+  },
   permisos_btn: {
-    alignItems:'center',
-    justifyContent:'center',
-    width:200,
-    height:50,
-    borderRadius:20,
-    borderWidth:1,
-    borderColor:'#00FFFF',
+    alignItems: "center",
+    justifyContent: "center",
+    width: 200,
+    height: 50,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "#00ADEF",
     backgroundColor: "white",
   },
-  titulo:{
-    fontSize:25,
-    fontWeight:'bold'
-  }
+  titulo: {
+    fontSize: 25,
+    fontWeight: "bold",
+  },
 });
 
 export default PermisosUbi;
