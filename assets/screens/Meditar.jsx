@@ -49,11 +49,14 @@ const Meditar = () => {
       setReload(!reload);
     }
   };
-  if (!ubicacion) {
+  if (ubicacion) {
     return (
       <SafeAreaView style={styles.loading_container}>
         <Ubicacion getLocation={obtenerUbicacion} />
-        <Image style={styles.loading} source={require("../loading.gif")} />
+        <Image
+          style={styles.loading}
+          source={require("../loadingnaranja.gif")}
+        />
       </SafeAreaView>
     );
   } else if (isLoading) {
@@ -77,7 +80,7 @@ const Meditar = () => {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={styles.container}>
       <ScrollView>
         <View style={{ flex: 0.5 }}>
           <Videos />
@@ -100,17 +103,18 @@ const Meditar = () => {
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: "#000",
     flex: 1,
   },
   loading_container: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    // backgroundColor:'red'
+    backgroundColor: "#fff",
   },
   loading: {
-    width: 200,
-    height: 200,
+    width: 150,
+    height: 150,
   },
 });
 

@@ -56,7 +56,7 @@ const Publicaciones = ({ datos_usuario }) => {
     return (
       <ActivityIndicator
         size="large"
-        color="#40E0D0"
+        color="#1bd6c3"
         style={{ flex: 1, alignItems: "center" }}
       />
     );
@@ -146,13 +146,12 @@ const Info = ({ item, rol, usuario_id }) => {
             <Text style={styles.fechaTexto}>{FormatoFecha(fecha)}</Text>
           )}
           {nueva && (
-            <MaterialIcons name="fiber-new" size={24} color="red" />
-            // <Entypo name="new" size={24} color="red" />
+            <MaterialIcons name="fiber-new" size={24} color="#00ADEF" />
           )}
           <View style={styles.menu_publicacion}>
             {rol === "admin" && (
               <TouchableOpacity activeOpacity={1.0} onPress={toggleOpciones}>
-                <Entypo name="dots-three-vertical" size={18} color="black" />
+                <Entypo name="dots-three-vertical" size={15} color="black" />
               </TouchableOpacity>
             )}
           </View>
@@ -192,8 +191,8 @@ const styles = StyleSheet.create({
     //height:500,
     padding: 10,
     borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
-    backgroundColor: "white",
+    borderBottomColor: "#00abef42",
+    backgroundColor: "#fff",
   },
   skeletonItem: {
     marginBottom: 10,

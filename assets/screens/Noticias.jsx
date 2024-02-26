@@ -5,6 +5,7 @@ import FloatButton from "../componentes/FloatButton";
 import Publicaciones from "../componentes/Publicaciones";
 import { contexUser } from "../../fb/AuthenticatedUserProvider";
 import RemoveCache from "../cache/RemoveCache";
+import { style } from "deprecated-react-native-prop-types/DeprecatedViewPropTypes";
 
 const Noticias = () => {
   const { usuario } = contexUser();
@@ -27,7 +28,7 @@ const Noticias = () => {
     );
   } else {
     return (
-      <SafeAreaView style={{ flex: 1 }}>
+      <SafeAreaView>
         <Publicaciones datos_usuario={usuario} />
         {usuario.rol === "admin" && <FloatButton pantalla="N" />}
       </SafeAreaView>

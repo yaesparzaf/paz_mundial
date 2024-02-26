@@ -20,14 +20,16 @@ const MyDrawer = () => {
       screenOptions={{
         drawerPosition: "right",
         headerLeft: false,
-        drawerActiveBackgroundColor: "#00adef",
-        drawerInactiveBackgroundColor: "#000000",
+        drawerActiveBackgroundColor: "#1059B8",
+        drawerInactiveBackgroundColor: "#5FA0FE",
+        overlayColor: "#00ADEF99",
         headerTitleStyle: {
           fontSize: 24, // Ajusta el tamaño del texto del título
           color: "#fff",
           fontWeight: "bold",
         },
         drawerStyle: {
+          width: "75%",
           backgroundColor: "#ffffff",
         },
       }}
@@ -40,7 +42,7 @@ const MyDrawer = () => {
           drawerPosition: "right",
           headerShown: false,
           drawerLabelStyle: {
-            color: "#fff",
+            color: "#ffffff",
             fontSize: 14,
           },
           drawerItemStyle: {
