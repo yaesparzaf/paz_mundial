@@ -9,8 +9,11 @@ import {
 } from "@react-navigation/drawer";
 import TabStack from "./TabStack";
 import CustomDrawerContent from "./CustomDrawerContent";
+import { createStackNavigator } from "@react-navigation/stack";
+import PerfilEdit from "../assets/screens/PerfilEdit";
 
 const Drawer = createDrawerNavigator();
+const Stack = createStackNavigator();
 
 const MyDrawer = () => {
   const tam = Dimensions.get("window").width * 0.05;
@@ -20,16 +23,14 @@ const MyDrawer = () => {
       screenOptions={{
         drawerPosition: "right",
         headerLeft: false,
-        drawerActiveBackgroundColor: "#0092d2",
-        drawerInactiveBackgroundColor: "#18b6ef",
+        drawerActiveBackgroundColor: "#00adef",
+        drawerInactiveBackgroundColor: "#000000",
         headerTitleStyle: {
           fontSize: 24, // Ajusta el tamaño del texto del título
           color: "#fff",
           fontWeight: "bold",
         },
         drawerStyle: {
-          marginTop: "100",
-          width: "75%",
           backgroundColor: "#ffffff",
         },
       }}
@@ -42,7 +43,7 @@ const MyDrawer = () => {
           drawerPosition: "right",
           headerShown: false,
           drawerLabelStyle: {
-            color: "#ffffff",
+            color: "#fff",
             fontSize: 14,
           },
           drawerItemStyle: {
@@ -56,8 +57,8 @@ const MyDrawer = () => {
         }}
       />
       <Drawer.Screen
-        name="Perfil"
-        component={Perfil}
+        name=" Mi Perfil"
+        component={PerfilStack}
         options={{
           drawerPosition: "right",
           drawerLabelStyle: {
@@ -69,12 +70,29 @@ const MyDrawer = () => {
             marginTop: 2,
             borderRadius: 100,
           },
-          drawerIcon: ({ color, size }) => (
+          headerShown: false,
+          headerTitle: "Perfil",
+          headerTitleStyle: { color: "#000000", fontWeight: "bold" },
+          drawerIcon: ({ size, color }) => (
             <Ionicons name="person" size={tam} color={col} />
           ),
         }}
       />
     </Drawer.Navigator>
+  );
+};
+
+const PerfilStack = () => {
+  //const navigation = useNavigation();
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="Perfil" component={Perfil} />
+      <Stack.Screen
+        name="PerfilEdit"
+        component={PerfilEdit}
+        options={{ title: "Editar Perfil" }}
+      />
+    </Stack.Navigator>
   );
 };
 
