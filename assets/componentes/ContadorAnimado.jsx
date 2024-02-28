@@ -19,7 +19,7 @@ const ContadorAnimado = ({ numero }) => {
 
   return (
     <View>
-      <Text style={{ fontSize: 18, fontWeight: "bold", color: "#8FD9A1" }}>
+      <Text style={{ fontSize: 18, fontWeight: "bold", color: "#00adef" }}>
         {contador}
       </Text>
     </View>

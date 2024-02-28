@@ -20,10 +20,7 @@ const CustomDrawerContent = (props) => {
   return (
     <DrawerContentScrollView {...props}>
       {usuario !== null && (
-        <ImageBackground
-          source={require("../assets/FondoDrawer.jpg")}
-          style={styles.profileContainer}
-        >
+        <ImageBackground style={styles.profileContainer}>
           <View style={styles.imageContainer}>
             <Image
               source={{
@@ -43,20 +40,21 @@ const CustomDrawerContent = (props) => {
         </ImageBackground>
       )}
       <DrawerItemList {...props} />
-      <ImageBackground
+      {/*       <ImageBackground
         source={require("../assets/Chakras1.png")}
         style={styles.drawerBackground}
-      ></ImageBackground>
+      ></ImageBackground> */}
     </DrawerContentScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   profileContainer: {
-    height: 150,
+    height: 160,
     flexDirection: "row",
     alignItems: "center",
-    marginVertical: -20,
+    marginVertical: -30,
+    backgroundColor: "#00adef",
   },
 
   imageContainer: {

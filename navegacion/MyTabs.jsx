@@ -36,6 +36,8 @@ const MyTabs = () => {
             <Ionicons name="newspaper-outline" size={tam} color={color} />
           ),
           headerShown: true,
+          headerTitleAlign: "center", // Centra el título
+          headerTitleStyle: { fontSize: 22, fontWeight: "bold" }, // Ajusta el tamaño del título
         }}
       />
       <Tab.Screen

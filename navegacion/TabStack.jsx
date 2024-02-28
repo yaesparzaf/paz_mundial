@@ -42,7 +42,12 @@ const TabStack = () => {
             </TouchableOpacity>
           ),
           headerStyle: { backgroundColor: "#fff" },
-          headerTitleStyle: { color: "#000", fontSize: 24, fontWeight: "bold" },
+          headerTitleStyle: {
+            color: "#000",
+            fontSize: 24,
+            fontWeight: "bold",
+          },
+          headerTitleAlign: "center",
         }}
       />
       <Stack.Screen

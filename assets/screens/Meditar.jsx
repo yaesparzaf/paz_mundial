@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Text,
   StyleSheet,
+  ImageBackground,
 } from "react-native";
 import React, { useCallback, useState } from "react";
 import FloatButton from "../componentes/FloatButton";
@@ -19,6 +20,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import OnMeditar from "../componentes/OnMeditar";
 import { contexUser } from "../../fb/AuthenticatedUserProvider";
 import useContador from "../../fb/useContador";
+import ContadorAnimado from "../componentes/ContadorAnimado";
 
 const Meditar = () => {
   const { usuario } = contexUser();
@@ -49,14 +51,11 @@ const Meditar = () => {
       setReload(!reload);
     }
   };
-  if (ubicacion) {
+  if (!ubicacion) {
     return (
       <SafeAreaView style={styles.loading_container}>
         <Ubicacion getLocation={obtenerUbicacion} />
-        <Image
-          style={styles.loading}
-          source={require("../loadingnaranja.gif")}
-        />
+        <Image style={styles.loading} source={require("../loading.gif")} />
       </SafeAreaView>
     );
   } else if (isLoading) {
@@ -90,9 +89,20 @@ const Meditar = () => {
             flex: 1,
             justifyContent: "center",
             alignItems: "center",
+            backgroundColor: "#F7FFFE",
           }}
         >
-          <Text>Personas meditando ahora: {contador} </Text>
+          <Image
+            //source={require("../meditarplanta.png")}
+            source={require("../meditar.gif")}
+            //source={require("../meditar1.gif")}
+            style={{ width: "100%", height: 250 }}
+            resizeMode="cover"
+          />
+          <View style={styles.textContainer}>
+            <Text style={styles.titulo}>Personas meditando ahora:</Text>
+            <ContadorAnimado numero={contador} />
+          </View>
           <Map />
         </View>
       </ScrollView>
@@ -103,7 +113,7 @@ const Meditar = () => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#000",
+    backgroundColor: "#F7FFFE",
     flex: 1,
   },
   loading_container: {
@@ -115,6 +125,29 @@ const styles = StyleSheet.create({
   loading: {
     width: 150,
     height: 150,
+  },
+  drawerBackground: {
+    marginTop: 200,
+    height: 250,
+    flex: 1,
+    resizeMode: "center",
+  },
+  profileImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+  },
+  textContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  titulo: {
+    fontSize: 18,
+    fontWeight: "bold",
+    padding: 10,
+    marginRight: 1,
+    color: "#000",
   },
 });
 

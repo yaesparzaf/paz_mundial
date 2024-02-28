@@ -6,6 +6,8 @@ import { db } from "../../fb/firebase-config";
 import RemoveCache from "../cache/RemoveCache";
 import GetAlls from "../cache/GetAlls";
 import { contexUser } from "../../fb/AuthenticatedUserProvider";
+import { Skeleton } from "moti/skeleton";
+
 //import OnMeditar from "../../fb/OnMeditar";
 
 const Videos = () => {
@@ -43,14 +45,37 @@ const Videos = () => {
   return (
     <View style={{ flex: 1 }}>
       {loading ? (
-        <ActivityIndicator
-          size="large"
-          color="#40E0D0"
-          style={{ flex: 1, alignItems: "center" }}
-        />
+        <View>
+          <View
+            style={{
+              alignItems: "center",
+              flexDirection: "column",
+              marginBottom: 25,
+            }}
+          >
+            <Skeleton width={"90%"} height={212} colorMode="ligth" />
+          </View>
+          <View
+            style={{
+              alignItems: "center",
+              flexDirection: "column",
+              marginTop: 25,
+              marginBottom: 25,
+            }}
+          >
+            <Skeleton width={"90%"} height={212} colorMode="ligth" />
+          </View>
+        </View>
       ) : (
         usuario && (
-          <View style={{ flex: 1, flexDirection: "column" }}>
+          <View
+            style={{
+              flex: 1,
+              flexDirection: "column",
+              height: 500,
+              backgroundColor: "#F7FFFE",
+            }}
+          >
             <VideoYT video={videosId[0]} />
             <VideoYT video={videosId[1]} />
           </View>
