@@ -13,7 +13,7 @@ const MyTabs = () => {
   const tam = Dimensions.get("window").width * 0.05;
   return (
     <Tab.Navigator
-      initialRouteName="Noticias"
+      //initialRouteName="Noticias"
       screenOptions={{
         tabBarActiveTintColor: "#00adef",
         tabBarInactiveTintColor: "gray",
@@ -23,8 +23,8 @@ const MyTabs = () => {
           fontWeight: "bold",
         },
         headerStyle: {
-          backgroundColor: "#ffffff", // Color de fondo de la barra de navegación superior
-          height: 60, // Ajusta la altura de la barra de navegación superior
+          backgroundColor: "#ffffff",
+          height: 60,
         },
       }}
     >

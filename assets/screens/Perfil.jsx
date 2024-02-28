@@ -3,13 +3,18 @@ import React from "react";
 import { contexUser } from "../../fb/AuthenticatedUserProvider";
 import LogOut from "../componentes/LogOut";
 import { useNavigation } from "@react-navigation/native";
+import GetAlls from "../cache/GetAlls";
 
 const Perfil = () => {
   const { usuario, setUsuario } = contexUser();
   const navegacion = useNavigation();
-  const onNavegacion = ()=>{
+  const onNavegacion = () => {
     navegacion.navigate("PerfilEdit");
-  }
+  };
+
+  const mostrarCache = async () => {
+    await GetAlls();
+  };
   return (
     <View style={styles.container}>
       {usuario !== null && (
@@ -43,6 +48,9 @@ const Perfil = () => {
           </View>
         </>
       )}
+      <TouchableOpacity onPress={mostrarCache}>
+        <Text>mostrar cache</Text>
+      </TouchableOpacity>
       <LogOut />
     </View>
   );
@@ -68,14 +76,14 @@ const styles = StyleSheet.create({
     height: 200,
     borderRadius: 75,
   },
-  boton_cont:{
-    alignContent:'flex-end',
-    alignItems:'flex-end',
-    justifyContent:'flex-end'
-  },  
-  boton_edit:{
-    width:'100%',
-    backgroundColor:'red'
+  boton_cont: {
+    alignContent: "flex-end",
+    alignItems: "flex-end",
+    justifyContent: "flex-end",
+  },
+  boton_edit: {
+    width: "100%",
+    backgroundColor: "red",
   },
   data_cont: {
     flex: 0.4,

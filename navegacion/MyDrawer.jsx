@@ -9,8 +9,11 @@ import {
 } from "@react-navigation/drawer";
 import TabStack from "./TabStack";
 import CustomDrawerContent from "./CustomDrawerContent";
+import { createStackNavigator } from "@react-navigation/stack";
+import PerfilEdit from "../assets/screens/PerfilEdit";
 
 const Drawer = createDrawerNavigator();
+const Stack = createStackNavigator();
 
 const MyDrawer = () => {
   const tam = Dimensions.get("window").width * 0.05;
@@ -54,8 +57,8 @@ const MyDrawer = () => {
         }}
       />
       <Drawer.Screen
-        name="Perfil"
-        component={Perfil}
+        name=" Mi Perfil"
+        component={PerfilStack}
         options={{
           drawerPosition: "right",
           drawerLabelStyle: {
@@ -67,14 +70,29 @@ const MyDrawer = () => {
             marginTop: 2,
             borderRadius: 100,
           },
-          headerTitle:"Perfil",
-          headerTitleStyle:{color:"#000000",fontWeight:'bold'},
-          drawerIcon: ({ color, size }) => (
+          headerShown: false,
+          headerTitle: "Perfil",
+          headerTitleStyle: { color: "#000000", fontWeight: "bold" },
+          drawerIcon: ({ size, color }) => (
             <Ionicons name="person" size={tam} color={col} />
           ),
         }}
       />
     </Drawer.Navigator>
+  );
+};
+
+const PerfilStack = () => {
+  //const navigation = useNavigation();
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="Perfil" component={Perfil} />
+      <Stack.Screen
+        name="PerfilEdit"
+        component={PerfilEdit}
+        options={{ title: "Editar Perfil" }}
+      />
+    </Stack.Navigator>
   );
 };
 

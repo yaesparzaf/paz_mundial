@@ -1,12 +1,13 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import { View, Text } from "react-native";
+import React from "react";
+import EditarPerfil from "../componentes/EditarPerfil";
 
 const PerfilEdit = () => {
   return (
     <View>
-      <Text>PerfilEdit</Text>
+      <EditarPerfil />
     </View>
-  )
-}
+  );
+};
 
-export default PerfilEdit
+export default PerfilEdit;

@@ -57,12 +57,6 @@ const TabStack = () => {
         }}
       /> */}
 
-      <Stack.Screen
-        name="PerfilEdit"
-        component={PerfilEdit}
-        options={{ title: "Editar Perfil" }}
-      />
-
       <Stack.Screen name="Foro" component={Foro} />
       <Stack.Screen
         name="Publicar"
