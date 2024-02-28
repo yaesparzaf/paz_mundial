@@ -6,9 +6,7 @@ import {
   StyleSheet,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { db } from "../../fb/firebase-config";
 import { contexUser } from "../../fb/AuthenticatedUserProvider";
-import DatosUsers from "../../fb/DatosUsers";
 import ActualizarDatos from "../../fb/ActualizarDatos";
 import { useNavigation } from "@react-navigation/native";
 import PutCache from "../cache/PutCache";

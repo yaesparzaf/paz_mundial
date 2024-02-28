@@ -12,9 +12,6 @@ const Perfil = () => {
     navegacion.navigate("PerfilEdit");
   };
 
-  const mostrarCache = async () => {
-    await GetAlls();
-  };
   return (
     <View style={styles.container}>
       {usuario !== null && (
@@ -48,9 +45,6 @@ const Perfil = () => {
           </View>
         </>
       )}
-      <TouchableOpacity onPress={mostrarCache}>
-        <Text>mostrar cache</Text>
-      </TouchableOpacity>
       <LogOut />
     </View>
   );
