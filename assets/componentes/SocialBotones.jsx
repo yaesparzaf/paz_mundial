@@ -22,15 +22,7 @@ const SocialBotones = (nombre) => {
       }
     } catch (error) {}
   };
-  /*const openYoutube = async () =>{
-        const AppYTUrl ='vnd.youtube://channel/UCCHANNELID';
-        const WebYTUrl ='';
-        try{
 
-        }catch(error){
-
-        }
-    };*/
   return (
     <View style={styles.cont_rs}>
       {/*<Text style={styles.titulo}>Redes Sociales</Text>*/}

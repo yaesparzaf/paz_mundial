@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Text,
   StyleSheet,
+  ImageBackground,
 } from "react-native";
 import React, { useCallback, useState } from "react";
 import FloatButton from "../componentes/FloatButton";
@@ -19,6 +20,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import OnMeditar from "../componentes/OnMeditar";
 import { contexUser } from "../../fb/AuthenticatedUserProvider";
 import useContador from "../../fb/useContador";
+import ContadorAnimado from "../componentes/ContadorAnimado";
 
 const Meditar = () => {
   const { usuario } = contexUser();
@@ -77,7 +79,7 @@ const Meditar = () => {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={styles.container}>
       <ScrollView>
         <View style={{ flex: 0.5 }}>
           <Videos />
@@ -87,9 +89,20 @@ const Meditar = () => {
             flex: 1,
             justifyContent: "center",
             alignItems: "center",
+            backgroundColor: "#F7FFFE",
           }}
         >
-          <Text>Personas meditando ahora: {contador} </Text>
+          <Image
+            //source={require("../meditarplanta.png")}
+            source={require("../meditar.gif")}
+            //source={require("../meditar1.gif")}
+            style={{ width: "100%", height: 250 }}
+            resizeMode="cover"
+          />
+          <View style={styles.textContainer}>
+            <Text style={styles.titulo}>Personas meditando ahora:</Text>
+            <ContadorAnimado numero={contador} />
+          </View>
           <Map />
         </View>
       </ScrollView>
@@ -100,17 +113,41 @@ const Meditar = () => {
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: "#F7FFFE",
     flex: 1,
   },
   loading_container: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    // backgroundColor:'red'
+    backgroundColor: "#fff",
   },
   loading: {
-    width: 200,
-    height: 200,
+    width: 150,
+    height: 150,
+  },
+  drawerBackground: {
+    marginTop: 200,
+    height: 250,
+    flex: 1,
+    resizeMode: "center",
+  },
+  profileImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+  },
+  textContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  titulo: {
+    fontSize: 18,
+    fontWeight: "bold",
+    padding: 10,
+    marginRight: 1,
+    color: "#000",
   },
 });
 

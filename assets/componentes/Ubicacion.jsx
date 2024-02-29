@@ -43,7 +43,6 @@ const Ubicacion = ({ getLocation }) => {
   async function getUserLocation() {
     try {
       const location = await Location.getCurrentPositionAsync({});
-      console.log(location);
       /* const location = {
         coords: {
           latitude: 19.6807101,

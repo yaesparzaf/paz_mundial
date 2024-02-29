@@ -11,9 +11,9 @@ const OnMeditar = async (isMeditar, usuario_id) => {
       await updateDoc(docRef, {
         meditando: isMeditar,
       });
-    }else{
-      await setDoc(usuario_id,{
-        meditando:isMeditar,
+    } else {
+      await setDoc(usuario_id, {
+        meditando: isMeditar,
       });
     }
   } catch (error) {

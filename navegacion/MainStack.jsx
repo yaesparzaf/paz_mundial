@@ -8,7 +8,6 @@ import Login from "../assets/componentes/Login";
 import { AuthenticatedUserContex } from "../fb/AuthenticatedUserProvider";
 import GetCache from "../assets/cache/GetCache";
 import MyDrawer from "./MyDrawer";
-import TabStack from "./TabStack";
 
 const Stack = createStackNavigator();
 
@@ -16,7 +15,7 @@ const MainStack = () => {
   const { usuario, setUsuario } = useContext(AuthenticatedUserContex);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const authInstance = getAuth();
-  const [isLoading, setIsLoading] = useState(true); // Nuevo estado para el indicador de carga
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const logeado = onAuthStateChanged(
@@ -36,7 +35,6 @@ const MainStack = () => {
     setIsAuthenticated(usuario !== null);
   }, [usuario]);
 
-  //const usuario_cache =async()=>{}
   const isLogin = async (onLogin) => {
     if (onLogin) {
       setIsAuthenticated(true);
@@ -116,14 +114,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  loading_container:{
-    flex:1,
-    alignItems:'center',
-    justifyContent:'center',
+  loading_container: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
     // backgroundColor:'red'
   },
   loading: {
-    width: '100%',
+    width: "100%",
     height: 700,
   },
 });

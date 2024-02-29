@@ -122,7 +122,7 @@ const Login = ({ onLogin, onShowSignUp }) => {
             autoCorrect={false}
             keyboardType="email-address"
             value={email}
-            onChangeText={setEmail}
+            onChangeText={(text) => setEmail(text.trim())}
           />
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             <TextInput
@@ -133,7 +133,7 @@ const Login = ({ onLogin, onShowSignUp }) => {
               autoCorrect={false}
               secureTextEntry={!showPassword}
               value={password}
-              onChangeText={setPassword}
+              onChangeText={(text) => setPassword(text.trim())}
             />
             <TouchableOpacity
               onPress={toggleShowPassword}
@@ -190,10 +190,9 @@ const styles = StyleSheet.create({
   },
   gif: {
     position: "relative",
-    width: "140%",
-    height: 300,
+    width: "100%",
+    height: 260,
     resizeMode: "contain",
-    marginTop: "0%", // Añade esta línea para subir la imagen un 10%
   },
   bienvenida: {
     textAlign: "center",
@@ -251,8 +250,8 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     position: "absolute",
-    top: "70%",
-    width: "105%",
+    top: "90%",
+    width: "100%",
     backgroundColor: "#fff",
     borderRadius: 30,
     shadowColor: "#000",

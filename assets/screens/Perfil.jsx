@@ -11,7 +11,6 @@ const Perfil = () => {
   const onNavegacion = () => {
     navegacion.navigate("PerfilEdit");
   };
-
   return (
     <View style={styles.container}>
       {usuario !== null && (
