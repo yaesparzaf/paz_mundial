@@ -23,6 +23,7 @@ import { FontAwesome } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import OpcionesUD from "./OpcionesUD";
 import { contexUser } from "../../fb/AuthenticatedUserProvider";
+import { Skeleton } from "moti/skeleton";
 
 const Publicaciones = ({ datos_usuario }) => {
   //const { usuario } = contexUser();
@@ -52,14 +53,26 @@ const Publicaciones = ({ datos_usuario }) => {
   }, [usuario]);
 
   if (loading) {
-    return (
-      <ActivityIndicator
-        size="large"
-        color="#1bd6c3"
-        style={{ flex: 1, alignItems: "center" }}
-      />
-    );
+    const skeletonViews = [];
+    for (let i = 0; i < 7; i++) {
+      skeletonViews.push(
+        <View
+          key={i}
+          style={{
+            alignItems: "center",
+            flexDirection: "column",
+            marginTop: 1,
+            marginBottom: 1,
+          }}
+        >
+          <Skeleton width={"150%"} height={90} colorMode="light" />
+        </View>
+      );
+    }
+
+    return <View>{skeletonViews}</View>;
   }
+
   return (
     <FlatList
       data={publicaciones}
@@ -187,10 +200,9 @@ const Info = ({ item, rol, usuario_id }) => {
 
 const styles = StyleSheet.create({
   publicacionContainer: {
-    //height:500,
     padding: 10,
     borderBottomWidth: 1,
-    borderBottomColor: "#00abef42",
+    borderBottomColor: "#00000021",
     backgroundColor: "#fff",
   },
   skeletonItem: {

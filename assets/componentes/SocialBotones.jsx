@@ -22,16 +22,31 @@ const SocialBotones = (nombre) => {
       }
     } catch (error) {}
   };
+  const openYouTube = () => {
+    // Lógica para abrir YouTube
+  };
+
+  const openInstagram = () => {
+    // Lógica para abrir Instagram
+  };
 
   return (
-    <View style={styles.cont_rs}>
-      {/*<Text style={styles.titulo}>Redes Sociales</Text>*/}
+    <View style={{ alignItems: "center", margin: 10 }}>
+      <Text style={styles.titulo}>
+        ¡Encuentranos en nuestras redes sociales!
+      </Text>
       <View style={styles.cont_botones}>
         <TouchableOpacity style={styles.fb_boton} onPress={openFacebook}>
-          <Entypo name="facebook" size={50} color="blue" />
+          <Entypo name="facebook" size={30} color="#ffffff" />
+          <Text style={styles.texto}>Facebook</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.yt_boton}>
-          <Entypo name="youtube" size={50} color="red" />
+        <TouchableOpacity style={styles.yt_boton} onPress={openYouTube}>
+          <Entypo name="youtube" size={30} color="#ffffff" />
+          <Text style={styles.texto}>YouTube</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.ig_boton} onPress={openInstagram}>
+          <Entypo name="instagram" size={30} color="#ffffff" />
+          <Text style={styles.texto}>Instagram</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -39,39 +54,46 @@ const SocialBotones = (nombre) => {
 };
 
 const styles = StyleSheet.create({
-  cont_rs: {
-    flex: 0.2,
-    width: "100%",
-    alignItems: "center",
-    //backgroundColor:"#b61832",
-    borderBottomWidth: 1,
-    borderBottomColor: "#D3D3D3",
-  },
   titulo: {
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: "bold",
+    color: "#fff",
   },
   cont_botones: {
     flexDirection: "row",
     justifyContent: "center",
     marginTop: 20,
     width: "100%",
-    height: 100,
+    height: "auto",
     justifyContent: "space-around",
     // backgroundColor:'yellow'
   },
   fb_boton: {
     width: "30%",
+    height: 50,
     borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
-    //backgroundColor:'green'
   },
   yt_boton: {
     width: "30%",
+    height: 50,
     borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
+  },
+  ig_boton: {
+    width: "30%",
+    height: 50,
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  texto: {
+    fontSize: 12, // Tamaño de la fuente
+    color: "#ffffff", // Color del texto
+    marginTop: 5, // Espacio superior
+    textAlign: "center", // Alineación centrada
   },
 });
 

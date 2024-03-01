@@ -8,8 +8,6 @@ import GetAlls from "../cache/GetAlls";
 import { contexUser } from "../../fb/AuthenticatedUserProvider";
 import { Skeleton } from "moti/skeleton";
 
-//import OnMeditar from "../../fb/OnMeditar";
-
 const Videos = () => {
   const { usuario } = contexUser();
   const [loading, setLoading] = useState(true);
@@ -53,7 +51,7 @@ const Videos = () => {
               marginBottom: 25,
             }}
           >
-            <Skeleton width={"90%"} height={212} colorMode="ligth" />
+            <Skeleton width={"95%"} height={212} colorMode="ligth" />
           </View>
           <View
             style={{
@@ -63,7 +61,7 @@ const Videos = () => {
               marginBottom: 25,
             }}
           >
-            <Skeleton width={"90%"} height={212} colorMode="ligth" />
+            <Skeleton width={"95%"} height={212} colorMode="ligth" />
           </View>
         </View>
       ) : (

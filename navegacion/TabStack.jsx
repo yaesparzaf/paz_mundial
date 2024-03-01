@@ -20,9 +20,9 @@ const TabStack = () => {
     <Stack.Navigator
       screenOptions={{
         headerStyle: {
-          backgroundColor: "#00ADEF",
+          backgroundColor: "#fff",
         },
-        headerTintColor: "#fff",
+        headerTintColor: "#00adef",
         headerTitleStyle: {
           fontWeight: "bold",
         },
