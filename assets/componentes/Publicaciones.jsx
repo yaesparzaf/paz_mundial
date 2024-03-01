@@ -24,7 +24,6 @@ import { MaterialIcons } from "@expo/vector-icons";
 import OpcionesUD from "./OpcionesUD";
 import { contexUser } from "../../fb/AuthenticatedUserProvider";
 
-//import { LinearGradient } from 'expo-linear-gradient';
 const Publicaciones = ({ datos_usuario }) => {
   //const { usuario } = contexUser();
   const usuario = datos_usuario;
