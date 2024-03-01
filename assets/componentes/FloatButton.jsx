@@ -10,9 +10,17 @@ const FloatButton = ({ pantalla }) => {
       navegacion.navigate("MeditarEdit");
     } else if (pantalla === "N") {
       navegacion.navigate("Publicar");
+    } else if (pantalla === "C") {
+      navegacion.navigate("NuevoForo");
     }
   };
-  return <FAB style={styles.fab} icon="pencil" onPress={navegarAPublicar} />;
+  return (
+    <FAB
+      style={styles.fab}
+      icon={pantalla === "C" ? "plus" : "pencil"}
+      onPress={navegarAPublicar}
+    />
+  );
 };
 
 const styles = StyleSheet.create({
