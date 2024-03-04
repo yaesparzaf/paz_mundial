@@ -106,7 +106,6 @@ const Meditar = () => {
           <Map />
         </View>
       </ScrollView>
-      {usuario && usuario.rol === "admin" && <FloatButton pantalla="V" />}
     </SafeAreaView>
   );
 };

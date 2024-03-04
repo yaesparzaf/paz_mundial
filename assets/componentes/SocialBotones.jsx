@@ -37,15 +37,15 @@ const SocialBotones = (nombre) => {
       </Text>
       <View style={styles.cont_botones}>
         <TouchableOpacity style={styles.fb_boton} onPress={openFacebook}>
-          <Entypo name="facebook" size={30} color="#ffffff" />
+          <Entypo name="facebook" size={30} color="#00adef" />
           <Text style={styles.texto}>Facebook</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.yt_boton} onPress={openYouTube}>
-          <Entypo name="youtube" size={30} color="#ffffff" />
+          <Entypo name="youtube" size={30} color="#00adef" />
           <Text style={styles.texto}>YouTube</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.ig_boton} onPress={openInstagram}>
-          <Entypo name="instagram" size={30} color="#ffffff" />
+          <Entypo name="instagram" size={30} color="#00adef" />
           <Text style={styles.texto}>Instagram</Text>
         </TouchableOpacity>
       </View>
@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
   titulo: {
     fontSize: 16,
     fontWeight: "bold",
-    color: "#fff",
+    color: "#00adef",
   },
   cont_botones: {
     flexDirection: "row",

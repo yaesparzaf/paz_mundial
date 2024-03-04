@@ -11,6 +11,7 @@ import MeditarEdit from "../assets/screens/MeditarEdit";
 import MyTabs from "./MyTabs";
 import Login from "../assets/componentes/Login";
 import PerfilEdit from "../assets/screens/PerfilEdit";
+import NuevoForo from "../assets/screens/NuevoForo";
 
 const Stack = createStackNavigator();
 
@@ -20,9 +21,9 @@ const TabStack = () => {
     <Stack.Navigator
       screenOptions={{
         headerStyle: {
-          backgroundColor: "#fff",
+          backgroundColor: "#00ADEF",
         },
-        headerTintColor: "#00adef",
+        headerTintColor: "#fff",
         headerTitleStyle: {
           fontWeight: "bold",
         },
@@ -57,7 +58,13 @@ const TabStack = () => {
         }}
       /> */}
 
-      <Stack.Screen name="Foro" component={Foro} />
+      <Stack.Screen
+        name="Foro"
+        component={Foro}
+        options={({ route }) => ({
+          title: route.params.name_foro,
+        })}
+      />
       <Stack.Screen
         name="Publicar"
         component={Publicar}
@@ -81,6 +88,11 @@ const TabStack = () => {
         options={{
           headerShown: false,
         }}
+      />
+      <Stack.Screen
+        name="NuevoForo"
+        component={NuevoForo}
+        options={{ title: "Nuevo foro" }}
       />
     </Stack.Navigator>
   );

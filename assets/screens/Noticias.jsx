@@ -31,7 +31,6 @@ const Noticias = () => {
     return (
       <SafeAreaView>
         <Publicaciones datos_usuario={usuario} />
-        {usuario.rol === "admin" && <FloatButton pantalla="N" />}
       </SafeAreaView>
     );
   }

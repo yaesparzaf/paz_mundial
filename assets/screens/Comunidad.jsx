@@ -1,13 +1,24 @@
-import { View, Text, StyleSheet, Dimensions } from "react-native";
+import {
+  View,
+  StyleSheet,
+  ActivityIndicator,
+  SafeAreaView,
+} from "react-native";
 import React from "react";
+import { contexUser } from "../../fb/AuthenticatedUserProvider";
+import FloatButton from "../componentes/FloatButton";
 import ForosBtn from "../componentes/ForosBtn";
 
 const Comunidad = () => {
-  return (
-    <View style={styles.contenedor}>
-      <ForosBtn />
-    </View>
-  );
+  const { usuario } = contexUser();
+  if (usuario) {
+    return (
+      <SafeAreaView style={styles.contenedor}>
+        {usuario.rol === "admin" && <FloatButton pantalla="C" />}
+        <ForosBtn />
+      </SafeAreaView>
+    );
+  }
 };
 
 const styles = StyleSheet.create({
