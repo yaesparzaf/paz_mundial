@@ -29,11 +29,7 @@ const Perfil = () => {
               onError={() => {}}
             />
           </View>
-          <View style={styles.boton_cont}>
-            <TouchableOpacity style={styles.boton_edit} onPress={onNavegacion}>
-              <Text>Editar</Text>
-            </TouchableOpacity>
-          </View>
+
           <View style={styles.data_cont}>
             <Text style={styles.data_title}>Nombre</Text>
             <Text style={styles.data_info}>{usuario.nombre}</Text>
@@ -42,15 +38,15 @@ const Perfil = () => {
               {usuario.email || usuario.correo}
             </Text>
             <Text style={styles.data_title}>No. Telefono</Text>
-            <Text style={styles.data_info}>
-              {usuario.telefono || usuario.correo}
-            </Text>
+            <Text style={styles.data_info}>{usuario.telefono}</Text>
           </View>
         </>
       )}
-      <TouchableOpacity onPress={mostrarCache}>
-        <Text>mostrar cache</Text>
-      </TouchableOpacity>
+      <View style={styles.boton_cont}>
+        <TouchableOpacity style={styles.boton_edit} onPress={onNavegacion}>
+          <Text>Editar</Text>
+        </TouchableOpacity>
+      </View>
       <LogOut />
     </View>
   );
@@ -60,21 +56,20 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-
-    backgroundColor: "white",
+    backgroundColor: "#ffffff",
   },
   image_cont: {
+    backgroundColor: "#000",
     borderWidth: 1,
     borderColor: "black",
-    borderRadius: 100,
+    borderRadius: 90,
     marginBottom: 20,
     overflow: "hidden",
     marginTop: 20,
   },
   profileImage: {
-    width: 200,
-    height: 200,
-    borderRadius: 75,
+    width: 130,
+    height: 130,
   },
   boton_cont: {
     alignContent: "flex-end",
@@ -82,30 +77,31 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   boton_edit: {
-    width: "100%",
-    backgroundColor: "red",
+    marginTop: 30,
+    backgroundColor: "#00adef",
+    padding: 15,
+    borderRadius: 20,
+    alignItems: "center",
+    width: 250,
   },
   data_cont: {
-    flex: 0.4,
+    height: 180,
     width: "90%",
-    marginTop: 20,
     justifyContent: "space-around",
+    marginLeft: 30,
   },
   profileName: {
     fontSize: 20,
     fontWeight: "bold",
   },
   data_title: {
-    fontSize: 15,
-    color: "#808080",
-    borderBottomWidth: 1,
-    borderBottomColor: "#808080",
-    fontWeight: "bold",
+    fontSize: 13,
+    color: "#8a8a8a",
+    fontWeight: "300",
   },
   data_info: {
-    fontSize: 17,
-    marginTop: 30,
-    marginBottom: 30,
+    color: "#000000",
+    fontSize: 18,
   },
 });
 

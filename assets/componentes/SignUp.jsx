@@ -77,9 +77,9 @@ const SignUp = ({ onBack }) => {
 
   return (
     <View style={styles.container}>
-      {/* <Image source={require("../meditar1.jpg")} style={styles.gif} /> */}
-      {/* <Image source={require("../meditar2.png")} style={styles.gif} /> */}
-      <Image source={require("../3.png")} style={styles.gif} />
+      <Image source={require("../meditar1.jpg")} style={styles.gif} />
+      {/*  <Image source={require("../meditar2.png")} style={styles.gif} /> */}
+      {/* <Image source={require("../3.png")} style={styles.gif} /> */}
       <View style={styles.formContainer}>
         <TextInput
           style={styles.input}
@@ -145,7 +145,7 @@ const SignUp = ({ onBack }) => {
   );
 };
 //Diseño Paloma
-const styles = StyleSheet.create({
+/* const styles = StyleSheet.create({
   container: {
     height: "100%",
     flex: 1,
@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
   errorInput: {
     borderColor: "red",
   },
-});
+}); */
 
 //Diseño Logo
 /* const styles = StyleSheet.create({
@@ -305,7 +305,7 @@ const styles = StyleSheet.create({
 }); */
 
 //Diseño minimalist
-/* const styles = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     height: "100%",
     flex: 1,
@@ -382,6 +382,6 @@ const styles = StyleSheet.create({
   errorInput: {
     borderColor: "red",
   },
-}); */
+});
 
 export default SignUp;

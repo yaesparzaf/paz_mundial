@@ -5,6 +5,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { auth } from "../fb/firebase-config";
 import Login from "../assets/componentes/Login";
+import SignUp from "../assets/componentes/SignUp";
 import { AuthenticatedUserContex } from "../fb/AuthenticatedUserProvider";
 import GetCache from "../assets/cache/GetCache";
 import MyDrawer from "./MyDrawer";

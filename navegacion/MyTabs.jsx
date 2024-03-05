@@ -21,6 +21,7 @@ const Tab = createBottomTabNavigator();
 const MyTabs = () => {
   const tam = Dimensions.get("window").width * 0.05;
   const { usuario } = contexUser();
+  const rol = "admin";
   return (
     <Tab.Navigator
       //initialRouteName="Noticias"
@@ -50,7 +51,7 @@ const MyTabs = () => {
               onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
               style={styles.account}
             >
-              {usuario.rol === "admin" && <FloatButton pantalla="N" />}
+              {usuario && usuario.rol === rol && <FloatButton pantalla="N" />}
             </TouchableOpacity>
           ),
           headerShown: true,
@@ -72,7 +73,7 @@ const MyTabs = () => {
               onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
               style={styles.account}
             >
-              {usuario.rol === "admin" && <FloatButton pantalla="C" />}
+              {usuario && usuario.rol === rol && <FloatButton pantalla="C" />}
             </TouchableOpacity>
           ),
           headerShown: true,
@@ -101,7 +102,7 @@ const MyTabs = () => {
               onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
               style={styles.account}
             >
-              {usuario.rol === "admin" && <FloatButton pantalla="V" />}
+              {usuario && usuario.rol === rol && <FloatButton pantalla="V" />}
             </TouchableOpacity>
           ),
           tabBarIcon: ({ color, size }) => (

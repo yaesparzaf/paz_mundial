@@ -93,9 +93,9 @@ const ForosBtn = () => {
         <View style={{ margin: 1 }}></View>
         {foros.map((foro) => (
           <React.Fragment key={foro.id}>
-            {usuario.rol === "usuario" ? (
+            {usuario.rol === "admin" ? (
               <Swipeable
-                friction={1}
+                friction={1.5}
                 leftThreshold
                 renderRightActions={() => onSwipeRight(foro.id)}
               >

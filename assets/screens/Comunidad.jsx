@@ -14,7 +14,6 @@ const Comunidad = () => {
   if (usuario) {
     return (
       <SafeAreaView style={styles.contenedor}>
-        {usuario.rol === "admin" && <FloatButton pantalla="C" />}
         <ForosBtn />
       </SafeAreaView>
     );

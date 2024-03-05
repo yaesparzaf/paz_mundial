@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
   },
   texto: {
     fontSize: 12, // Tamaño de la fuente
-    color: "#ffffff", // Color del texto
+    color: "#00adef", // Color del texto
     marginTop: 5, // Espacio superior
     textAlign: "center", // Alineación centrada
   },
