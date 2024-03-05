@@ -66,10 +66,8 @@ const ForosBtn = () => {
             style={styles.foros}
             onPress={() => botonPresionado(foro.id)}
           >
-            <Text style={styles.titulo_btn}>Poder mental: {foro.id}</Text>
-            <Text style={{ marginLeft: 10 }}>
-              Poderes mentales {foro.descripcion}
-            </Text>
+            <Text style={styles.titulo_btn}>{foro.id}</Text>
+            <Text style={{ marginLeft: 10 }}>{foro.descripcion}</Text>
           </TouchableOpacity>
         </Swipeable>
       ))}

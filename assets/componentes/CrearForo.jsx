@@ -8,6 +8,8 @@ import {
 import React, { useState } from "react";
 import ForoCD from "../../fb/ForoCD";
 import { useNavigation } from "@react-navigation/native";
+import { FontAwesome5 } from "@expo/vector-icons";
+import AbrirGaleria from "./AbrirGaleria";
 
 const CrearForo = () => {
   const navegacion = useNavigation();
@@ -16,23 +18,26 @@ const CrearForo = () => {
   const [crear, setCrear] = useState(false);
 
   const onCrearForo = () => {
-    console.log("crear foro");
     const datosForo = { nombre: nombre, descripcion: descripcion };
     ForoCD({ datos: datosForo, accion: true });
     navegacion.navigate("Comunidad");
   };
   return (
+    //agregar la opcion de elegir foto de galeria
     <View>
-      <TouchableOpacity
-        style={{
-          ...styles.crear_btn,
-          backgroundColor: crear ? "#00ADEF" : "#ffff",
-        }}
-        disabled={crear ? false : true}
-        onPress={onCrearForo}
-      >
-        <Text>Crear Foro</Text>
-      </TouchableOpacity>
+      <View>
+        <AbrirGaleria />
+        <TouchableOpacity
+          style={{
+            ...styles.crear_btn,
+            backgroundColor: crear ? "#00ADEF" : "#ffff",
+          }}
+          disabled={crear ? false : true}
+          onPress={onCrearForo}
+        >
+          <Text>Crear Foro</Text>
+        </TouchableOpacity>
+      </View>
       <View>
         <TextInput
           placeholder="Nombre"
@@ -48,6 +53,7 @@ const CrearForo = () => {
           onChangeText={(texto) => {
             setDescripcion(texto);
           }}
+          maxLength={100}
         />
       </View>
     </View>

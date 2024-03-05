@@ -11,7 +11,6 @@ import {
 import { TextInput } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
-import * as ImagePicker from "expo-image-picker";
 import { db } from "../../fb/firebase-config";
 import {
   ref,
@@ -32,6 +31,8 @@ import {
 } from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
 import { contexUser } from "../../fb/AuthenticatedUserProvider";
+import AbrirGaleria from "../componentes/AbrirGaleria";
+import SubirImagen from "../../fb/SubirImagen";
 
 const Publicar = ({ route }) => {
   const { usuario, setUsuario } = contexUser();
@@ -80,59 +81,6 @@ const Publicar = ({ route }) => {
     obtenerDatos();
   }, []);
 
-  const abrirGaleria = async () => {
-    try {
-      const { status } =
-        await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-      if (status !== "granted") {
-        ("Permiso denegado para acceder a la galería");
-        return;
-      }
-
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: false,
-        quality: 0.6,
-      });
-
-      if (!result.canceled) {
-        const selectedAsset =
-          result.assets && result.assets.length > 0 ? result.assets[0] : null;
-        setesImagen(selectedAsset?.type.startsWith("image"));
-        //setesVideo(selectedAsset?.type.startsWith('video'));
-        if (editar && !imagenUri_prev) setImagenUri_prev(imagenUri);
-        setImagenUri(selectedAsset ? selectedAsset.uri : null);
-        setPublicar(titulo && (selectedAsset || text.length > 0));
-      }
-    } catch (error) {
-      console.error("Error al abrir la galería: ", error);
-    }
-  };
-
-  const subirImagen = async (coleccionRef, imagenUri) => {
-    const storage = getStorage();
-    const extension = imagenUri.split(".").pop();
-    const storageRef = ref(
-      storage,
-      `uploads/noticias/imagenes/${coleccionRef.id}.${extension}`
-    );
-    try {
-      setGuardandoImagen(true);
-      const response = await fetch(imagenUri);
-      const blob = await response.blob();
-      const snapshot = await uploadBytes(storageRef, blob);
-      const imageUrl = await getDownloadURL(snapshot.ref);
-      await updateDoc(coleccionRef, { imagen: imageUrl });
-      return true;
-    } catch (error) {
-      console.error(error);
-      return false;
-    } finally {
-      setGuardandoImagen(false);
-    }
-  };
-
   const eliminarImagen = () => {
     if (editar) {
       setImagenUri_prev(imagenUri);
@@ -144,13 +92,19 @@ const Publicar = ({ route }) => {
   const keyboardHide = () => {
     setMenuEdicion(false);
   };
-  /*const onAlignTexto = (tipo, input) => {
-    if (input === 'A') {
-      setAlignAsunto(tipo);
-    } else if (input === 'T') {
-      setAlignTexto(tipo);
+
+  const getRespuesta = async (response) => {
+    console.log("se recibe: ", response);
+    console.log("_______________");
+    console.log("esto tiene imagenURI: ", imagenUri);
+    if (response) {
+      if (editar) setImagenUri_prev(imagenUri);
+      const { isImagen, uri } = response;
+      setesImagen(isImagen);
+      setImagenUri(uri);
+      setPublicar(titulo && titulo.length > 0);
     }
-  };*/
+  };
 
   const onSend = async (
     titulo,
@@ -175,7 +129,11 @@ const Publicar = ({ route }) => {
       });
       if (coleccionRef) {
         if (imagenUri) {
-          const imagenSubida = await subirImagen(coleccionRef, imagenUri);
+          setGuardandoImagen(true);
+          const imagenSubida = await SubirImagen(coleccionRef, imagenUri);
+          if (imagenSubida) {
+            setGuardandoImagen(false);
+          }
           if (!imagenSubida) {
             await deleteDoc(coleccionRef);
           }
@@ -202,6 +160,7 @@ const Publicar = ({ route }) => {
     const noticiaRef = doc(db, "noticias", noticiaId);
     try {
       if (prev_imagen && new_imagen) {
+        console.log("entro al if de prev_imagen && new_imagen");
         await updateDoc(noticiaRef, {
           align_asunto: alignAsunto,
           align_texto: alignTexto,
@@ -211,13 +170,17 @@ const Publicar = ({ route }) => {
           texto: new_texto,
           tipo_letra: italica ? "italic" : "normal",
         });
-        const storage = getStorage();
-        const imagenRef = ref(storage, prev_imagen);
-        subirImagen(noticiaRef, new_imagen);
-        try {
-          await deleteObject(imagenRef);
-        } catch (error) {}
+        setGuardandoImagen(true);
+        console.log("_______________");
+        console.log("esto tiene imagenURI: ", imagenUri);
+        const imagenSubida = await SubirImagen(noticiaRef, new_imagen);
+        console.log("respuesta: ", imagenSubida);
+        if (imagenSubida) {
+          setGuardandoImagen(false);
+        }
       } else if (prev_imagen && !new_imagen) {
+        console.log("entro al else  de  prev_imagen && !new_imagen");
+
         await updateDoc(noticiaRef, {
           align_asunto: alignAsunto,
           align_texto: alignTexto,
@@ -231,8 +194,13 @@ const Publicar = ({ route }) => {
         const imagenRef = ref(storage, prev_imagen);
         try {
           await deleteObject(imagenRef);
-        } catch (error) {}
+        } catch (error) {
+          console.error("ee", error);
+        }
+        //else if cuando no hay imagen previa pero si imagen nueva
       } else {
+        console.log("entro al else 207");
+
         await updateDoc(noticiaRef, {
           align_asunto: alignAsunto,
           align_texto: alignTexto,
@@ -243,7 +211,9 @@ const Publicar = ({ route }) => {
         });
       }
       navegacion.navigate("Noticias", { screen: "Noticias" });
-    } catch (error) {}
+    } catch (error) {
+      console.error("eerrrorrr", error);
+    }
   };
 
   const MenuEdicion = (input) => {
@@ -312,10 +282,7 @@ const Publicar = ({ route }) => {
     <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
       <ScrollView>
         <View style={styles.botones_cont}>
-          <TouchableOpacity style={styles.up_fv} onPress={abrirGaleria}>
-            <FontAwesome5 name="photo-video" size={24} color="black" />
-            <Text style={styles.buttonText}>Foto</Text>
-          </TouchableOpacity>
+          <AbrirGaleria respuesta={getRespuesta} />
           <TouchableOpacity
             onPress={() =>
               editar
@@ -471,10 +438,6 @@ const styles = StyleSheet.create({
     height: 500,
     resizeMode: "contain",
     marginHorizontal: 5,
-  },
-  buttonText: {
-    marginLeft: 5,
-    fontWeight: "bold",
   },
   publicar_btn: {
     width: "30%",

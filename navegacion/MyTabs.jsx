@@ -2,7 +2,7 @@ import { TouchableOpacity, StyleSheet, Dimensions } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Comunidad from "../assets/screens/Comunidad";
 import Noticias from "../assets/screens/Noticias";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Entypo, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import Entrenamiento from "../assets/screens/Entrenamiento";
 import Notificaciones from "../assets/screens/Notificaciones";
 import Meditar from "../assets/screens/Meditar";
@@ -13,7 +13,7 @@ const MyTabs = () => {
   const tam = Dimensions.get("window").width * 0.05;
   return (
     <Tab.Navigator
-      //initialRouteName="Noticias"
+      initialRouteName="Comunidad"
       screenOptions={{
         tabBarActiveTintColor: "#00adef",
         tabBarInactiveTintColor: "gray",
@@ -45,11 +45,10 @@ const MyTabs = () => {
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons
               name="account-group"
-              size={tam}
+              size={size}
               color={color}
             />
           ),
-          headerShown: true,
         }}
       />
       <Tab.Screen
