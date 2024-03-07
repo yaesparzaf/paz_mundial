@@ -55,6 +55,8 @@
     "react-native-image-picker": "^7.1.0",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-linking": "^0.0.0",
+    "react-native-map-clustering": "^3.4.2",
+    "react-native-maps": "^1.10.3",
     "react-native-navigation": "^7.38.1",
     "react-native-paper": "^5.12.0",
     "react-native-picker-select": "^9.0.0",
@@ -65,7 +67,7 @@
     "react-native-skeleton-content": "^1.0.28",
     "react-native-skeleton-placeholder": "^5.2.4",
     "react-native-video": "^5.2.1",
-    "react-native-webview": "13.2.2",
+    "react-native-webview": "^13.2.2",
     "react-native-youtube": "^2.0.2",
     "react-native-youtube-iframe": "^2.3.0",
     "react-navigation-drawer": "^2.7.2"
