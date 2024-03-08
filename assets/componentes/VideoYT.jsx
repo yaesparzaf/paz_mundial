@@ -50,19 +50,21 @@ const VideoYT = React.memo(({ video }) => {
   }, [videoId]);
 
   return (
-    <View style={{ flex: 1, marginTop: 5 }}>
+    <View style={{ flex: 1 }}>
       {videoInfo ? (
         <View
           style={{
-            flex: 1,
+            marginTop: 10,
             alignSelf: "center",
+            justifyContent: "center",
             width: "95%",
-            resizeMode: "contain",
+            height: 200,
+            resizeMode: "center",
           }}
         >
           <YouTube
             videoId={videoId}
-            height={250}
+            height={200}
             initialPlayerParams={{
               controls: 0,
             }}

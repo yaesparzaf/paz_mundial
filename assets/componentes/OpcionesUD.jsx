@@ -6,7 +6,7 @@ import {
   StyleSheet,
   TouchableWithoutFeedback,
 } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Publicar from "../screens/Publicar";
 import { useNavigation } from "@react-navigation/native";
 import {
@@ -20,17 +20,32 @@ import {
 import { deleteObject, getStorage, ref } from "firebase/storage";
 import { db } from "../../fb/firebase-config";
 
-const OpcionesUD = ({ onClose, noticiaId, imagenUrl }) => {
+const OpcionesUD = ({ onClose, noticiaId, imagenUrl, onScreen }) => {
   const navegacion = useNavigation();
+  const [coleccionLeidas, setColeccionLeidas] = useState();
+  const [ventana, setVentana] = useState();
+  useEffect(() => {
+    if (onScreen === "noticias") {
+      setColeccionLeidas("noticiasLeidas");
+      setVentana("Publicar");
+    } else if (onScreen === "entrenamiento") {
+      setColeccionLeidas("entrenamientoVisto");
+      setVentana("NuevoEntrenamiento");
+    }
+    console.log("noticiaId ", noticiaId);
+  }, [onScreen]);
+
   const pressEditar = () => {
-    navegacion.navigate("Publicar", { noticiaId });
+    console.log("a la ventana: ", ventana);
+    navegacion.navigate(ventana, { noticiaId });
     onClose();
   };
+
   const pressEliminar = async () => {
     const storage = getStorage();
     const imagenRef = ref(storage, imagenUrl);
     try {
-      await deleteDoc(doc(db, "noticias", noticiaId));
+      await deleteDoc(doc(db, onScreen, noticiaId));
       if (imagenUrl) await deleteObject(imagenRef);
       const allUsuarios = await getDocs(collection(db, "usuarios"));
       await Promise.all(
@@ -40,7 +55,7 @@ const OpcionesUD = ({ onClose, noticiaId, imagenUrl }) => {
             db,
             "usuarios",
             usuario_id,
-            "noticiasLeidas",
+            coleccionLeidas,
             noticiaId
           );
           if (noticiaLeidaRef) await deleteDoc(noticiaLeidaRef);

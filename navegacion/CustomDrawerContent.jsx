@@ -1,4 +1,11 @@
-import { View, Text, StyleSheet, Image, Dimensions } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  Dimensions,
+  ImageBackground,
+} from "react-native";
 import { contexUser } from "../fb/AuthenticatedUserProvider";
 import {
   createDrawerNavigator,
@@ -13,7 +20,7 @@ const CustomDrawerContent = (props) => {
   return (
     <DrawerContentScrollView {...props}>
       {usuario !== null && (
-        <View style={styles.profileContainer}>
+        <ImageBackground style={styles.profileContainer}>
           <View style={styles.imageContainer}>
             <Image
               source={{
@@ -30,21 +37,26 @@ const CustomDrawerContent = (props) => {
             <Text style={styles.userName}>{usuario.nombre}</Text>
             <Text style={styles.userRole}>{usuario.rol}</Text>
           </View>
-        </View>
+        </ImageBackground>
       )}
       <DrawerItemList {...props} />
+      {/*       <ImageBackground
+        source={require("../assets/Chakras1.png")}
+        style={styles.drawerBackground}
+      ></ImageBackground> */}
     </DrawerContentScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   profileContainer: {
-    backgroundColor: "#0092d2",
-    height: 150,
+    height: 160,
     flexDirection: "row",
     alignItems: "center",
-    marginVertical: -20,
+    marginVertical: -30,
+    backgroundColor: "#00adef",
   },
+
   imageContainer: {
     marginRight: 20,
     marginLeft: 10,
@@ -66,6 +78,16 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: "#fff",
     fontWeight: "300",
+  },
+  drawerContent: {
+    flex: 1,
+  },
+  drawerBackground: {
+    marginTop: 200,
+    height: 250,
+    flex: 1,
+    resizeMode: "center",
+    backgroundColor: "transparent",
   },
 });
 export default CustomDrawerContent;

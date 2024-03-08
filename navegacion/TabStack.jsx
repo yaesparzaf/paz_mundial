@@ -12,6 +12,7 @@ import MyTabs from "./MyTabs";
 import Login from "../assets/componentes/Login";
 import PerfilEdit from "../assets/screens/PerfilEdit";
 import NuevoForo from "../assets/screens/NuevoForo";
+import NuevoEntrenamiento from "../assets/screens/NuevoEntrenamiento";
 
 const Stack = createStackNavigator();
 
@@ -93,6 +94,11 @@ const TabStack = () => {
         name="NuevoForo"
         component={NuevoForo}
         options={{ title: "Nuevo foro" }}
+      />
+      <Stack.Screen
+        name="NuevoEntrenamiento"
+        component={NuevoEntrenamiento}
+        options={{ title: "Nuevo entrenamiento" }}
       />
     </Stack.Navigator>
   );

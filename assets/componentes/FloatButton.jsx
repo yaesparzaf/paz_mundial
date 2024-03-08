@@ -1,7 +1,8 @@
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, TouchableOpacity } from "react-native";
 import { FAB } from "react-native-paper";
+import { Entypo } from "@expo/vector-icons";
 
 const FloatButton = ({ pantalla }) => {
   const navegacion = useNavigation();
@@ -12,24 +13,19 @@ const FloatButton = ({ pantalla }) => {
       navegacion.navigate("Publicar");
     } else if (pantalla === "C") {
       navegacion.navigate("NuevoForo");
+    } else if (pantalla === "E") {
+      navegacion.navigate("NuevoEntrenamiento");
     }
   };
   return (
-    <FAB
-      style={styles.fab}
-      icon={pantalla === "C" ? "plus" : "pencil"}
+    <Entypo
+      name={pantalla == "C" ? "circle-with-plus" : "new-message"}
+      size={24}
+      color="black"
       onPress={navegarAPublicar}
     />
   );
 };
 
-const styles = StyleSheet.create({
-  fab: {
-    position: "absolute",
-    margin: 20,
-    right: 10,
-    bottom: 20,
-    backgroundColor: "#00ADEF",
-  },
-});
+const styles = StyleSheet.create({});
 export default FloatButton;

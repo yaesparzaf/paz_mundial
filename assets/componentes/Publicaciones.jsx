@@ -22,8 +22,10 @@ import { useNavigation } from "@react-navigation/native";
 import { FontAwesome } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import OpcionesUD from "./OpcionesUD";
+import { contexUser } from "../../fb/AuthenticatedUserProvider";
+import { Skeleton } from "moti/skeleton";
 
-const Publicaciones = ({ datos_usuario }) => {
+const Publicaciones = ({ datos_usuario, screen }) => {
   //const { usuario } = contexUser();
   const usuario = datos_usuario;
   const [loading, setLoading] = useState(true);
@@ -31,8 +33,9 @@ const Publicaciones = ({ datos_usuario }) => {
   const [noticiaLeida, setNoticiaLeida] = useState();
 
   useEffect(() => {
-    if (usuario) {
-      const q = query(collection(db, "noticias"));
+    if (usuario && screen) {
+      console.log("screen: ", screen);
+      const q = query(collection(db, screen));
       const subscripcion = onSnapshot(q, (snapshot) => {
         const newPublicacion = snapshot.docs.map((doc) => ({
           id: doc.id,
@@ -51,14 +54,26 @@ const Publicaciones = ({ datos_usuario }) => {
   }, [usuario]);
 
   if (loading) {
-    return (
-      <ActivityIndicator
-        size="large"
-        color="#1bd6c3"
-        style={{ flex: 1, alignItems: "center" }}
-      />
-    );
+    const skeletonViews = [];
+    for (let i = 0; i < 7; i++) {
+      skeletonViews.push(
+        <View
+          key={i}
+          style={{
+            alignItems: "center",
+            flexDirection: "column",
+            marginTop: 1,
+            marginBottom: 1,
+          }}
+        >
+          <Skeleton width={"150%"} height={90} colorMode="light" />
+        </View>
+      );
+    }
+
+    return <View>{skeletonViews}</View>;
   }
+
   return (
     <FlatList
       data={publicaciones}
@@ -68,13 +83,14 @@ const Publicaciones = ({ datos_usuario }) => {
           item={item}
           rol={usuario ? usuario.rol : ""}
           usuario_id={usuario ? usuario.id : ""}
+          ventana={screen}
         />
       )}
     />
   );
 };
 
-const Info = ({ item, rol, usuario_id }) => {
+const Info = ({ item, rol, usuario_id, ventana }) => {
   const [mostrarOpciones, setMostrarOpciones] = useState(false);
   const [nueva, setNueva] = useState();
   const navegacion = useNavigation();
@@ -86,7 +102,7 @@ const Info = ({ item, rol, usuario_id }) => {
           db,
           "usuarios",
           usuario_id,
-          "noticiasLeidas"
+          "entrenamientoVisto"
         );
         const datosColeccion = await getDocs(coleccionRef);
         const vacia = datosColeccion.empty;
@@ -102,7 +118,7 @@ const Info = ({ item, rol, usuario_id }) => {
 
   const addLeida = async (noticia_id) => {
     const coleccionRef = await getDocs(
-      collection(db, "usuarios", usuario_id, "noticiasLeidas")
+      collection(db, "usuarios", usuario_id, "entrenamientoVisto")
     );
     //const querySnapshot = await getDocs(query(coleccionRef, where('noticia_id', '==', noticia_id)));
     setNueva(false);
@@ -111,7 +127,7 @@ const Info = ({ item, rol, usuario_id }) => {
       db,
       "usuarios",
       usuario_id,
-      "noticiasLeidas",
+      "entrenamientoVisto",
       noticia_id
     );
     await setDoc(noticiaRef, {
@@ -147,7 +163,7 @@ const Info = ({ item, rol, usuario_id }) => {
             <MaterialIcons name="fiber-new" size={24} color="#00ADEF" />
           )}
           <View style={styles.menu_publicacion}>
-            {rol === "admin" && (
+            {rol === "admin" && usuario_id == item.autor_id && (
               <TouchableOpacity activeOpacity={1.0} onPress={toggleOpciones}>
                 <Entypo name="dots-three-vertical" size={15} color="black" />
               </TouchableOpacity>
@@ -177,6 +193,7 @@ const Info = ({ item, rol, usuario_id }) => {
             onClose={toggleOpciones}
             noticiaId={item.id}
             imagenUrl={item.imagen}
+            onScreen={ventana}
           />
         )}
       </View>
@@ -186,10 +203,9 @@ const Info = ({ item, rol, usuario_id }) => {
 
 const styles = StyleSheet.create({
   publicacionContainer: {
-    //height:500,
     padding: 10,
     borderBottomWidth: 1,
-    borderBottomColor: "#00abef42",
+    borderBottomColor: "#00000021",
     backgroundColor: "#fff",
   },
   skeletonItem: {

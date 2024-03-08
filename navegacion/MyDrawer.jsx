@@ -26,7 +26,7 @@ const MyDrawer = () => {
         drawerActiveBackgroundColor: "#00adef",
         drawerInactiveBackgroundColor: "#000000",
         headerTitleStyle: {
-          fontSize: 24,
+          fontSize: 24, // Ajusta el tamaño del texto del título
           color: "#fff",
           fontWeight: "bold",
         },
@@ -56,7 +56,7 @@ const MyDrawer = () => {
           ),
         }}
       />
-      <Stack.Screen
+      <Drawer.Screen
         name=" Mi Perfil"
         component={PerfilStack}
         options={{

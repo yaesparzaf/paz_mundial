@@ -5,9 +5,11 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { auth } from "../fb/firebase-config";
 import Login from "../assets/componentes/Login";
+import SignUp from "../assets/componentes/SignUp";
 import { AuthenticatedUserContex } from "../fb/AuthenticatedUserProvider";
 import GetCache from "../assets/cache/GetCache";
 import MyDrawer from "./MyDrawer";
+import TabStack from "./TabStack";
 
 const Stack = createStackNavigator();
 
@@ -15,7 +17,7 @@ const MainStack = () => {
   const { usuario, setUsuario } = useContext(AuthenticatedUserContex);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const authInstance = getAuth();
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true); // Nuevo estado para el indicador de carga
 
   useEffect(() => {
     const logeado = onAuthStateChanged(
@@ -35,6 +37,7 @@ const MainStack = () => {
     setIsAuthenticated(usuario !== null);
   }, [usuario]);
 
+  //const usuario_cache =async()=>{}
   const isLogin = async (onLogin) => {
     if (onLogin) {
       setIsAuthenticated(true);
@@ -63,7 +66,7 @@ const MainStack = () => {
       <SafeAreaView style={styles.loading_container}>
         <Image
           style={styles.loading}
-          source={require("../assets/splash1.png")}
+          source={require("../assets/splash.png")}
         />
       </SafeAreaView>
     );

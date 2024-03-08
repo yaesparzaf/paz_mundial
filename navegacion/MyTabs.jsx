@@ -1,19 +1,32 @@
-import { TouchableOpacity, StyleSheet, Dimensions } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Dimensions,
+} from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Comunidad from "../assets/screens/Comunidad";
 import Noticias from "../assets/screens/Noticias";
-import { Entypo, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import Entrenamiento from "../assets/screens/Entrenamiento";
 import Notificaciones from "../assets/screens/Notificaciones";
 import Meditar from "../assets/screens/Meditar";
+import { MaterialIcons } from "@expo/vector-icons";
+import FloatButton from "../assets/componentes/FloatButton";
+import { contexUser } from "../fb/AuthenticatedUserProvider";
+import { useNavigation } from "@react-navigation/native";
 
 const Tab = createBottomTabNavigator();
 
 const MyTabs = () => {
+  const navigation = useNavigation();
   const tam = Dimensions.get("window").width * 0.05;
+  const { usuario } = contexUser();
+  const rol = "admin";
   return (
     <Tab.Navigator
-      initialRouteName="Comunidad"
+      //initialRouteName="Noticias"
       screenOptions={{
         tabBarActiveTintColor: "#00adef",
         tabBarInactiveTintColor: "gray",
@@ -35,6 +48,14 @@ const MyTabs = () => {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="newspaper-outline" size={tam} color={color} />
           ),
+          headerRight: () => (
+            <TouchableOpacity
+              onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
+              style={styles.account}
+            >
+              {usuario && usuario.rol === rol && <FloatButton pantalla="N" />}
+            </TouchableOpacity>
+          ),
           headerShown: true,
         }}
       />
@@ -45,10 +66,19 @@ const MyTabs = () => {
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons
               name="account-group"
-              size={size}
+              size={tam}
               color={color}
             />
           ),
+          headerRight: () => (
+            <TouchableOpacity
+              onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
+              style={styles.account}
+            >
+              {usuario && usuario.rol === rol && <FloatButton pantalla="C" />}
+            </TouchableOpacity>
+          ),
+          headerShown: true,
         }}
       />
       <Tab.Screen
@@ -62,6 +92,14 @@ const MyTabs = () => {
               color={color}
             />
           ),
+          headerRight: () => (
+            <TouchableOpacity
+              onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
+              style={styles.account}
+            >
+              {usuario && usuario.rol === rol && <FloatButton pantalla="N" />}
+            </TouchableOpacity>
+          ),
           headerShown: true,
         }}
       />
@@ -69,6 +107,14 @@ const MyTabs = () => {
         name="Meditar"
         component={Meditar}
         options={({ navigation }) => ({
+          headerRight: () => (
+            <TouchableOpacity
+              onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
+              style={styles.account}
+            >
+              {usuario && usuario.rol === rol && <FloatButton pantalla="V" />}
+            </TouchableOpacity>
+          ),
           tabBarIcon: ({ color, size }) => (
             <TouchableOpacity
               onPress={() =>
@@ -82,6 +128,7 @@ const MyTabs = () => {
               />
             </TouchableOpacity>
           ),
+
           headerShown: true,
         })}
       />
@@ -105,7 +152,7 @@ const styles = StyleSheet.create({
   },
   account: {
     alignItems: "center",
-    marginRight: 5,
+    marginRight: 10,
   },
   account_text: {
     fontSize: 10,
