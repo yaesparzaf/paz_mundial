@@ -7,7 +7,7 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import Publicar from "../screens/Publicar";
+import Publicar from "./Publicar";
 import { useNavigation } from "@react-navigation/native";
 import {
   collection,
@@ -27,17 +27,14 @@ const OpcionesUD = ({ onClose, noticiaId, imagenUrl, onScreen }) => {
   useEffect(() => {
     if (onScreen === "noticias") {
       setColeccionLeidas("noticiasLeidas");
-      setVentana("Publicar");
     } else if (onScreen === "entrenamiento") {
       setColeccionLeidas("entrenamientoVisto");
-      setVentana("NuevoEntrenamiento");
     }
     console.log("noticiaId ", noticiaId);
   }, [onScreen]);
 
   const pressEditar = () => {
-    console.log("a la ventana: ", ventana);
-    navegacion.navigate(ventana, { noticiaId });
+    navegacion.navigate("NuevaPublicacion", { noticiaId });
     onClose();
   };
 

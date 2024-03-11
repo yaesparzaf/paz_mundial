@@ -14,7 +14,7 @@ const FloatButton = ({ pantalla }) => {
     } else if (pantalla === "C") {
       navegacion.navigate("NuevoForo");
     } else if (pantalla === "E") {
-      navegacion.navigate("NuevoEntrenamiento");
+      navegacion.navigate("NuevaPublicacion");
     }
   };
   return (

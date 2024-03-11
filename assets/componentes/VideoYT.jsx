@@ -64,7 +64,7 @@ const VideoYT = React.memo(({ video }) => {
         >
           <YouTube
             videoId={videoId}
-            height={200}
+            height={220}
             initialPlayerParams={{
               controls: 0,
             }}

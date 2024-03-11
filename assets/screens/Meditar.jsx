@@ -61,8 +61,7 @@ const Meditar = () => {
   } else if (isLoading) {
     return (
       <SafeAreaView style={styles.loading_container}>
-        <Ubicacion getLocation={obtenerUbicacion} />
-        {reload && <Ubicacion getLocation={obtenerUbicacion} />}
+        {/* {reload && <Ubicacion getLocation={obtenerUbicacion} />} */}
         <View
           style={{
             width: "100%",
@@ -71,9 +70,7 @@ const Meditar = () => {
             justifyContent: "center",
             backgroundColor: "white",
           }}
-        >
-          <PermisosUbi getUbi={onReload} />
-        </View>
+        ></View>
       </SafeAreaView>
     );
   }
@@ -86,25 +83,26 @@ const Meditar = () => {
         </View>
         <View
           style={{
-            flex: 1,
+            flex: 0.5,
             justifyContent: "center",
             alignItems: "center",
             backgroundColor: "#F7FFFE",
           }}
         >
+          <Map />
           <Image
             //source={require("../meditarplanta.png")}
             source={require("../meditar.gif")}
             //source={require("../meditar1.gif")}
-            style={{ width: "100%", height: 250 }}
+            style={{ width: "50%", height: 250 }}
             resizeMode="cover"
           />
           <View style={styles.textContainer}>
             <Text style={styles.titulo}>Personas meditando ahora:</Text>
-            <ContadorAnimado numero={contador} />
+            {/* <ContadorAnimado numero={contador} /> */}
           </View>
-          <Map />
         </View>
+        <Text>hola</Text>
       </ScrollView>
     </SafeAreaView>
   );

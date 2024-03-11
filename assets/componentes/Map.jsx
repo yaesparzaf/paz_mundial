@@ -1,8 +1,9 @@
 import React, { useRef, useState, useEffect } from "react";
 import { Button, StyleSheet, View, Text } from "react-native";
-import MapView from "react-native-map-clustering";
+// import MapView from "react-native-map-clustering";
 import { Marker } from "react-native-maps";
 import GetUbicacion from "../../fb/GetUbicacion";
+import MapView from "react-native-map-clustering";
 
 const iosPinIcon = require("../pin.png");
 
@@ -25,7 +26,7 @@ const Map = () => {
     }
   }, [datos, coordsRecibidas]);
 
-  const getDatos = (coords) => {
+  const getDatos = async (coords) => {
     if (coords) {
       setDatos(coords);
     }
@@ -73,14 +74,15 @@ const Map = () => {
 const styles = StyleSheet.create({
   container3: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#ac0000",
     alignItems: "center",
     justifyContent: "center",
     width: "100%",
+    height: 300,
   },
   map: {
-    width: "100%",
-    height: 400,
+    width: "90%",
+    height: 200,
   },
 });
 

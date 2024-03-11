@@ -22,7 +22,6 @@ import { useNavigation } from "@react-navigation/native";
 import { FontAwesome } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import OpcionesUD from "./OpcionesUD";
-import { contexUser } from "../../fb/AuthenticatedUserProvider";
 import { Skeleton } from "moti/skeleton";
 
 const Publicaciones = ({ datos_usuario, screen }) => {

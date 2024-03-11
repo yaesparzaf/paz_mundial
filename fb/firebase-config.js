@@ -1,11 +1,10 @@
-import { initializeApp } from 'firebase/app';
-import  Constants  from 'expo-constants';
-import { getFirestore, initializeFirestore } from 'firebase/firestore';
-import { getAuth } from 'firebase/auth';
+import { initializeApp } from "firebase/app";
+import Constants from "expo-constants";
+import { getFirestore, initializeFirestore } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 //import { getReactNativePersistence } from '@react-native-firebase/auth';
-import { initializeAuth, getReactNativePersistence } from '@firebase/auth'; // Importa initializeAuth y getReactNativePersistence
-import AsyncStorage from '@react-native-async-storage/async-storage'; // Importa AsyncStorage si no lo has hecho
-
+import { initializeAuth, getReactNativePersistence } from "@firebase/auth"; // Importa initializeAuth y getReactNativePersistence
+import AsyncStorage from "@react-native-async-storage/async-storage"; // Importa AsyncStorage si no lo has hecho
 
 const firebaseConfig = {
   apiKey: Constants.expoConfig.extra.apiKey,
@@ -19,11 +18,11 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = initializeAuth(app, {
-  persistence: getReactNativePersistence(AsyncStorage)
+  persistence: getReactNativePersistence(AsyncStorage),
 });
 //const db = getFirestore(app);
-const db = initializeFirestore(app,{
-  experimentalForceLongPolling:true,
+const db = initializeFirestore(app, {
+  experimentalForceLongPolling: true,
 });
 
 // Configurar autenticación con persistencia
@@ -31,8 +30,7 @@ const db = initializeFirestore(app,{
   persistence: getReactNativePersistence(ReactNativeAsyncStorage),
 });*/
 const yt = Constants.expoConfig.extra.ytKey;
-const mapbox = Constants.expoConfig.extra.mapboxKey;
-export { app, auth, db, yt, mapbox };
+export { app, auth, db, yt };
 
 //IOS 133476762148-5ec612ukt96ohs88frg5emcaila6hff7.apps.googleusercontent.com
 

@@ -6,7 +6,6 @@ import {
   SafeAreaView,
 } from "react-native";
 import React, { useEffect } from "react";
-import GetUbicacion from "../../fb/GetUbicacion";
 import { useState } from "react";
 import Publicaciones from "../componentes/Publicaciones";
 import { contexUser } from "../../fb/AuthenticatedUserProvider";

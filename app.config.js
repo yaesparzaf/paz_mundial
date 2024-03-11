@@ -1,47 +1,44 @@
-export default{
-  "expo": {
-    "name": "paz_mundial",
-    "slug": "paz_mundial",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+export default {
+  expo: {
+    name: "paz_mundial",
+    slug: "paz_mundial",
+    version: "1.0.0",
+    orientation: "portrait",
+    icon: "./assets/icon.png",
+    userInterfaceStyle: "light",
+    splash: {
+      image: "./assets/splash.png",
+      resizeMode: "contain",
+      backgroundColor: "#ffffff",
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
-    "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "dev.despertar.pazmunidial"
+    assetBundlePatterns: ["**/*"],
+    ios: {
+      supportsTablet: true,
+      bundleIdentifier: "dev.despertar.pazmunidial",
     },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+    android: {
+      adaptiveIcon: {
+        foregroundImage: "./assets/adaptive-icon.png",
+        backgroundColor: "#ffffff",
       },
-      "package": "dev.despertar.pazmunidial"
+      package: "dev.despertar.pazmunidial",
     },
-    "web": {
-      "favicon": "./assets/favicon.png"
+    web: {
+      favicon: "./assets/favicon.png",
     },
     extra: {
-      apiKey:process.env.API_KEY,
-      authDomain:process.env.AUTH_DOMAIN,
-      projectId:process.env.PROJECT_ID,
-      storageBucket:process.env.STORAGE_BUCKET,
-      messagingSenderId:process.env.MESSAGING_SENDER_ID,
-      appId:process.env.APP_ID,
-      measurementId:process.env.MEASUREMENT_ID,
-      mapboxKey: process.env.MAPBOX_KEY,
+      apiKey: process.env.API_KEY,
+      authDomain: process.env.AUTH_DOMAIN,
+      projectId: process.env.PROJECT_ID,
+      storageBucket: process.env.STORAGE_BUCKET,
+      messagingSenderId: process.env.MESSAGING_SENDER_ID,
+      appId: process.env.APP_ID,
+      measurementId: process.env.MEASUREMENT_ID,
       ytKey: process.env.YT_KEY,
-      "eas": {
-        "projectId": "c5ae49d6-b741-4651-b952-a551736728f1"
-      }
+      eas: {
+        projectId: "c5ae49d6-b741-4651-b952-a551736728f1",
+      },
     },
-    "scheme": "paz_mundial"
-  }
-}
+    scheme: "paz_mundial",
+  },
+};

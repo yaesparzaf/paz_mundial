@@ -11,7 +11,6 @@ import {
 import { TextInput } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
-import * as ImagePicker from "expo-image-picker";
 import { db } from "../../fb/firebase-config";
 import {
   ref,
@@ -32,14 +31,17 @@ import {
 } from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
 import { contexUser } from "../../fb/AuthenticatedUserProvider";
+import AbrirGaleria from "./AbrirGaleria";
+import SubirImagen from "../../fb/SubirImagen";
 
-const Publicar = ({ route }) => {
-  const { usuario, setUsuario } = contexUser();
+const Publicar = ({ docId }) => {
+  const { usuario } = contexUser();
   const [titulo, setTitulo] = React.useState();
   const [asunto, setAsunto] = useState("");
   const [text, onChangeText] = React.useState("");
   const [alignAsunto, setAlignAsunto] = useState("left");
   const [alignTexto, setAlignTexto] = useState("left");
+  const [alignTexto2, setAlignTexto2] = useState("left");
   const [italica, setItalica] = useState(false);
   const [menuEdicion, setMenuEdicion] = useState(true);
   const [publicar, setPublicar] = useState(false);
@@ -50,88 +52,46 @@ const Publicar = ({ route }) => {
   const [esImagen, setesImagen] = useState();
   const [esVideo, setesVideo] = useState();
   const [editar, setEditar] = useState(false);
-  const [noticiaId, setNoticiaId] = useState();
+  const [documentoId, setDocumentoId] = useState();
+  const [texto2, setTexto2] = useState("");
+  const [segundoInput, setSegundoInput] = useState(false);
 
   useEffect(() => {
     const obtenerDatos = async () => {
-      const { params } = route;
-      if (params) {
-        const { noticiaId } = params;
-        setNoticiaId(noticiaId);
-        if (noticiaId) {
-          const noticiaRef = collection(db, "noticias");
-          const noticiaEdit = await getDoc(doc(noticiaRef, noticiaId));
-          if (noticiaEdit.exists()) {
-            const datos_noticia = noticiaEdit.data();
-            setTitulo(datos_noticia.titulo);
-            setAlignAsunto(datos_noticia.align_asunto);
-            setAlignTexto(datos_noticia.align_texto);
-            setAsunto(datos_noticia.asunto);
-            onChangeText(datos_noticia.texto);
-            setImagenUri(datos_noticia.imagen);
-            setItalica(datos_noticia.tipo_letra === "italic");
+      const datos = docId;
+      console.log("esto esta en docID ", docId);
+      if (datos) {
+        setDocumentoId(datos);
+        console.log("docID ", documentoId);
+        if (datos) {
+          console.log("entra al if de ", datos);
+          const documentoRef = collection(db, "entrenamiento");
+          const docEdit = await getDoc(doc(documentoRef, datos));
+          if (docEdit.exists()) {
+            const datos_doc = docEdit.data();
+            setTitulo(datos_doc.titulo);
+            setAlignAsunto(datos_doc.align_asunto);
+            setAlignTexto(datos_doc.align_texto);
+            setAlignTexto2(datos_doc.align_texto2);
+            setAsunto(datos_doc.asunto);
+            onChangeText(datos_doc.texto);
+            setTexto2(datos_doc.texto2);
+            setImagenUri(datos_doc.imagen);
+            setItalica(datos_doc.tipo_letra === "italic");
             setEditar(!editar);
+            if (datos_doc.texto2) {
+              setSegundoInput(true);
+            }
           } else {
-            "no hay datos para mostrar " + noticiaId;
+            "no hay datos para mostrar " + documentoId;
           }
+        } else {
+          console.log("entra al else");
         }
       }
     };
     obtenerDatos();
-  }, []);
-
-  const abrirGaleria = async () => {
-    try {
-      const { status } =
-        await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-      if (status !== "granted") {
-        ("Permiso denegado para acceder a la galería");
-        return;
-      }
-
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: false,
-        quality: 0.6,
-      });
-
-      if (!result.canceled) {
-        const selectedAsset =
-          result.assets && result.assets.length > 0 ? result.assets[0] : null;
-        setesImagen(selectedAsset?.type.startsWith("image"));
-        //setesVideo(selectedAsset?.type.startsWith('video'));
-        if (editar && !imagenUri_prev) setImagenUri_prev(imagenUri);
-        setImagenUri(selectedAsset ? selectedAsset.uri : null);
-        setPublicar(titulo && (selectedAsset || text.length > 0));
-      }
-    } catch (error) {
-      console.error("Error al abrir la galería: ", error);
-    }
-  };
-
-  const subirImagen = async (coleccionRef, imagenUri) => {
-    const storage = getStorage();
-    const extension = imagenUri.split(".").pop();
-    const storageRef = ref(
-      storage,
-      `uploads/noticias/imagenes/${coleccionRef.id}.${extension}`
-    );
-    try {
-      setGuardandoImagen(true);
-      const response = await fetch(imagenUri);
-      const blob = await response.blob();
-      const snapshot = await uploadBytes(storageRef, blob);
-      const imageUrl = await getDownloadURL(snapshot.ref);
-      await updateDoc(coleccionRef, { imagen: imageUrl });
-      return true;
-    } catch (error) {
-      console.error(error);
-      return false;
-    } finally {
-      setGuardandoImagen(false);
-    }
-  };
+  }, [docId]);
 
   const eliminarImagen = () => {
     if (editar) {
@@ -144,38 +104,55 @@ const Publicar = ({ route }) => {
   const keyboardHide = () => {
     setMenuEdicion(false);
   };
-  /*const onAlignTexto = (tipo, input) => {
-    if (input === 'A') {
-      setAlignAsunto(tipo);
-    } else if (input === 'T') {
-      setAlignTexto(tipo);
+
+  const getRespuesta = async (response) => {
+    console.log("se recibe: ", response);
+    console.log("_______________");
+    console.log("esto tiene imagenURI: ", imagenUri);
+    if (response) {
+      if (editar) setImagenUri_prev(imagenUri);
+      const { isImagen, uri } = response;
+      setesImagen(isImagen);
+      setImagenUri(uri);
+      setPublicar(titulo && titulo.length > 0);
+      if (isImagen) {
+        agregarInput("image", uri);
+      }
     }
-  };*/
+  };
 
   const onSend = async (
     titulo,
     asunto,
     alignAsunto,
     alignTexto,
+    alignTexto2,
     text,
+    texto2,
     imagenUri
   ) => {
     try {
-      const coleccionRef = await addDoc(collection(db, "noticias"), {
+      const coleccionRef = await addDoc(collection(db, "entrenamiento"), {
         titulo: titulo,
         asunto: asunto,
         align_asunto: alignAsunto,
         align_texto: alignTexto,
+        align_texto2: alignTexto2,
         autor: usuario.nombre,
         autor_id: usuario.id,
         fecha: serverTimestamp(),
         leida: false,
         tipo_letra: italica ? "italic" : "normal",
         texto: text,
+        texto2: texto2,
       });
       if (coleccionRef) {
         if (imagenUri) {
-          const imagenSubida = await subirImagen(coleccionRef, imagenUri);
+          setGuardandoImagen(true);
+          const imagenSubida = await SubirImagen(coleccionRef, imagenUri);
+          if (imagenSubida) {
+            setGuardandoImagen(false);
+          }
           if (!imagenSubida) {
             await deleteDoc(coleccionRef);
           }
@@ -183,70 +160,90 @@ const Publicar = ({ route }) => {
       } else {
         console.error("Error al obtener la referencia del nuevo documento");
       }
-      navegacion.navigate("Noticias", { screen: "Noticias" });
+      navegacion.navigate("Entrenamiento", { screen: "entrenamiento" });
     } catch (error) {
       console.error("Error al enviar datos:", error);
     }
   };
 
   const onSendEdit = async (
-    noticiaId,
+    documentoId,
     new_titulo,
     new_asunto,
     alignAsunto,
     alignTexto,
+    alignTexto2,
     new_texto,
+    new_texto2,
     new_imagen,
     prev_imagen
   ) => {
-    const noticiaRef = doc(db, "noticias", noticiaId);
+    const documentoRef = doc(db, "entrenamiento", documentoId);
     try {
       if (prev_imagen && new_imagen) {
-        await updateDoc(noticiaRef, {
+        console.log("entro al if de prev_imagen && new_imagen");
+        await updateDoc(documentoRef, {
           align_asunto: alignAsunto,
           align_texto: alignTexto,
+          align_texto2: alignTexto2,
           asunto: new_asunto,
           imagen: new_imagen,
           titulo: new_titulo,
           texto: new_texto,
+          new_texto2,
           tipo_letra: italica ? "italic" : "normal",
         });
-        const storage = getStorage();
-        const imagenRef = ref(storage, prev_imagen);
-        subirImagen(noticiaRef, new_imagen);
-        try {
-          await deleteObject(imagenRef);
-        } catch (error) {}
+        setGuardandoImagen(true);
+        console.log("_______________");
+        console.log("esto tiene imagenURI: ", imagenUri);
+        const imagenSubida = await SubirImagen(documentoRef, new_imagen);
+        console.log("respuesta: ", imagenSubida);
+        if (imagenSubida) {
+          setGuardandoImagen(false);
+        }
       } else if (prev_imagen && !new_imagen) {
-        await updateDoc(noticiaRef, {
+        console.log("entro al else  de  prev_imagen && !new_imagen");
+
+        await updateDoc(documentoRef, {
           align_asunto: alignAsunto,
           align_texto: alignTexto,
+          align_texto2: alignTexto2,
           asunto: new_asunto,
           imagen: deleteField(),
           titulo: new_titulo,
           texto: new_texto,
+          texto2: new_texto2,
           tipo_letra: italica ? "italic" : "normal",
         });
         const storage = getStorage();
         const imagenRef = ref(storage, prev_imagen);
         try {
           await deleteObject(imagenRef);
-        } catch (error) {}
+        } catch (error) {
+          console.error("ee", error);
+        }
+        //else if cuando no hay imagen previa pero si imagen nueva
       } else {
-        await updateDoc(noticiaRef, {
+        console.log("entro al else 207");
+
+        await updateDoc(documentoRef, {
           align_asunto: alignAsunto,
           align_texto: alignTexto,
+          align_texto2: alignTexto2,
           titulo: new_titulo,
           asunto: new_asunto,
           texto: new_texto,
+          texto2: new_texto2,
           tipo_letra: italica ? "italic" : "normal",
         });
       }
-      navegacion.navigate("Noticias", { screen: "Noticias" });
-    } catch (error) {}
+      navegacion.navigate("Entrenamiento", { screen: "entrenamiento" });
+    } catch (error) {
+      console.error("eerrrorrr", error);
+    }
   };
 
-  const MenuEdicion = (input) => {
+  const MenuEdicion = (input, input2) => {
     if (input === "A") {
       return (
         <View style={styles.row}>
@@ -290,7 +287,7 @@ const Publicar = ({ route }) => {
           <TouchableOpacity
             style={styles.align_Text}
             onPress={() => {
-              setAlignTexto("left");
+              input2 ? setAlignTexto2("left") : setAlignTexto("left");
             }}
           >
             <Feather name="align-left" size={24} color="black" />
@@ -298,7 +295,7 @@ const Publicar = ({ route }) => {
           <TouchableOpacity
             style={styles.align_Text}
             onPress={() => {
-              setAlignTexto("center");
+              input2 ? setAlignTexto2("center") : setAlignTexto("center");
             }}
           >
             <Feather name="align-center" size={24} color="black" />
@@ -308,24 +305,44 @@ const Publicar = ({ route }) => {
     }
   };
 
+  //   const agregarTexto = (index, value) => {
+  //     const nuevoTexto = [...textos];
+  //     nuevoTexto[index] = value;
+  //     setTextos(nuevoTexto);
+  //   };
+
+  const agregarInput = () => {
+    setSegundoInput(true);
+  };
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
       <ScrollView>
         <View style={styles.botones_cont}>
-          <TouchableOpacity style={styles.up_fv} onPress={abrirGaleria}>
-            <FontAwesome5 name="photo-video" size={24} color="black" />
-            <Text style={styles.buttonText}>Foto</Text>
+          <AbrirGaleria respuesta={getRespuesta} />
+          <TouchableOpacity onPress={agregarInput}>
+            <Text
+              style={{
+                padding: 10,
+                backgroundColor: "#00adef",
+                borderRadius: 10,
+              }}
+            >
+              Añadir texto
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() =>
               editar
                 ? onSendEdit(
-                    noticiaId,
+                    documentoId,
                     titulo,
                     asunto,
                     alignAsunto,
                     alignTexto,
+                    alignTexto2,
                     text,
+                    texto2,
                     imagenUri,
                     imagenUri_prev
                   )
@@ -334,7 +351,9 @@ const Publicar = ({ route }) => {
                     asunto,
                     alignAsunto,
                     alignTexto,
+                    alignTexto2,
                     text,
+                    texto2,
                     imagenUri
                   )
             }
@@ -420,6 +439,24 @@ const Publicar = ({ route }) => {
             </View>
           ) : null}
         </View>
+        <View>
+          {menuEdicion && segundoInput && MenuEdicion("T", "T2")}
+          {segundoInput && (
+            <TextInput
+              placeholder="Escribe un texto..."
+              style={[styles.texto_input, { textAlign: alignTexto2 }]}
+              multiline={true}
+              numberOfLines={4}
+              value={texto2}
+              onChangeText={(newTexto2) => {
+                if (editar) {
+                  setPublicar(newTexto2 && newTexto2.length > 0);
+                }
+                setTexto2(newTexto2);
+              }}
+            />
+          )}
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -471,10 +508,6 @@ const styles = StyleSheet.create({
     height: 500,
     resizeMode: "contain",
     marginHorizontal: 5,
-  },
-  buttonText: {
-    marginLeft: 5,
-    fontWeight: "bold",
   },
   publicar_btn: {
     width: "30%",

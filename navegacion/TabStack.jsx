@@ -4,15 +4,14 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
 import { MaterialIcons } from "@expo/vector-icons";
 import Foro from "../assets/screens/Foro";
-import Perfil from "../assets/screens/Perfil";
-import Publicar from "../assets/screens/Publicar";
+import Publicar from "../assets/componentes/Publicar";
 import NoticiaInfo from "../assets/screens/NoticiaInfo";
 import MeditarEdit from "../assets/screens/MeditarEdit";
 import MyTabs from "./MyTabs";
 import Login from "../assets/componentes/Login";
 import PerfilEdit from "../assets/screens/PerfilEdit";
 import NuevoForo from "../assets/screens/NuevoForo";
-import NuevoEntrenamiento from "../assets/screens/NuevoEntrenamiento";
+import NuevaPublicacion from "../assets/screens/NuevaPublicacion";
 
 const Stack = createStackNavigator();
 
@@ -69,7 +68,7 @@ const TabStack = () => {
       <Stack.Screen
         name="Publicar"
         component={Publicar}
-        options={{ title: "Crear noticia" }}
+        options={({ route }) => ({ title: route.params })}
       />
       <Stack.Screen
         name="NoticiaInfo"
@@ -90,15 +89,11 @@ const TabStack = () => {
           headerShown: false,
         }}
       />
+      <Stack.Screen name="NuevaPublicacion" component={NuevaPublicacion} />
       <Stack.Screen
         name="NuevoForo"
         component={NuevoForo}
         options={{ title: "Nuevo foro" }}
-      />
-      <Stack.Screen
-        name="NuevoEntrenamiento"
-        component={NuevoEntrenamiento}
-        options={{ title: "Nuevo entrenamiento" }}
       />
     </Stack.Navigator>
   );

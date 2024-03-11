@@ -49,29 +49,22 @@ const Ubicacion = ({ getLocation }) => {
           longitude: -101.1856651,
         },
       }; */
-      const location_copy = location;
-      try {
-        const coleccionRef = collection(db, "meditando");
-        const docRef = doc(coleccionRef, usuario.id);
-        const docEdit = await getDoc(docRef);
-        if (docEdit.exists()) {
-          await updateDoc(docRef, {
-            latitud: location.coords.latitude,
-            longitud: location.coords.longitude,
-          });
-        } else {
-          const meditandoRef = doc(db, "meditando", usuario.id);
-          await setDoc(meditandoRef, {
-            id: usuario.id,
-            latitud: location.coords.latitude,
-            longitud: location.coords.longitude,
-          });
-          if (meditandoRef) {
-          }
-        }
-        //PutCache({key: 'ubicacion',datos: location_copy.coords});
-      } catch (error) {
-        Alert.alert("Error", "Hubo un error al añadir a la colección");
+
+      const coleccionRef = collection(db, "meditando");
+      const docRef = doc(coleccionRef, usuario.id);
+      const docEdit = await getDoc(docRef);
+      if (docEdit.exists()) {
+        await updateDoc(docRef, {
+          latitud: location.coords.latitude,
+          longitud: location.coords.longitude,
+        });
+      } else {
+        const meditandoRef = doc(db, "meditando", usuario.id);
+        await setDoc(meditandoRef, {
+          id: usuario.id,
+          latitud: location.coords.latitude,
+          longitud: location.coords.longitude,
+        });
       }
       return true;
     } catch (error) {
