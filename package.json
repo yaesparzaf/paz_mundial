@@ -70,7 +70,9 @@
     "react-native-webview": "^13.2.2",
     "react-native-youtube": "^2.0.2",
     "react-native-youtube-iframe": "^2.3.0",
-    "react-navigation-drawer": "^2.7.2"
+    "react-navigation-drawer": "^2.7.2",
+    "react-native-web": "~0.19.6",
+    "@expo/webpack-config": "^19.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

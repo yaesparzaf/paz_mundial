@@ -2,20 +2,16 @@ import {
   View,
   SafeAreaView,
   Image,
-  ActivityIndicator,
   ScrollView,
-  TouchableOpacity,
+  FlatList,
   Text,
   StyleSheet,
-  ImageBackground,
 } from "react-native";
 import React, { useCallback, useState } from "react";
-import FloatButton from "../componentes/FloatButton";
 import Videos from "../componentes/Videos";
 import Ubicacion from "../componentes/Ubicacion";
 import Map from "../componentes/Map";
 import PermisosUbi from "./PermisosUbi";
-import Contador from "../../fb/useContador";
 import { useFocusEffect } from "@react-navigation/native";
 import OnMeditar from "../componentes/OnMeditar";
 import { contexUser } from "../../fb/AuthenticatedUserProvider";
@@ -28,6 +24,7 @@ const Meditar = () => {
   const [reload, setReload] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const contador = useContador();
+  const videosData = [];
 
   useFocusEffect(
     useCallback(() => {
@@ -80,32 +77,39 @@ const Meditar = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView>
-        <View style={{ flex: 0.5 }}>
-          <Videos />
-        </View>
-        <View
-          style={{
-            flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
-            backgroundColor: "#F7FFFE",
-          }}
-        >
-          <Image
-            //source={require("../meditarplanta.png")}
-            source={require("../meditar.gif")}
-            //source={require("../meditar1.gif")}
-            style={{ width: "100%", height: 250 }}
-            resizeMode="cover"
-          />
-          <View style={styles.textContainer}>
-            <Text style={styles.titulo}>Personas meditando ahora:</Text>
-            <ContadorAnimado numero={contador} />
-          </View>
-          <Map />
-        </View>
-      </ScrollView>
+      <FlatList
+        data={["Videos", "Image"]}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({ item }) => {
+          return (
+            <View>
+              {item === "Videos" ? (
+                <Videos data={videosData} />
+              ) : (
+                <View
+                  style={{
+                    flex: 1,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    backgroundColor: "#F7FFFE",
+                  }}
+                >
+                  <Image
+                    source={require("../meditar.gif")}
+                    style={{ width: "100%", height: 250 }}
+                    resizeMode="cover"
+                  />
+                  <View style={styles.textContainer}>
+                    <Text style={styles.titulo}>Personas meditando ahora:</Text>
+                    <ContadorAnimado numero={contador} />
+                  </View>
+                  <Map />
+                </View>
+              )}
+            </View>
+          );
+        }}
+      />
     </SafeAreaView>
   );
 };
@@ -113,7 +117,6 @@ const Meditar = () => {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "#F7FFFE",
-    flex: 1,
   },
   loading_container: {
     flex: 1,

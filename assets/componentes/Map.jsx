@@ -31,16 +31,6 @@ const Map = () => {
     }
   };
 
-  const animateToRegion = () => {
-    let region = {
-      latitude: 19.7069,
-      longitude: -101.1953,
-      latitudeDelta: 0.05,
-      longitudeDelta: 0.05,
-    };
-    mapRef.current.animateToRegion(region, 4000);
-  };
-
   return (
     <View style={styles.container3}>
       {!coordsRecibidas && <GetUbicacion allDatos={getDatos} />}
