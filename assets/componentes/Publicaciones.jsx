@@ -26,7 +26,6 @@ import { Skeleton } from "moti/skeleton";
 import publicaciones from "../styles/publicacionesStyles";
 
 const Publicaciones = ({ datos_usuario, screen }) => {
-  //const { usuario } = contexUser();
   const usuario = datos_usuario;
   const [loading, setLoading] = useState(true);
   const [publicaciones, setPublicaciones] = useState([]);
@@ -41,7 +40,10 @@ const Publicaciones = ({ datos_usuario, screen }) => {
           id: doc.id,
           ...doc.data(),
         }));
-        newPublicacion.sort((a, b) => b.fecha - a.fecha);
+        if (screen === "noticias")
+          newPublicacion.sort((a, b) => b.fecha - a.fecha);
+        else if (screen === "entrenamiento")
+          newPublicacion.sort((a, b) => a.id - b.id);
         setPublicaciones(newPublicacion);
         setLoading(false);
       });
