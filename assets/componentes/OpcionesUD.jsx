@@ -34,7 +34,8 @@ const OpcionesUD = ({ onClose, noticiaId, imagenUrl, onScreen }) => {
   }, [onScreen]);
 
   const pressEditar = () => {
-    navegacion.navigate("NuevaPublicacion", { noticiaId });
+    navegacion.navigate("NuevaPublicacion", { noticiaId:noticiaId, screen: onScreen });
+    
     onClose();
   };
 

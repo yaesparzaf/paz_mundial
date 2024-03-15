@@ -28,14 +28,16 @@ import {
   getDoc,
   deleteDoc,
   deleteField,
+  setDoc,
 } from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
 import { contexUser } from "../../fb/AuthenticatedUserProvider";
 import AbrirGaleria from "./AbrirGaleria";
 import SubirImagen from "../../fb/SubirImagen";
 
-const Publicar = ({ docId }) => {
+const Publicar = ({ docId, screen }) => {
   const { usuario } = contexUser();
+  const [numEnt, setNumEnt] = useState();
   const [titulo, setTitulo] = React.useState();
   const [asunto, setAsunto] = useState("");
   const [text, onChangeText] = React.useState("");
@@ -55,38 +57,41 @@ const Publicar = ({ docId }) => {
   const [documentoId, setDocumentoId] = useState();
   const [texto2, setTexto2] = useState("");
   const [segundoInput, setSegundoInput] = useState(false);
+  const [coleccion, setColeccion] = useState();
+  const [nameNavigate, setNameNavigate] = useState();
 
   useEffect(() => {
     const obtenerDatos = async () => {
+      console.log("docId: ", docId);
       const datos = docId;
-      console.log("esto esta en docID ", docId);
+      const coleccionEffect = screen;
+      setColeccion(screen);
+      if (screen === "noticias") {
+        setNameNavigate("Noticias");
+      } else if (screen === "entrenamiento") {
+        setNameNavigate("Entrenamiento");
+      }
       if (datos) {
         setDocumentoId(datos);
-        console.log("docID ", documentoId);
-        if (datos) {
-          console.log("entra al if de ", datos);
-          const documentoRef = collection(db, "entrenamiento");
-          const docEdit = await getDoc(doc(documentoRef, datos));
-          if (docEdit.exists()) {
-            const datos_doc = docEdit.data();
-            setTitulo(datos_doc.titulo);
-            setAlignAsunto(datos_doc.align_asunto);
-            setAlignTexto(datos_doc.align_texto);
-            setAlignTexto2(datos_doc.align_texto2);
-            setAsunto(datos_doc.asunto);
-            onChangeText(datos_doc.texto);
-            setTexto2(datos_doc.texto2);
-            setImagenUri(datos_doc.imagen);
-            setItalica(datos_doc.tipo_letra === "italic");
-            setEditar(!editar);
-            if (datos_doc.texto2) {
-              setSegundoInput(true);
-            }
-          } else {
-            "no hay datos para mostrar " + documentoId;
+        const documentoRef = collection(db, coleccionEffect);
+        const docEdit = await getDoc(doc(documentoRef, datos));
+        if (docEdit.exists()) {
+          const datos_doc = docEdit.data();
+          setTitulo(datos_doc.titulo);
+          setAlignAsunto(datos_doc.align_asunto);
+          setAlignTexto(datos_doc.align_texto);
+          setAlignTexto2(datos_doc.align_texto2);
+          setAsunto(datos_doc.asunto);
+          onChangeText(datos_doc.texto);
+          setTexto2(datos_doc.texto2);
+          setImagenUri(datos_doc.imagen);
+          setItalica(datos_doc.tipo_letra === "italic");
+          setEditar(!editar);
+          if (datos_doc.texto2) {
+            setSegundoInput(true);
           }
         } else {
-          console.log("entra al else");
+          "no hay datos para mostrar " + documentoId;
         }
       }
     };
@@ -106,9 +111,6 @@ const Publicar = ({ docId }) => {
   };
 
   const getRespuesta = async (response) => {
-    console.log("se recibe: ", response);
-    console.log("_______________");
-    console.log("esto tiene imagenURI: ", imagenUri);
     if (response) {
       if (editar) setImagenUri_prev(imagenUri);
       const { isImagen, uri } = response;
@@ -132,20 +134,41 @@ const Publicar = ({ docId }) => {
     imagenUri
   ) => {
     try {
-      const coleccionRef = await addDoc(collection(db, "entrenamiento"), {
-        titulo: titulo,
-        asunto: asunto,
-        align_asunto: alignAsunto,
-        align_texto: alignTexto,
-        align_texto2: alignTexto2,
-        autor: usuario.nombre,
-        autor_id: usuario.id,
-        fecha: serverTimestamp(),
-        leida: false,
-        tipo_letra: italica ? "italic" : "normal",
-        texto: text,
-        texto2: texto2,
-      });
+      let coleccionRef;
+      if (coleccion === "entrenamiento") {
+        coleccionRef = doc(db, coleccion, numEnt);
+        await setDoc(coleccionRef, {
+          titulo: titulo,
+          asunto: asunto,
+          align_asunto: alignAsunto,
+          align_texto: alignTexto,
+          align_texto2: alignTexto2,
+          autor: usuario.nombre,
+          autor_id: usuario.id,
+          fecha: serverTimestamp(),
+          leida: false,
+          tipo_letra: italica ? "italic" : "normal",
+          texto: text,
+          texto2: texto2,
+        });
+      } else {
+        coleccionRef = await addDoc(collection(db, coleccion), {
+          titulo: titulo,
+          asunto: asunto,
+          align_asunto: alignAsunto,
+          align_texto: alignTexto,
+          align_texto2: alignTexto2,
+          autor: usuario.nombre,
+          autor_id: usuario.id,
+          fecha: serverTimestamp(),
+          leida: false,
+          tipo_letra: italica ? "italic" : "normal",
+          texto: text,
+          texto2: texto2,
+        });
+        console.log("coleccion ref: ", coleccionRef);
+      }
+
       if (coleccionRef) {
         if (imagenUri) {
           setGuardandoImagen(true);
@@ -160,7 +183,7 @@ const Publicar = ({ docId }) => {
       } else {
         console.error("Error al obtener la referencia del nuevo documento");
       }
-      navegacion.navigate("Entrenamiento", { screen: "entrenamiento" });
+      navegacion.navigate(nameNavigate, { screen: coleccion });
     } catch (error) {
       console.error("Error al enviar datos:", error);
     }
@@ -178,7 +201,7 @@ const Publicar = ({ docId }) => {
     new_imagen,
     prev_imagen
   ) => {
-    const documentoRef = doc(db, "entrenamiento", documentoId);
+    const documentoRef = doc(db, coleccion, documentoId);
     try {
       if (prev_imagen && new_imagen) {
         console.log("entro al if de prev_imagen && new_imagen");
@@ -237,7 +260,7 @@ const Publicar = ({ docId }) => {
           tipo_letra: italica ? "italic" : "normal",
         });
       }
-      navegacion.navigate("Entrenamiento", { screen: "entrenamiento" });
+      navegacion.navigate(nameNavigate, { screen: coleccion });
     } catch (error) {
       console.error("eerrrorrr", error);
     }
@@ -374,13 +397,34 @@ const Publicar = ({ docId }) => {
           </TouchableOpacity>
         </View>
         <View>
+          {coleccion === "entrenamiento" && (
+            <TextInput
+              placeholder="Num. entrenamiento"
+              keyboardType="numeric"
+              maxLength={3}
+              value={numEnt}
+              style={styles.texto_input}
+              onChangeText={(numero) => {
+                setNumEnt(numero);
+                setPublicar(
+                  numero && titulo && (imagenUri || titulo.length > 0)
+                );
+              }}
+            />
+          )}
           <TextInput
             placeholder="Título"
             style={styles.titulo_asunto_input}
             value={titulo}
             onChangeText={(title) => {
               setTitulo(title);
-              setPublicar(title && (imagenUri || title.length > 0));
+              {
+                numEnt
+                  ? setPublicar(
+                      numEnt && title && (imagenUri || title.length > 0)
+                    )
+                  : setPublicar(title && (imagenUri || title.length > 0));
+              }
             }}
           />
           {menuEdicion && MenuEdicion("A")}

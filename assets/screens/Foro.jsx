@@ -32,7 +32,7 @@ const Foro = ({ route }) => {
               _id: doc.data().autor_id,
               name: doc.data().autor,
             },
-            createdAt: doc.data().fecha.toDate(), // Asegúrate de convertir la fecha a un objeto Date
+            createdAt: doc.data().fecha.toDate(),
           }))
         );
 

@@ -1,9 +1,8 @@
 import React, { useRef, useState, useEffect } from "react";
 import { Button, StyleSheet, View, Text } from "react-native";
-// import MapView from "react-native-map-clustering";
+import MapView from "react-native-map-clustering";
 import { Marker } from "react-native-maps";
 import GetUbicacion from "../../fb/GetUbicacion";
-import MapView from "react-native-map-clustering";
 
 const iosPinIcon = require("../pin.png");
 
@@ -26,20 +25,10 @@ const Map = () => {
     }
   }, [datos, coordsRecibidas]);
 
-  const getDatos = async (coords) => {
+  const getDatos = (coords) => {
     if (coords) {
       setDatos(coords);
     }
-  };
-
-  const animateToRegion = () => {
-    let region = {
-      latitude: 19.7069,
-      longitude: -101.1953,
-      latitudeDelta: 0.05,
-      longitudeDelta: 0.05,
-    };
-    mapRef.current.animateToRegion(region, 4000);
   };
 
   return (
@@ -48,7 +37,7 @@ const Map = () => {
       <MapView
         ref={mapRef}
         style={styles.map}
-        mapType="satellite"
+        // mapType="satellite"
         loadingEnabled={true}
         toolbarEnabled={false}
         clusteringEnabled={true}
@@ -74,15 +63,14 @@ const Map = () => {
 const styles = StyleSheet.create({
   container3: {
     flex: 1,
-    backgroundColor: "#ac0000",
+    backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
     width: "100%",
-    height: 300,
   },
   map: {
-    width: "90%",
-    height: 200,
+    width: "100%",
+    height: 400,
   },
 });
 

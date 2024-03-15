@@ -5,13 +5,14 @@ import Publicar from "../componentes/Publicar";
 const NuevoEntrenamiento = ({ route }) => {
   const [noticiaID, setNoticiaID] = useState();
   const [loading, setLoading] = useState(true);
-  console.log("route ", route);
+  const [ventana, setVentana] = useState();
 
   useEffect(() => {
     if (route) {
       const { params } = route;
-      const { noticiaId } = params;
+      const { noticiaId, screen } = params;
       setNoticiaID(noticiaId);
+      setVentana(screen);
       setLoading(false);
     }
   }, []);
@@ -22,8 +23,11 @@ const NuevoEntrenamiento = ({ route }) => {
   }
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      {console.log("NoticiaID: ", noticiaID)}
-      {noticiaID ? <Publicar docId={noticiaID} /> : <Publicar />}
+      {noticiaID && ventana ? (
+        <Publicar docId={noticiaID} screen={ventana} />
+      ) : (
+        ventana && <Publicar screen={ventana} />
+      )}
     </SafeAreaView>
   );
 };

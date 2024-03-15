@@ -48,7 +48,6 @@ const SignUp = ({ onBack }) => {
     }
 
     try {
-      // Verificar si el email ya está registrado
       const signInMethods = await fetchSignInMethodsForEmail(auth, email);
       if (signInMethods.length > 0) {
         Alert.alert(
@@ -57,19 +56,13 @@ const SignUp = ({ onBack }) => {
         );
         return;
       }
-
-      // Crear el usuario y guardar los datos en Firestore
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         email,
         password
       );
       const user = userCredential.user;
-
-      // Crear una referencia al documento con el uid del usuario como ID
       const userDocRef = doc(db, "usuarios", user.uid);
-
-      // Establecer los datos del usuario en el documento con el uid como ID
       await setDoc(userDocRef, {
         nombre: nombre,
         email: email,

@@ -23,6 +23,7 @@ import { FontAwesome } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import OpcionesUD from "./OpcionesUD";
 import { Skeleton } from "moti/skeleton";
+import publicaciones from "../styles/publicacionesStyles";
 
 const Publicaciones = ({ datos_usuario, screen }) => {
   //const { usuario } = contexUser();
@@ -82,27 +83,28 @@ const Publicaciones = ({ datos_usuario, screen }) => {
           item={item}
           rol={usuario ? usuario.rol : ""}
           usuario_id={usuario ? usuario.id : ""}
-          ventana={screen}
+          screen={screen}
         />
       )}
     />
   );
 };
 
-const Info = ({ item, rol, usuario_id, ventana }) => {
+const Info = ({ item, rol, usuario_id, screen }) => {
   const [mostrarOpciones, setMostrarOpciones] = useState(false);
   const [nueva, setNueva] = useState();
   const navegacion = useNavigation();
   const fecha = item.fecha ? item.fecha.toDate() : null;
+  let coleccion;
+  if (screen === "noticias") {
+    coleccion = "noticiasLeidas";
+  } else if (screen === "entrenamiento") {
+    coleccion = "entrenamientoVisto";
+  }
   useEffect(() => {
     const NuevaNoticia = async () => {
       try {
-        const coleccionRef = collection(
-          db,
-          "usuarios",
-          usuario_id,
-          "entrenamientoVisto"
-        );
+        const coleccionRef = collection(db, "usuarios", usuario_id, coleccion);
         const datosColeccion = await getDocs(coleccionRef);
         const vacia = datosColeccion.empty;
         if (vacia) setNueva(vacia);
@@ -116,24 +118,15 @@ const Info = ({ item, rol, usuario_id, ventana }) => {
   }, [usuario_id, item.id]);
 
   const addLeida = async (noticia_id) => {
-    const coleccionRef = await getDocs(
-      collection(db, "usuarios", usuario_id, "entrenamientoVisto")
-    );
-    //const querySnapshot = await getDocs(query(coleccionRef, where('noticia_id', '==', noticia_id)));
+    // const coleccionRef = await getDocs(
+    //   collection(db, "usuarios", usuario_id, coleccion)
+    // );
     setNueva(false);
-    //if (coleccionRef.empty) {
-    const noticiaRef = doc(
-      db,
-      "usuarios",
-      usuario_id,
-      "entrenamientoVisto",
-      noticia_id
-    );
+    const noticiaRef = doc(db, "usuarios", usuario_id, coleccion, noticia_id);
     await setDoc(noticiaRef, {
       noticia_id: noticia_id,
       leida: true,
     });
-    // }
   };
 
   const FormatoFecha = (fecha) => {
@@ -152,16 +145,16 @@ const Info = ({ item, rol, usuario_id, ventana }) => {
   };
   return (
     usuario_id && (
-      <View style={styles.publicacionContainer}>
-        <View style={styles.encabezado}>
-          <Text style={styles.autorTexto}>{item.autor}</Text>
+      <View style={publicaciones.publicacionContainer}>
+        <View style={publicaciones.encabezado}>
+          <Text style={publicaciones.autorTexto}>{item.autor}</Text>
           {fecha !== null && (
-            <Text style={styles.fechaTexto}>{FormatoFecha(fecha)}</Text>
+            <Text style={publicaciones.fechaTexto}>{FormatoFecha(fecha)}</Text>
           )}
           {nueva && (
             <MaterialIcons name="fiber-new" size={24} color="#00ADEF" />
           )}
-          <View style={styles.menu_publicacion}>
+          <View style={publicaciones.menu_publicacion}>
             {rol === "admin" && usuario_id == item.autor_id && (
               <TouchableOpacity activeOpacity={1.0} onPress={toggleOpciones}>
                 <Entypo name="dots-three-vertical" size={15} color="black" />
@@ -170,13 +163,13 @@ const Info = ({ item, rol, usuario_id, ventana }) => {
           </View>
         </View>
         <TouchableOpacity
-          style={styles.noticia_btn}
+          style={publicaciones.noticia_btn}
           onPress={() => pressButton(item)}
         >
-          <Text style={styles.titulo_publicacion}>{item.titulo}</Text>
+          <Text style={publicaciones.titulo_publicacion}>{item.titulo}</Text>
           <Text
             style={[
-              styles.asunto_publicacion,
+              publicaciones.asunto_publicacion,
               { textAlign: item.align_asunto, fontStyle: item.tipo_letra },
             ]}
           >
@@ -184,7 +177,7 @@ const Info = ({ item, rol, usuario_id, ventana }) => {
           </Text>
           {
             item.imagen && <FontAwesome name="photo" size={18} color="black" />
-            //<Image source={{ uri: item.imagen }} style={styles.imagenPublicacion}
+            //<Image source={{ uri: item.imagen }} style={publicaciones.imagenPublicacion}
           }
         </TouchableOpacity>
         {mostrarOpciones && (
@@ -192,67 +185,12 @@ const Info = ({ item, rol, usuario_id, ventana }) => {
             onClose={toggleOpciones}
             noticiaId={item.id}
             imagenUrl={item.imagen}
-            onScreen={ventana}
+            onScreen={screen}
           />
         )}
       </View>
     )
   );
 };
-
-const styles = StyleSheet.create({
-  publicacionContainer: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#00000021",
-    backgroundColor: "#fff",
-  },
-  skeletonItem: {
-    marginBottom: 10,
-    borderRadius: 5,
-    height: 100,
-    width: "100%",
-  },
-  noticia_btn: {
-    //backgroundColor:'brown'
-  },
-  encabezado: {
-    alignItems: "center",
-    flexDirection: "row",
-    height: 25,
-    //backgroundColor: 'red'
-  },
-  titulo_publicacion: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  asunto_publicacion: {
-    fontSize: 18,
-  },
-  autorTexto: {
-    fontWeight: "bold",
-    marginBottom: 5,
-    marginRight: 10,
-  },
-  textoPublicacion: {
-    fontSize: 15,
-    textAlign: "justify",
-  },
-  imagenPublicacion: {
-    height: 200,
-    resizeMode: "cover",
-    marginBottom: 10,
-  },
-  fechaTexto: {
-    fontSize: 12,
-    color: "#888",
-    marginTop: 0,
-  },
-  menu_publicacion: {
-    flexDirection: "row-reverse",
-    flex: 1,
-    //backgroundColor:'green'
-  },
-});
 
 export default Publicaciones;

@@ -9,7 +9,6 @@ import SignUp from "../assets/componentes/SignUp";
 import { AuthenticatedUserContex } from "../fb/AuthenticatedUserProvider";
 import GetCache from "../assets/cache/GetCache";
 import MyDrawer from "./MyDrawer";
-import TabStack from "./TabStack";
 
 const Stack = createStackNavigator();
 
