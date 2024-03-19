@@ -1,8 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { collection, doc, getDoc } from "firebase/firestore";
+import { collection, doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "./firebase-config";
 
-// DatosUsers.js
 const DatosUsers = async ({ usuario_id }) => {
   try {
     console.log("esto recibe datos user: ", usuario_id);
@@ -21,8 +19,24 @@ const DatosUsers = async ({ usuario_id }) => {
     }
   } catch (error) {
     console.error("Error al obtener datos del usuario:", error);
-    throw error; // Importante: lanza el error para que pueda ser manejado por el componente
+    throw error;
   }
 };
 
-export default DatosUsers;
+const addLeida = async (coleccion, noticia_id, usuario_id) => {
+  const noticiaRef = doc(db, "usuarios", usuario_id, coleccion, noticia_id);
+  await setDoc(noticiaRef, {
+    publicacion_id: noticia_id,
+    leida: true,
+  });
+};
+
+const verBloqueados = ()=>{
+  
+}
+
+const desbloquear = ()=>{
+
+}
+
+export { DatosUsers, addLeida };

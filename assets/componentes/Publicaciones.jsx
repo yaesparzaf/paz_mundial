@@ -24,36 +24,47 @@ import { MaterialIcons } from "@expo/vector-icons";
 import OpcionesUD from "./OpcionesUD";
 import { Skeleton } from "moti/skeleton";
 import publicaciones from "../styles/publicacionesStyles";
+import { addLeida } from "../../fb/DatosUsers";
 
 const Publicaciones = ({ datos_usuario, screen }) => {
   const usuario = datos_usuario;
   const [loading, setLoading] = useState(true);
   const [publicaciones, setPublicaciones] = useState([]);
   const [noticiaLeida, setNoticiaLeida] = useState();
+  const [primero, setPrimero] = useState(null);
 
   useEffect(() => {
-    if (usuario && screen) {
-      console.log("screen: ", screen);
-      const q = query(collection(db, screen));
-      const subscripcion = onSnapshot(q, (snapshot) => {
-        const newPublicacion = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        if (screen === "noticias")
-          newPublicacion.sort((a, b) => b.fecha - a.fecha);
-        else if (screen === "entrenamiento")
-          newPublicacion.sort((a, b) => a.id - b.id);
-        setPublicaciones(newPublicacion);
+    const getColeccion = async () => {
+      if (usuario && screen) {
+        const colecc = collection(db, screen);
+        const isEmpty = await getDocs(colecc);
+        if (!isEmpty.empty) {
+          const q = query(colecc);
+          const subscripcion = onSnapshot(q, (snapshot) => {
+            const newPublicacion = snapshot.docs.map((doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            }));
+            if (screen === "noticias")
+              newPublicacion.sort((a, b) => b.fecha - a.fecha);
+            else if (screen === "entrenamiento")
+              newPublicacion.sort((a, b) => a.fecha - b.fecha);
+            setPrimero(newPublicacion[0].id);
+            setPublicaciones(newPublicacion);
+            setLoading(false);
+          });
+          return () => {
+            subscripcion();
+          };
+        } else {
+          setLoading(false);
+        }
+      } else {
         setLoading(false);
-      });
-      return () => {
-        subscripcion();
-      };
-    } else {
-      setLoading(false);
-    }
-  }, [usuario]);
+      }
+    };
+    getColeccion();
+  }, [usuario, screen]);
 
   if (loading) {
     const skeletonViews = [];
@@ -75,27 +86,30 @@ const Publicaciones = ({ datos_usuario, screen }) => {
 
     return <View>{skeletonViews}</View>;
   }
-
-  return (
-    <FlatList
-      data={publicaciones}
-      keyExtractor={(item) => item.id.toString()}
-      renderItem={({ item }) => (
-        <Info
-          item={item}
-          rol={usuario ? usuario.rol : ""}
-          usuario_id={usuario ? usuario.id : ""}
-          screen={screen}
-        />
-      )}
-    />
-  );
+  if (publicaciones !== null) {
+    return (
+      <FlatList
+        data={publicaciones}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
+          <Info
+            item={item}
+            rol={usuario ? usuario.rol : ""}
+            usuario_id={usuario ? usuario.id : ""}
+            screen={screen}
+            primero={item.id === primero ? true : false}
+          />
+        )}
+      />
+    );
+  }
 };
 
-const Info = ({ item, rol, usuario_id, screen }) => {
+const Info = ({ item, rol, usuario_id, screen, primero }) => {
+  const navegacion = useNavigation();
   const [mostrarOpciones, setMostrarOpciones] = useState(false);
   const [nueva, setNueva] = useState();
-  const navegacion = useNavigation();
+  const [enEntrenamiento, setEnEntrenamiento] = useState();
   const fecha = item.fecha ? item.fecha.toDate() : null;
   let coleccion;
   if (screen === "noticias") {
@@ -105,13 +119,15 @@ const Info = ({ item, rol, usuario_id, screen }) => {
   }
   useEffect(() => {
     const NuevaNoticia = async () => {
+      if (screen === "entrenamiento") setEnEntrenamiento(true);
       try {
         const coleccionRef = collection(db, "usuarios", usuario_id, coleccion);
         const datosColeccion = await getDocs(coleccionRef);
         const vacia = datosColeccion.empty;
         if (vacia) setNueva(vacia);
         const noticia_leida = datosColeccion.docs.some(
-          (doc) => doc.data().noticia_id === item.id
+          (doc) => doc.data().noticia_id === item.id,
+          verBloqueados(doc)
         );
         setNueva(!noticia_leida);
       } catch (error) {}
@@ -119,28 +135,15 @@ const Info = ({ item, rol, usuario_id, screen }) => {
     NuevaNoticia();
   }, [usuario_id, item.id]);
 
-  const addLeida = async (noticia_id) => {
-    // const coleccionRef = await getDocs(
-    //   collection(db, "usuarios", usuario_id, coleccion)
-    // );
-    setNueva(false);
-    const noticiaRef = doc(db, "usuarios", usuario_id, coleccion, noticia_id);
-    await setDoc(noticiaRef, {
-      noticia_id: noticia_id,
-      leida: true,
-    });
-  };
-
   const FormatoFecha = (fecha) => {
     if (!fecha) return "";
     const options = { day: "numeric", month: "numeric", year: "numeric" };
     return fecha.toLocaleDateString(undefined, options);
   };
   const pressButton = (info) => {
-    //if(nueva)
-    //setNueva(true);
-    addLeida(info.id);
-    navegacion.navigate("NoticiaInfo", { info });
+    setNueva(false);
+    addLeida(coleccion, info.id, usuario_id);
+    navegacion.navigate("NoticiaInfo", { info, screen, usuario_id });
   };
   const toggleOpciones = () => {
     setMostrarOpciones(!mostrarOpciones);
@@ -153,7 +156,7 @@ const Info = ({ item, rol, usuario_id, screen }) => {
           {fecha !== null && (
             <Text style={publicaciones.fechaTexto}>{FormatoFecha(fecha)}</Text>
           )}
-          {nueva && (
+          {nueva && screen === "noticias" && (
             <MaterialIcons name="fiber-new" size={24} color="#00ADEF" />
           )}
           <View style={publicaciones.menu_publicacion}>
@@ -165,7 +168,8 @@ const Info = ({ item, rol, usuario_id, screen }) => {
           </View>
         </View>
         <TouchableOpacity
-          style={publicaciones.noticia_btn}
+          style={{ ...publicaciones.noticia_btn }}
+          disabled={item.bloqueado}
           onPress={() => pressButton(item)}
         >
           <Text style={publicaciones.titulo_publicacion}>{item.titulo}</Text>
@@ -177,10 +181,7 @@ const Info = ({ item, rol, usuario_id, screen }) => {
           >
             {item.asunto}
           </Text>
-          {
-            item.imagen && <FontAwesome name="photo" size={18} color="black" />
-            //<Image source={{ uri: item.imagen }} style={publicaciones.imagenPublicacion}
-          }
+          {item.imagen && <FontAwesome name="photo" size={18} color="black" />}
         </TouchableOpacity>
         {mostrarOpciones && (
           <OpcionesUD

@@ -29,6 +29,7 @@ import {
   deleteDoc,
   deleteField,
   setDoc,
+  getDocs,
 } from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
 import { contexUser } from "../../fb/AuthenticatedUserProvider";
@@ -134,10 +135,14 @@ const Publicar = ({ docId, screen }) => {
     imagenUri
   ) => {
     try {
-      let coleccionRef;
+      let coleccionRef, bloqueado;
       if (coleccion === "entrenamiento") {
-        coleccionRef = doc(db, coleccion, numEnt);
-        await setDoc(coleccionRef, {
+        const colecc = collection(db, coleccion);
+        const isEmpty = await getDocs(colecc);
+        if (isEmpty.empty) 
+          bloqueado=false;
+        else bloqueado = true;
+        coleccionRef = await addDoc(colecc, {
           titulo: titulo,
           asunto: asunto,
           align_asunto: alignAsunto,
@@ -145,6 +150,7 @@ const Publicar = ({ docId, screen }) => {
           align_texto2: alignTexto2,
           autor: usuario.nombre,
           autor_id: usuario.id,
+          bloqueado: bloqueado,
           fecha: serverTimestamp(),
           leida: false,
           tipo_letra: italica ? "italic" : "normal",
@@ -397,7 +403,7 @@ const Publicar = ({ docId, screen }) => {
           </TouchableOpacity>
         </View>
         <View>
-          {coleccion === "entrenamiento" && (
+          {/* {coleccion === "entrenamiento" && (
             <TextInput
               placeholder="Num. entrenamiento"
               keyboardType="numeric"
@@ -411,7 +417,7 @@ const Publicar = ({ docId, screen }) => {
                 );
               }}
             />
-          )}
+          )} */}
           <TextInput
             placeholder="Título"
             style={styles.titulo_asunto_input}

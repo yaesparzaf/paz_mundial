@@ -6,30 +6,44 @@ import {
   StyleSheet,
   Image,
   ScrollView,
+  TouchableOpacity,
 } from "react-native";
+import DesbloquearEntrenamiento from "../../fb/DesbloquearEntrenamiento";
 
 const NoticiaInfo = ({ route }) => {
   const { params } = route;
+  console.log(params);
   const {
     align_asunto,
     align_texto,
     asunto,
     autor,
     fecha,
+    id,
     imagen,
     texto,
     tipo_letra,
     titulo,
   } = params?.info || {};
+  const screen = params?.screen;
+  const usuario_id = params.usuario_id;
+  const formato_fecha = fecha.toDate().toLocaleDateString();
+  const aDesbloquear = () => {
+    const datos = { fecha, id };
+    console.log("esto se envia: ", usuario_id, screen, datos);
+    DesbloquearEntrenamiento({
+      usuario_id: usuario_id,
+      screen: screen,
+      datos: { datos },
+    });
+  };
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
         <View style={styles.postContainer}>
           <View style={styles.header}>
             <Text style={styles.author}>{autor}</Text>
-            <Text style={styles.date}>
-              {fecha && fecha.toDate().toLocaleDateString()}
-            </Text>
+            <Text style={styles.date}>{fecha && formato_fecha}</Text>
           </View>
           <View style={styles.content}>
             <Text style={styles.title}>{titulo}</Text>
@@ -51,6 +65,9 @@ const NoticiaInfo = ({ route }) => {
             </Text>
             {imagen && <Image source={{ uri: imagen }} style={styles.image} />}
           </View>
+          <TouchableOpacity style={styles.visto_btn} onPress={aDesbloquear}>
+            <Text>Visto</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -83,7 +100,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#888",
   },
-  content: {},
   title: {
     fontSize: 18,
     fontWeight: "bold",
@@ -102,6 +118,11 @@ const styles = StyleSheet.create({
     height: 400,
     borderRadius: 10,
     marginBottom: 10,
+  },
+  visto_btn: {
+    alignItems: "center",
+    backgroundColor: "green",
+    width: "20%",
   },
 });
 
