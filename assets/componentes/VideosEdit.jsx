@@ -11,6 +11,7 @@ import { collection, doc, getDocs, updateDoc } from "firebase/firestore";
 import { db } from "../../fb/firebase-config";
 import { useNavigation } from "@react-navigation/native";
 import { useVideoContext } from "./MeditarContext";
+import getId from "../rules/reglas";
 //import queryString from "query-string";
 
 const VideosEdit = () => {
@@ -43,18 +44,10 @@ const VideosEdit = () => {
     getDatos();
   }, []);
 
-  const getId = (url) => {
-    const reglaUrl =
-      /^(?:(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11}))/i;
-    const match = url.match(reglaUrl);
-    return match;
-  };
-
   const onActualizar = async (video1_id, video2_id) => {
     const datosUrl1 = getId(video1Url);
     const datosUrl2 = getId(video2Url);
     if (datosUrl1 !== null && datosUrl2 !== null) {
-      //enviar datos a los archivos en firebase
       try {
         const video1_ref = doc(db, "meditar", video1_id);
         const video2_ref = doc(db, "meditar", video2_id);

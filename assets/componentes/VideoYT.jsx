@@ -2,16 +2,13 @@ import React, { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import YouTube from "react-native-youtube-iframe";
 import axios from "axios";
-import { useVideoContext } from "./MeditarContext";
 import { yt } from "../../fb/firebase-config";
 import PutCache from "../cache/PutCache";
 import GetCache from "../cache/GetCache";
-import { Skeleton } from "moti/skeleton";
-import { MotiView } from "moti";
 
-const VideoYT = React.memo(({ video }) => {
+const VideoYT = React.memo(({ video, esPublicacion }) => {
   const [videoInfo, setVideoInfo] = useState(null);
-  const [videoId, setVideoId] = useState(video.video_id);
+  const [videoId, setVideoId] = useState(video);
   //const {cacheVideo, videoACache, setCacheVideo} = useVideoContext();
   //const [precargaVideo, setPrecargaVideo] = useState({});
 
@@ -33,7 +30,8 @@ const VideoYT = React.memo(({ video }) => {
                 categoryId: response.data.items[0].snippet.categoryId,
               };
               setVideoInfo(newInfo);
-              PutCache({ key: String(videoId), datos: newInfo });
+              if (!esPublicacion)
+                PutCache({ key: String(videoId), datos: newInfo });
             } else {
               console.error("No se encontró información del video.");
             }

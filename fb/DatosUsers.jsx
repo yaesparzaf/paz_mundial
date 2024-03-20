@@ -3,7 +3,6 @@ import { db } from "./firebase-config";
 
 const DatosUsers = async ({ usuario_id }) => {
   try {
-    console.log("esto recibe datos user: ", usuario_id);
     const usuariosRef = collection(db, "usuarios");
     const docRef = doc(usuariosRef, usuario_id);
     const docInfo = await getDoc(docRef);

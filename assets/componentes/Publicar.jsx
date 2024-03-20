@@ -35,6 +35,9 @@ import { useNavigation } from "@react-navigation/native";
 import { contexUser } from "../../fb/AuthenticatedUserProvider";
 import AbrirGaleria from "./AbrirGaleria";
 import SubirImagen from "../../fb/SubirImagen";
+import getId from "../rules/reglas";
+import { Alert } from "react-native";
+import { addLeida } from "../../fb/DatosUsers";
 
 const Publicar = ({ docId, screen }) => {
   const { usuario } = contexUser();
@@ -60,10 +63,10 @@ const Publicar = ({ docId, screen }) => {
   const [segundoInput, setSegundoInput] = useState(false);
   const [coleccion, setColeccion] = useState();
   const [nameNavigate, setNameNavigate] = useState();
-
+  const [addVideo, setAddVideo] = useState(false);
+  const [url, setUrl] = useState("");
   useEffect(() => {
     const obtenerDatos = async () => {
-      console.log("docId: ", docId);
       const datos = docId;
       const coleccionEffect = screen;
       setColeccion(screen);
@@ -87,6 +90,7 @@ const Publicar = ({ docId, screen }) => {
           setTexto2(datos_doc.texto2);
           setImagenUri(datos_doc.imagen);
           setItalica(datos_doc.tipo_letra === "italic");
+          setUrl(datos_doc.url);
           setEditar(!editar);
           if (datos_doc.texto2) {
             setSegundoInput(true);
@@ -132,16 +136,15 @@ const Publicar = ({ docId, screen }) => {
     alignTexto2,
     text,
     texto2,
-    imagenUri
+    imagenUri,
+    video_id
   ) => {
     try {
       let coleccionRef, bloqueado;
       if (coleccion === "entrenamiento") {
         const colecc = collection(db, coleccion);
         const isEmpty = await getDocs(colecc);
-        if (isEmpty.empty) 
-          bloqueado=false;
-        else bloqueado = true;
+        bloqueado = true;
         coleccionRef = await addDoc(colecc, {
           titulo: titulo,
           asunto: asunto,
@@ -156,7 +159,12 @@ const Publicar = ({ docId, screen }) => {
           tipo_letra: italica ? "italic" : "normal",
           texto: text,
           texto2: texto2,
+          ...(video_id && video_id[0] !== undefined && { url: video_id[0] }),
+          ...(video_id &&
+            video_id[1] !== undefined && { video_id: video_id[1] }),
         });
+        if (isEmpty.empty)
+          await addLeida("entrenamientoVisto", coleccionRef.id, usuario.id);
       } else {
         coleccionRef = await addDoc(collection(db, coleccion), {
           titulo: titulo,
@@ -171,8 +179,10 @@ const Publicar = ({ docId, screen }) => {
           tipo_letra: italica ? "italic" : "normal",
           texto: text,
           texto2: texto2,
+          ...(video_id && video_id[0] !== undefined && { url: video_id[0] }),
+          ...(video_id &&
+            video_id[1] !== undefined && { video_id: video_id[1] }),
         });
-        console.log("coleccion ref: ", coleccionRef);
       }
 
       if (coleccionRef) {
@@ -205,7 +215,8 @@ const Publicar = ({ docId, screen }) => {
     new_texto,
     new_texto2,
     new_imagen,
-    prev_imagen
+    prev_imagen,
+    video_id
   ) => {
     const documentoRef = doc(db, coleccion, documentoId);
     try {
@@ -219,8 +230,10 @@ const Publicar = ({ docId, screen }) => {
           imagen: new_imagen,
           titulo: new_titulo,
           texto: new_texto,
-          new_texto2,
+          texto2: new_texto2,
           tipo_letra: italica ? "italic" : "normal",
+          ...(video_id !== undefined && { url: video_id[0] }),
+          ...(video_id !== undefined && { video_id: video_id[1] }),
         });
         setGuardandoImagen(true);
         console.log("_______________");
@@ -232,7 +245,6 @@ const Publicar = ({ docId, screen }) => {
         }
       } else if (prev_imagen && !new_imagen) {
         console.log("entro al else  de  prev_imagen && !new_imagen");
-
         await updateDoc(documentoRef, {
           align_asunto: alignAsunto,
           align_texto: alignTexto,
@@ -243,6 +255,8 @@ const Publicar = ({ docId, screen }) => {
           texto: new_texto,
           texto2: new_texto2,
           tipo_letra: italica ? "italic" : "normal",
+          ...(video_id !== undefined && { url: video_id[0] }),
+          ...(video_id !== undefined && { video_id: video_id[1] }),
         });
         const storage = getStorage();
         const imagenRef = ref(storage, prev_imagen);
@@ -252,9 +266,38 @@ const Publicar = ({ docId, screen }) => {
           console.error("ee", error);
         }
         //else if cuando no hay imagen previa pero si imagen nueva
+      } else if (!prev_imagen && new_imagen) {
+        await updateDoc(documentoRef, {
+          align_asunto: alignAsunto,
+          align_texto: alignTexto,
+          align_texto2: alignTexto2,
+          asunto: new_asunto,
+          imagen: new_imagen,
+          titulo: new_titulo,
+          texto: new_texto,
+          texto2: new_texto2,
+          tipo_letra: italica ? "italic" : "normal",
+          ...(video_id !== undefined && { url: video_id[0] }),
+          ...(video_id !== undefined && { video_id: video_id[1] }),
+        });
+        setGuardandoImagen(true);
+        const imagenSubida = await SubirImagen(documentoRef, new_imagen);
+        if (imagenSubida) {
+          setGuardandoImagen(false);
+        }
       } else {
         console.log("entro al else 207");
-
+        console.log(
+          "esto se envia: ",
+          alignAsunto,
+          alignTexto,
+          alignTexto2,
+          new_titulo,
+          new_asunto,
+          new_texto,
+          new_texto2,
+          video_id
+        );
         await updateDoc(documentoRef, {
           align_asunto: alignAsunto,
           align_texto: alignTexto,
@@ -264,6 +307,8 @@ const Publicar = ({ docId, screen }) => {
           texto: new_texto,
           texto2: new_texto2,
           tipo_letra: italica ? "italic" : "normal",
+          ...(video_id !== undefined && { url: video_id[0] }),
+          ...(video_id !== undefined && { video_id: video_id[1] }),
         });
       }
       navegacion.navigate(nameNavigate, { screen: coleccion });
@@ -344,6 +389,73 @@ const Publicar = ({ docId, screen }) => {
     setSegundoInput(true);
   };
 
+  const validarEnvio = () => {
+    console.log("en validar envio");
+    if (addVideo) {
+      const video_id = getId(url);
+      if (video_id !== null) {
+        onSend(
+          titulo,
+          asunto,
+          alignAsunto,
+          alignTexto,
+          alignTexto2,
+          text,
+          texto2,
+          imagenUri,
+          video_id
+        );
+      } else Alert.alert("URL no válida.");
+    } else {
+      const video_id = "";
+      onSend(
+        titulo,
+        asunto,
+        alignAsunto,
+        alignTexto,
+        alignTexto2,
+        text,
+        texto2,
+        imagenUri,
+        video_id
+      );
+    }
+  };
+
+  const validarEdicion = () => {
+    if (addVideo) {
+      const video_id = getId(url);
+      if (video_id !== null) {
+        onSendEdit(
+          documentoId,
+          titulo,
+          asunto,
+          alignAsunto,
+          alignTexto,
+          alignTexto2,
+          text,
+          texto2,
+          imagenUri,
+          imagenUri_prev,
+          video_id
+        );
+      } else Alert.alert("URL no válida.");
+    } else {
+      onSendEdit(
+        documentoId,
+        titulo,
+        asunto,
+        alignAsunto,
+        alignTexto,
+        alignTexto2,
+        text,
+        texto2,
+        imagenUri,
+        imagenUri_prev
+      );
+    }
+  };
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
       <ScrollView>
@@ -360,32 +472,12 @@ const Publicar = ({ docId, screen }) => {
               Añadir texto
             </Text>
           </TouchableOpacity>
+          {/* boton para agregar video -------------*/}
+          <TouchableOpacity onPress={() => setAddVideo(true)}>
+            <Text>Video</Text>
+          </TouchableOpacity>
           <TouchableOpacity
-            onPress={() =>
-              editar
-                ? onSendEdit(
-                    documentoId,
-                    titulo,
-                    asunto,
-                    alignAsunto,
-                    alignTexto,
-                    alignTexto2,
-                    text,
-                    texto2,
-                    imagenUri,
-                    imagenUri_prev
-                  )
-                : onSend(
-                    titulo,
-                    asunto,
-                    alignAsunto,
-                    alignTexto,
-                    alignTexto2,
-                    text,
-                    texto2,
-                    imagenUri
-                  )
-            }
+            onPress={editar ? validarEdicion : validarEnvio}
             style={{
               ...styles.publicar_btn,
               backgroundColor: publicar ? "#00FFFF" : "#A9A9A9",
@@ -504,6 +596,13 @@ const Publicar = ({ docId, screen }) => {
                 }
                 setTexto2(newTexto2);
               }}
+            />
+          )}
+          {addVideo && (
+            <TextInput
+              placeholder="Ingrese url del video"
+              value={url}
+              onChangeText={setUrl}
             />
           )}
         </View>

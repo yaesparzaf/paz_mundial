@@ -10,13 +10,12 @@ import {
 } from "firebase/firestore";
 import React from "react";
 import { db } from "./firebase-config";
+import { addLeida } from "./DatosUsers";
 
 const DesbloquearEntrenamiento = async ({ usuario_id, screen, datos }) => {
-  const { fecha, id } = datos.datos;
-  console.log(fecha);
+
   if (usuario_id && screen && datos) {
     const { fecha, id } = datos.datos;
-    console.log(fecha);
     try {
       const coleccion = collection(db, screen);
       const consulta = query(
@@ -27,10 +26,9 @@ const DesbloquearEntrenamiento = async ({ usuario_id, screen, datos }) => {
       );
       const respuesta = await getDocs(consulta);
       respuesta.forEach(async (documento) => {
-        console.log("Documento encontrado:", documento.id);
         //const documento = doc(coleccion, doc.id);
         const docEditRef = doc(coleccion, documento.id);
-        await setDoc(docEditRef, { bloqueado: false }, { merge: true });
+        await addLeida("entrenamientoVisto", documento.id, usuario_id);
       });
     } catch (error) {
       console.error(error);

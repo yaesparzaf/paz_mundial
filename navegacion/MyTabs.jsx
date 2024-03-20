@@ -26,7 +26,7 @@ const MyTabs = () => {
   const rol = "admin";
   return (
     <Tab.Navigator
-      //initialRouteName="Noticias"
+      initialRouteName="Entrenamiento"
       screenOptions={{
         tabBarActiveTintColor: "#00adef",
         tabBarInactiveTintColor: "gray",
@@ -59,7 +59,7 @@ const MyTabs = () => {
           headerShown: true,
         }}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         name="Comunidad"
         component={Comunidad}
         options={{
@@ -80,17 +80,23 @@ const MyTabs = () => {
           ),
           headerShown: true,
         }}
-      />
+      /> */}
       <Tab.Screen
         name="Entrenamiento"
         component={Entrenamiento}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons
-              name="head-cog-outline"
-              size={tam}
-              color={color}
-            />
+            <TouchableOpacity
+              onPress={() =>
+                navigation.reset({ routes: [{ name: "Entrenamiento" }] })
+              }
+            >
+              <MaterialCommunityIcons
+                name="head-cog-outline"
+                size={tam}
+                color={color}
+              />
+            </TouchableOpacity>
           ),
           headerRight: () => (
             <TouchableOpacity

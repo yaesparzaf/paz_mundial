@@ -124,11 +124,13 @@ const Info = ({ item, rol, usuario_id, screen, primero }) => {
         const coleccionRef = collection(db, "usuarios", usuario_id, coleccion);
         const datosColeccion = await getDocs(coleccionRef);
         const vacia = datosColeccion.empty;
-        if (vacia) setNueva(vacia);
-        const noticia_leida = datosColeccion.docs.some(
-          (doc) => doc.data().noticia_id === item.id,
-          verBloqueados(doc)
-        );
+        if (vacia) setNueva(true);
+        const noticia_leida = datosColeccion.docs.some((doc) => {
+          if (doc.id === item.id) {
+            return true;
+          }
+          return false;
+        });
         setNueva(!noticia_leida);
       } catch (error) {}
     };
@@ -141,8 +143,11 @@ const Info = ({ item, rol, usuario_id, screen, primero }) => {
     return fecha.toLocaleDateString(undefined, options);
   };
   const pressButton = (info) => {
-    setNueva(false);
-    addLeida(coleccion, info.id, usuario_id);
+    if (screen === "noticias") {
+      setNueva(false);
+      addLeida(coleccion, info.id, usuario_id);
+      //navegacion.navigate("NoticiaInfo", { info, screen, usuario_id });
+    }
     navegacion.navigate("NoticiaInfo", { info, screen, usuario_id });
   };
   const toggleOpciones = () => {
@@ -169,7 +174,7 @@ const Info = ({ item, rol, usuario_id, screen, primero }) => {
         </View>
         <TouchableOpacity
           style={{ ...publicaciones.noticia_btn }}
-          disabled={item.bloqueado}
+          disabled={!(!nueva && item.bloqueado)}
           onPress={() => pressButton(item)}
         >
           <Text style={publicaciones.titulo_publicacion}>{item.titulo}</Text>

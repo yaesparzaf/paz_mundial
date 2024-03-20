@@ -30,7 +30,6 @@ const Videos = () => {
     };
     getVideos();
   }, []);
-
   return (
     <View style={{ flex: 1 }}>
       {loading ? (
@@ -65,8 +64,8 @@ const Videos = () => {
               backgroundColor: "#F7FFFE",
             }}
           >
-            <VideoYT video={videosId[0]} />
-            <VideoYT video={videosId[1]} />
+            <VideoYT video={videosId[0].video_id} esPublicacion={false} />
+            <VideoYT video={videosId[1].video_id} esPublicacion={false} />
           </View>
         )
       )}

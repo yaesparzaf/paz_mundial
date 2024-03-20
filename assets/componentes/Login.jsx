@@ -14,13 +14,12 @@ import { FontAwesome } from "@expo/vector-icons";
 import ContadorAnimado from "./ContadorAnimado";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { contexUser } from "../../fb/AuthenticatedUserProvider";
-import DatosUsers from "../../fb/DatosUsers";
 import PutCache from "../cache/PutCache";
-import GetAlls from "../cache/GetAlls";
 import Icon from "react-native-vector-icons/FontAwesome";
 import * as Google from "expo-auth-session/providers/google";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import useContador from "../../fb/useContador";
+import { DatosUsers } from "../../fb/DatosUsers";
 
 const Login = ({ onLogin, onShowSignUp }) => {
   const [email, setEmail] = useState("");
@@ -32,7 +31,6 @@ const Login = ({ onLogin, onShowSignUp }) => {
   const [haveDatos, setHaveDatos] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [userInfo, setUserInfo] = React.useState(null);
-  const datos = {};
 
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);

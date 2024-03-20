@@ -9,10 +9,10 @@ import {
   TouchableOpacity,
 } from "react-native";
 import DesbloquearEntrenamiento from "../../fb/DesbloquearEntrenamiento";
+import VideoYT from "../componentes/VideoYT";
 
 const NoticiaInfo = ({ route }) => {
   const { params } = route;
-  console.log(params);
   const {
     align_asunto,
     align_texto,
@@ -24,13 +24,13 @@ const NoticiaInfo = ({ route }) => {
     texto,
     tipo_letra,
     titulo,
+    video_id,
   } = params?.info || {};
   const screen = params?.screen;
   const usuario_id = params.usuario_id;
   const formato_fecha = fecha.toDate().toLocaleDateString();
   const aDesbloquear = () => {
     const datos = { fecha, id };
-    console.log("esto se envia: ", usuario_id, screen, datos);
     DesbloquearEntrenamiento({
       usuario_id: usuario_id,
       screen: screen,
@@ -65,9 +65,12 @@ const NoticiaInfo = ({ route }) => {
             </Text>
             {imagen && <Image source={{ uri: imagen }} style={styles.image} />}
           </View>
-          <TouchableOpacity style={styles.visto_btn} onPress={aDesbloquear}>
-            <Text>Visto</Text>
-          </TouchableOpacity>
+          {video_id && <VideoYT video={video_id} esPublicacion={true} />}
+          {screen === "entrenamiento" && (
+            <TouchableOpacity style={styles.visto_btn} onPress={aDesbloquear}>
+              <Text>Visto</Text>
+            </TouchableOpacity>
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>
