@@ -26,7 +26,7 @@ const MyTabs = () => {
   const rol = "admin";
   return (
     <Tab.Navigator
-      initialRouteName="Entrenamiento"
+      //initialRouteName="Entrenamiento"
       screenOptions={{
         tabBarActiveTintColor: "#00adef",
         tabBarInactiveTintColor: "gray",

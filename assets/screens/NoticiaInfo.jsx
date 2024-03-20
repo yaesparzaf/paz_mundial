@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import DesbloquearEntrenamiento from "../../fb/DesbloquearEntrenamiento";
 import VideoYT from "../componentes/VideoYT";
+import { useNavigation } from "@react-navigation/native";
 
 const NoticiaInfo = ({ route }) => {
   const { params } = route;
@@ -29,12 +30,17 @@ const NoticiaInfo = ({ route }) => {
   const screen = params?.screen;
   const usuario_id = params.usuario_id;
   const formato_fecha = fecha.toDate().toLocaleDateString();
-  const aDesbloquear = () => {
+  const navegacion = useNavigation();
+  const aDesbloquear = async () => {
     const datos = { fecha, id };
-    DesbloquearEntrenamiento({
+    await DesbloquearEntrenamiento({
       usuario_id: usuario_id,
       screen: screen,
       datos: { datos },
+    });
+
+    navegacion.reset({
+      routes: [{ name: "Entrenamiento" }],
     });
   };
   return (

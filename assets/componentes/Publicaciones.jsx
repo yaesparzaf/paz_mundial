@@ -172,9 +172,10 @@ const Info = ({ item, rol, usuario_id, screen, primero }) => {
             )}
           </View>
         </View>
+        {console.log(enEntrenamiento ? !(!nueva && item.bloqueado) : false)}
         <TouchableOpacity
           style={{ ...publicaciones.noticia_btn }}
-          disabled={!(!nueva && item.bloqueado)}
+          disabled={enEntrenamiento && !(!nueva && item.bloqueado)}
           onPress={() => pressButton(item)}
         >
           <Text style={publicaciones.titulo_publicacion}>{item.titulo}</Text>
