@@ -124,14 +124,18 @@ const Info = ({ item, rol, usuario_id, screen, primero }) => {
         const coleccionRef = collection(db, "usuarios", usuario_id, coleccion);
         const datosColeccion = await getDocs(coleccionRef);
         const vacia = datosColeccion.empty;
-        if (vacia) setNueva(true);
-        const noticia_leida = datosColeccion.docs.some((doc) => {
-          if (doc.id === item.id) {
-            return true;
-          }
-          return false;
-        });
-        setNueva(!noticia_leida);
+        if (vacia) {
+          await addLeida(coleccion, item.id, usuario_id);
+          setNueva(true);
+        } else {
+          const noticia_leida = datosColeccion.docs.some((doc) => {
+            if (doc.id === item.id) {
+              return true;
+            }
+            return false;
+          });
+          setNueva(!noticia_leida);
+        }
       } catch (error) {}
     };
     NuevaNoticia();
@@ -172,10 +176,13 @@ const Info = ({ item, rol, usuario_id, screen, primero }) => {
             )}
           </View>
         </View>
-        {console.log(enEntrenamiento ? !(!nueva && item.bloqueado) : false)}
         <TouchableOpacity
           style={{ ...publicaciones.noticia_btn }}
-          disabled={enEntrenamiento && !(!nueva && item.bloqueado)}
+          disabled={
+            enEntrenamiento && item.bloqueado === false
+              ? false
+              : !(!nueva && item.bloqueado)
+          }
           onPress={() => pressButton(item)}
         >
           <Text style={publicaciones.titulo_publicacion}>{item.titulo}</Text>

@@ -144,7 +144,9 @@ const Publicar = ({ docId, screen }) => {
       if (coleccion === "entrenamiento") {
         const colecc = collection(db, coleccion);
         const isEmpty = await getDocs(colecc);
-        bloqueado = true;
+        if (isEmpty.empty) bloqueado = false;
+        else bloqueado = true;
+        
         coleccionRef = await addDoc(colecc, {
           titulo: titulo,
           asunto: asunto,
@@ -178,7 +180,7 @@ const Publicar = ({ docId, screen }) => {
           leida: false,
           tipo_letra: italica ? "italic" : "normal",
           texto: text,
-          texto2: texto2,
+          ...(texto2 !== undefined && { texto2: texto2 }),
           ...(video_id && video_id[0] !== undefined && { url: video_id[0] }),
           ...(video_id &&
             video_id[1] !== undefined && { video_id: video_id[1] }),
@@ -220,17 +222,17 @@ const Publicar = ({ docId, screen }) => {
   ) => {
     const documentoRef = doc(db, coleccion, documentoId);
     try {
-      if (prev_imagen && new_imagen) {
+      if (prev_imagen || new_imagen) {
         console.log("entro al if de prev_imagen && new_imagen");
         await updateDoc(documentoRef, {
           align_asunto: alignAsunto,
           align_texto: alignTexto,
           align_texto2: alignTexto2,
           asunto: new_asunto,
-          imagen: new_imagen,
+          ...(new_imagen !== undefined && { imagen: new_imagen }),
           titulo: new_titulo,
           texto: new_texto,
-          texto2: new_texto2,
+          ...(texto2 !== undefined && { texto2: new_texto2 }),
           tipo_letra: italica ? "italic" : "normal",
           ...(video_id !== undefined && { url: video_id[0] }),
           ...(video_id !== undefined && { video_id: video_id[1] }),
@@ -266,38 +268,8 @@ const Publicar = ({ docId, screen }) => {
           console.error("ee", error);
         }
         //else if cuando no hay imagen previa pero si imagen nueva
-      } else if (!prev_imagen && new_imagen) {
-        await updateDoc(documentoRef, {
-          align_asunto: alignAsunto,
-          align_texto: alignTexto,
-          align_texto2: alignTexto2,
-          asunto: new_asunto,
-          imagen: new_imagen,
-          titulo: new_titulo,
-          texto: new_texto,
-          texto2: new_texto2,
-          tipo_letra: italica ? "italic" : "normal",
-          ...(video_id !== undefined && { url: video_id[0] }),
-          ...(video_id !== undefined && { video_id: video_id[1] }),
-        });
-        setGuardandoImagen(true);
-        const imagenSubida = await SubirImagen(documentoRef, new_imagen);
-        if (imagenSubida) {
-          setGuardandoImagen(false);
-        }
       } else {
         console.log("entro al else 207");
-        console.log(
-          "esto se envia: ",
-          alignAsunto,
-          alignTexto,
-          alignTexto2,
-          new_titulo,
-          new_asunto,
-          new_texto,
-          new_texto2,
-          video_id
-        );
         await updateDoc(documentoRef, {
           align_asunto: alignAsunto,
           align_texto: alignTexto,
