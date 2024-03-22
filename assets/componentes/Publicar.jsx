@@ -14,9 +14,7 @@ import { Feather } from "@expo/vector-icons";
 import { db } from "../../fb/firebase-config";
 import {
   ref,
-  getDownloadURL,
   getStorage,
-  uploadBytes,
   deleteObject,
 } from "firebase/storage";
 import {
@@ -28,7 +26,6 @@ import {
   getDoc,
   deleteDoc,
   deleteField,
-  setDoc,
   getDocs,
 } from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
@@ -146,7 +143,7 @@ const Publicar = ({ docId, screen }) => {
         const isEmpty = await getDocs(colecc);
         if (isEmpty.empty) bloqueado = false;
         else bloqueado = true;
-        
+
         coleccionRef = await addDoc(colecc, {
           titulo: titulo,
           asunto: asunto,

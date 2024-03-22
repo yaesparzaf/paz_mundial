@@ -1,4 +1,4 @@
-import { collection, doc, getDoc, setDoc } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, setDoc } from "firebase/firestore";
 import { db } from "./firebase-config";
 
 const DatosUsers = async ({ usuario_id }) => {
@@ -23,19 +23,27 @@ const DatosUsers = async ({ usuario_id }) => {
 };
 
 const addLeida = async (coleccion, noticia_id, usuario_id) => {
-  const noticiaRef = doc(db, "usuarios", usuario_id, coleccion, noticia_id);
-  await setDoc(noticiaRef, {
-    publicacion_id: noticia_id,
-    leida: true,
-  });
+  try {
+    const coleccionRef = collection(db, "usuarios", usuario_id, coleccion);
+    const docs = await getDocs(coleccionRef);
+    const existe = docs.docs.some((documento) => {
+      if (documento.id === noticia_id) return true;
+      return false;
+    });
+    console.log("existe en la coleccion?: ", existe);
+    if (!existe) {
+      const noticiaRef = doc(db, "usuarios", usuario_id, coleccion, noticia_id);
+      await setDoc(noticiaRef, {
+        publicacion_id: noticia_id,
+        leida: true,
+      });
+      return false;
+    } else if (existe) return true;
+  } catch (error) {}
 };
 
-const verBloqueados = ()=>{
-  
-}
+const verBloqueados = () => {};
 
-const desbloquear = ()=>{
-
-}
+const desbloquear = () => {};
 
 export { DatosUsers, addLeida };

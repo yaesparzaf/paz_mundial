@@ -33,11 +33,12 @@ const NoticiaInfo = ({ route }) => {
   const navegacion = useNavigation();
   const aDesbloquear = async () => {
     const datos = { fecha, id };
-    await DesbloquearEntrenamiento({
+    const existe = await DesbloquearEntrenamiento({
       usuario_id: usuario_id,
       screen: screen,
       datos: { datos },
     });
+    console.log("Existe?: ", existe);
 
     navegacion.reset({
       routes: [{ name: "Entrenamiento" }],

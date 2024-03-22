@@ -40,5 +40,11 @@ export default {
       },
     },
     scheme: "paz_mundial",
+    notification: {
+      androidMode: "default",
+      androidPendingTransition: {
+        body: "Mi Aplicación quiere enviarte notificaciones",
+      },
+    },
   },
 };

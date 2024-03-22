@@ -16,7 +16,7 @@ const MainStack = () => {
   const { usuario, setUsuario } = useContext(AuthenticatedUserContex);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const authInstance = getAuth();
-  const [isLoading, setIsLoading] = useState(true); // Nuevo estado para el indicador de carga
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const logeado = onAuthStateChanged(

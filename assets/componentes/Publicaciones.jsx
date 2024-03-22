@@ -181,7 +181,9 @@ const Info = ({ item, rol, usuario_id, screen, primero }) => {
           disabled={
             enEntrenamiento && item.bloqueado === false
               ? false
-              : !(!nueva && item.bloqueado)
+              : enEntrenamiento && item.bloqueado === true
+              ? nueva
+              : false
           }
           onPress={() => pressButton(item)}
         >
