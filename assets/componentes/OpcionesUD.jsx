@@ -19,27 +19,34 @@ import {
 } from "firebase/firestore";
 import { deleteObject, getStorage, ref } from "firebase/storage";
 import { db } from "../../fb/firebase-config";
+import route from "color-convert/route";
+import { mdiConsoleNetworkOutline } from "@mdi/js";
 
-const OpcionesUD = ({ onClose, noticiaId, imagenUrl, onScreen }) => {
+const OpcionesUD = ({ onClose, noticiaId, imagenUrl, onScreen, accion }) => {
   const navegacion = useNavigation();
   const [coleccionLeidas, setColeccionLeidas] = useState();
-  const [ventana, setVentana] = useState();
+  let screen;
   useEffect(() => {
     if (onScreen === "noticias") {
       setColeccionLeidas("noticiasLeidas");
+      screen = "Noticias";
     } else if (onScreen === "entrenamiento") {
       setColeccionLeidas("entrenamientoVisto");
+      screen = "Entrenamiento";
     }
-    console.log("noticiaId ", noticiaId);
   }, [onScreen]);
 
   const pressEditar = () => {
-    navegacion.navigate("NuevaPublicacion", { noticiaId:noticiaId, screen: onScreen });
-    
-    onClose();
+    console.log("Entro a editar");
+    navegacion.navigate("NuevaPublicacion", {
+      noticiaId: noticiaId,
+      screen: onScreen,
+    });
+    console.log("Saliendo de editar");
   };
 
   const pressEliminar = async () => {
+    console.log("Entro a eliminar");
     const storage = getStorage();
     const imagenRef = ref(storage, imagenUrl);
     try {
@@ -60,57 +67,18 @@ const OpcionesUD = ({ onClose, noticiaId, imagenUrl, onScreen }) => {
         })
       );
     } catch (error) {}
-    onClose();
+    navegacion.reset({ routes: [{ name: "Entrenamiento" }] });
   };
-  const pressOverlay = () => {
-    onClose();
-  };
-  return (
-    <Modal animationType="slide" transparent={true} visible={true}>
-      <TouchableWithoutFeedback onPress={pressOverlay}>
-        <View style={styles.overlay} />
-      </TouchableWithoutFeedback>
-      <View style={styles.modalContent}>
-        <TouchableOpacity style={styles.acciones_btn} onPress={pressEditar}>
-          <Text style={styles.acciones_texto}>Editar</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.acciones_btn}>
-          <Text
-            style={{ ...styles.acciones_texto, color: "red" }}
-            onPress={pressEliminar}
-          >
-            Eliminar
-          </Text>
-        </TouchableOpacity>
-      </View>
-    </Modal>
-  );
-};
 
-const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    //backgroundColor: 'rgba(0, 0, 0, 0.2)',
-  },
-  modalContent: {
-    flex: 0.3,
-    alignItems: "center",
-    justifyContent: "center",
-    bottom: 0,
-    backgroundColor: "white",
-  },
-  acciones_btn: {
-    justifyContent: "center",
-    width: "50%",
-    height: 50,
-    borderBottomWidth: 0.8,
-    borderColor: "black",
-    //backgroundColor: 'red',
-  },
-  acciones_texto: {
-    fontSize: 20,
-    textAlign: "center",
-  },
-});
+  useEffect(() => {
+    if (accion === "editar") {
+      pressEditar();
+    } else if (accion === "eliminar") {
+      pressEliminar();
+    }
+  }, [accion]);
+
+  return null;
+};
 
 export default OpcionesUD;

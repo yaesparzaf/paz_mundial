@@ -52,7 +52,10 @@ const Meditar = () => {
     return (
       <SafeAreaView style={styles.loading_container}>
         <Ubicacion getLocation={obtenerUbicacion} />
-        <Image style={styles.loading} source={require("../loading.gif")} />
+        <Image
+          style={styles.loading}
+          source={require("../images/loading.gif")}
+        />
       </SafeAreaView>
     );
   } else if (isLoading) {

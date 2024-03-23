@@ -2,10 +2,40 @@ import { StyleSheet } from "react-native";
 
 const publicaciones = StyleSheet.create({
   publicacionContainer: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#00000021",
+    alignSelf: "center",
+    width: "100%",
     backgroundColor: "#fff",
+    height: 125,
+  },
+  eliminar: {
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#ef0000",
+    width: 50,
+  },
+  editar: {
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#eeeeee", // Color para el botón "Editar"
+    width: 50,
+  },
+  candado: {
+    position: "absolute",
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#f8f8f8",
+    zIndex: 1,
+  },
+  separador: {
+    alignSelf: "center",
+    width: "90%",
+    borderBottomWidth: 1,
+    borderBottomColor: "#d1d1d1b7",
+    marginVertical: 15,
   },
   skeletonItem: {
     marginBottom: 10,
@@ -17,21 +47,24 @@ const publicaciones = StyleSheet.create({
     //backgroundColor:'brown'
   },
   encabezado: {
+    paddingHorizontal: "5%",
     alignItems: "center",
     flexDirection: "row",
-    height: 25,
-    //backgroundColor: 'red'
+    height: 30,
   },
   titulo_publicacion: {
-    fontSize: 20,
-    fontWeight: "bold",
+    paddingHorizontal: "5%",
+    fontSize: 15,
+    fontWeight: "700",
+    marginVertical: "30",
   },
   asunto_publicacion: {
-    fontSize: 18,
+    fontSize: 14,
+    paddingHorizontal: "5%",
   },
   autorTexto: {
-    fontWeight: "bold",
-    marginBottom: 5,
+    fontWeight: "900",
+    marginBottom: 2,
     marginRight: 10,
   },
   textoPublicacion: {

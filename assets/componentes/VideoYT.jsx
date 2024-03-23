@@ -50,22 +50,35 @@ const VideoYT = React.memo(({ video, esPublicacion }) => {
   return (
     <View>
       {videoInfo ? (
-        <View
-          style={{
-            marginTop: 10,
-            alignSelf: "center",
-            justifyContent: "center",
-            resizeMode: "center",
-          }}
-        >
-          <YouTube
-            videoId={videoId}
-            height={250}
-            width={400}
-            initialPlayerParams={{
-              controls: 0,
+        <View>
+          <View
+            style={{
+              width: "100%",
+              aspectRatio: 16 / 9,
+              borderRadius: 10,
+              overflow: "hidden",
+              marginVertical: 20,
             }}
-          />
+          >
+            <YouTube
+              videoId={videoId}
+              height={320}
+              playerVars={{
+                modestbranding: 1, // Oculta el logo de YouTube
+                controls: 1, // Muestra los controles del reproductor
+                autoplay: 0, // No reproducir automáticamente
+                loop: 0, // No repetir el video
+                rel: 0, // No mostrar videos relacionados al final
+                iv_load_policy: 3, // No mostrar anotaciones
+                cc_load_policy: 0, // No mostrar subtítulos
+                fs: 0, // No mostrar botón de pantalla completa
+                disablekb: 1, // Deshabilitar el control del teclado
+                enablejsapi: 1, // Habilitar la API de JavaScript
+                playsinline: 1, // Reproducir en el contenedor del componente
+                quality: "small", // Calidad baja
+              }}
+            />
+          </View>
           <TouchableOpacity
             style={{ position: "absolute", top: 0, width: "100%", height: 55 }}
           />

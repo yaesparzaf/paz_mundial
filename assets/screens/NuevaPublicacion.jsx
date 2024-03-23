@@ -2,7 +2,7 @@ import { View, Text, SafeAreaView } from "react-native";
 import React, { useEffect, useState } from "react";
 import Publicar from "../componentes/Publicar";
 
-const NuevoEntrenamiento = ({ route }) => {
+const NuevaPublicacion = ({ route }) => {
   const [noticiaID, setNoticiaID] = useState();
   const [loading, setLoading] = useState(true);
   const [ventana, setVentana] = useState();
@@ -32,4 +32,4 @@ const NuevoEntrenamiento = ({ route }) => {
   );
 };
 
-export default NuevoEntrenamiento;
+export default NuevaPublicacion;

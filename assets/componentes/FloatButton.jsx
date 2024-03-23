@@ -9,11 +9,11 @@ const FloatButton = ({ pantalla }) => {
     if (pantalla === "V") {
       navegacion.navigate("MeditarEdit");
     } else if (pantalla === "N") {
-      navegacion.navigate("NuevaPublicacion",{screen: "noticias"});
+      navegacion.navigate("NuevaPublicacion", { screen: "noticias" });
     } else if (pantalla === "C") {
       navegacion.navigate("NuevoForo");
     } else if (pantalla === "E") {
-      navegacion.navigate("NuevaPublicacion", {screen: "entrenamiento"});
+      navegacion.navigate("NuevaPublicacion", { screen: "entrenamiento" });
     }
   };
   return (

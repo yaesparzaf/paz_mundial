@@ -1,7 +1,8 @@
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
 import React, { useEffect, useState } from "react";
 import * as ImagePicker from "expo-image-picker";
 import { FontAwesome5 } from "@expo/vector-icons";
+import foto from "../foto.png";
 
 const AbrirGaleria = ({ respuesta }) => {
   const [esImagen, setesImagen] = useState();
@@ -36,8 +37,15 @@ const AbrirGaleria = ({ respuesta }) => {
 
   return (
     <TouchableOpacity style={styles.up_fv} onPress={onOpenGallery}>
-      <FontAwesome5 name="photo-video" size={24} color="black" />
-      <Text style={styles.buttonText}>Foto</Text>
+      <Image
+        source={foto}
+        style={{
+          width: 20,
+          height: 20,
+          tintColor: "black",
+          marginHorizontal: 10,
+        }}
+      />
     </TouchableOpacity>
   );
 };
@@ -46,10 +54,7 @@ const styles = StyleSheet.create({
   up_fv: {
     alignItems: "center",
     flexDirection: "row",
-  },
-  buttonText: {
-    marginLeft: 5,
-    fontWeight: "bold",
+    marginHorizontal: "40",
   },
 });
 

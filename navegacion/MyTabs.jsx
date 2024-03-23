@@ -20,13 +20,13 @@ import { useNavigation } from "@react-navigation/native";
 const Tab = createBottomTabNavigator();
 
 const MyTabs = () => {
-  const navigation = useNavigation();
   const tam = Dimensions.get("window").width * 0.05;
   const { usuario } = contexUser();
+  const navegacion = useNavigation();
   const rol = "admin";
   return (
     <Tab.Navigator
-      //initialRouteName="Entrenamiento"
+      //initialRouteName="Noticias"
       screenOptions={{
         tabBarActiveTintColor: "#00adef",
         tabBarInactiveTintColor: "gray",
@@ -50,7 +50,7 @@ const MyTabs = () => {
           ),
           headerRight: () => (
             <TouchableOpacity
-              onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
+              onPress={() => navegacion.dispatch(DrawerActions.toggleDrawer())}
               style={styles.account}
             >
               {usuario && usuario.rol === rol && <FloatButton pantalla="N" />}
@@ -59,7 +59,7 @@ const MyTabs = () => {
           headerShown: true,
         }}
       />
-      {/* <Tab.Screen
+      <Tab.Screen
         name="Comunidad"
         component={Comunidad}
         options={{
@@ -80,7 +80,7 @@ const MyTabs = () => {
           ),
           headerShown: true,
         }}
-      /> */}
+      />
       <Tab.Screen
         name="Entrenamiento"
         component={Entrenamiento}
@@ -88,7 +88,7 @@ const MyTabs = () => {
           tabBarIcon: ({ color, size }) => (
             <TouchableOpacity
               onPress={() =>
-                navigation.reset({ routes: [{ name: "Entrenamiento" }] })
+                navegacion.reset({ routes: [{ name: "Entrenamiento" }] })
               }
             >
               <MaterialCommunityIcons
@@ -100,7 +100,7 @@ const MyTabs = () => {
           ),
           headerRight: () => (
             <TouchableOpacity
-              onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
+              onPress={() => navegacion.dispatch(DrawerActions.toggleDrawer())}
               style={styles.account}
             >
               {usuario && usuario.rol === rol && <FloatButton pantalla="E" />}

@@ -16,6 +16,7 @@ const CrearForo = () => {
   const [crear, setCrear] = useState(false);
 
   const onCrearForo = () => {
+    console.log("crear foro");
     const datosForo = { nombre: nombre, descripcion: descripcion };
     ForoCD({ datos: datosForo, accion: true });
     navegacion.navigate("Comunidad");

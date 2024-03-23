@@ -20,6 +20,7 @@ const Map = () => {
 
   useEffect(() => {
     if (datos.length > 0 && !coordsRecibidas) {
+      console.log("Coordenadas recibidas:", datos);
       setCoordsRecibidas(true);
     }
   }, [datos, coordsRecibidas]);
@@ -36,12 +37,12 @@ const Map = () => {
       <MapView
         ref={mapRef}
         style={styles.map}
-        // mapType="satellite"
+        mapType="hybrid"
         loadingEnabled={true}
         toolbarEnabled={false}
         clusteringEnabled={true}
         clusterColor="#00abef70"
-        maxZoomLevel={7}
+        maxZoomLevel={15}
         initialRegion={INITIAL_REGION}
       >
         {datos.map((coord, index) => (

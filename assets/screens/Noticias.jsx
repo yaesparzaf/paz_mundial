@@ -3,7 +3,7 @@ import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Publicaciones from "../componentes/Publicaciones";
 import { contexUser } from "../../fb/AuthenticatedUserProvider";
-import ObtenerTokenDeDispositivo from "../notificaciones/PermisosNotificaciones";
+import PermisosNotificaciones from "../notificaciones/PermisosNotificaciones";
 
 const Noticias = () => {
   const { usuario } = contexUser();
@@ -12,11 +12,11 @@ const Noticias = () => {
   const mostrarCache = async () => {
     GetAlls();
   };
+
   useEffect(() => {
     if (usuario) setLoading(false);
+    //PermisosNotificaciones();
   }, [usuario]);
-
-  ObtenerTokenDeDispositivo();
   if (loading || !usuario) {
     return (
       <SafeAreaView style={{ flex: 1 }}>
@@ -28,6 +28,7 @@ const Noticias = () => {
   } else {
     return (
       <SafeAreaView>
+        {/* <PermisosNotificaciones /> */}
         <Publicaciones datos_usuario={usuario} screen={"noticias"} />
       </SafeAreaView>
     );

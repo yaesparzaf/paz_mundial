@@ -12,11 +12,7 @@ import { TextInput } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 import { db } from "../../fb/firebase-config";
-import {
-  ref,
-  getStorage,
-  deleteObject,
-} from "firebase/storage";
+import { ref, getStorage, deleteObject } from "firebase/storage";
 import {
   collection,
   addDoc,
