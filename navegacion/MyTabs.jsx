@@ -15,11 +15,13 @@ import Meditar from "../assets/screens/Meditar";
 import { MaterialIcons } from "@expo/vector-icons";
 import FloatButton from "../assets/componentes/FloatButton";
 import { contexUser } from "../fb/AuthenticatedUserProvider";
+import { useNavigation } from "@react-navigation/native";
 
 const Tab = createBottomTabNavigator();
 
 const MyTabs = () => {
   const tam = Dimensions.get("window").width * 0.05;
+  const navegacion = useNavigation();
   const { usuario } = contexUser();
   const rol = "admin";
   return (
@@ -84,11 +86,17 @@ const MyTabs = () => {
         component={Entrenamiento}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons
-              name="head-cog-outline"
-              size={tam}
-              color={color}
-            />
+            <TouchableOpacity
+              onPress={() =>
+                navegacion.reset({ routes: [{ name: "Entrenamiento" }] })
+              }
+            >
+              <MaterialCommunityIcons
+                name="head-cog-outline"
+                size={tam}
+                color={color}
+              />
+            </TouchableOpacity>
           ),
           headerRight: () => (
             <TouchableOpacity

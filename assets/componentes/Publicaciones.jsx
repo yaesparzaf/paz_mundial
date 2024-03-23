@@ -1,31 +1,22 @@
-import {
-  View,
-  Text,
-  FlatList,
-  StyleSheet,
-  TouchableOpacity,
-  ActivityIndicator,
-  Image,
-} from "react-native";
+import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import { collection, getDocs, onSnapshot, query } from "firebase/firestore";
+import { Skeleton } from "moti/skeleton";
 import React, { useEffect, useState } from "react";
 import {
-  collection,
-  doc,
-  getDocs,
-  onSnapshot,
-  query,
-  setDoc,
-} from "firebase/firestore";
-import { db } from "../../fb/firebase-config";
-import { Entypo } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
-import { FontAwesome } from "@expo/vector-icons";
-import { MaterialIcons } from "@expo/vector-icons";
-import OpcionesUD from "./OpcionesUD";
-import { Skeleton } from "moti/skeleton";
-import publicaciones from "../styles/publicacionesStyles";
-import { addLeida } from "../../fb/DatosUsers";
+  FlatList,
+  Text,
+  TouchableOpacity,
+  View,
+  ScrollView,
+} from "react-native";
 import { Swipeable } from "react-native-gesture-handler";
+import { addLeida } from "../../fb/DatosUsers";
+import { db } from "../../fb/firebase-config";
+import publicaciones from "../styles/publicacionesStyles";
+import OpcionesUD from "./OpcionesUD";
+
+let resultado = null;
 
 const Publicaciones = ({ datos_usuario, screen }) => {
   const usuario = datos_usuario;
@@ -40,6 +31,9 @@ const Publicaciones = ({ datos_usuario, screen }) => {
         const colecc = collection(db, screen);
         const isEmpty = await getDocs(colecc);
         if (!isEmpty.empty) {
+          console.log("en empty");
+          if (isEmpty.size === 1) setPrimero(true);
+          else setPrimero(false);
           const q = query(colecc);
           const subscripcion = onSnapshot(q, (snapshot) => {
             const newPublicacion = snapshot.docs.map((doc) => ({
@@ -50,7 +44,12 @@ const Publicaciones = ({ datos_usuario, screen }) => {
               newPublicacion.sort((a, b) => b.fecha - a.fecha);
             else if (screen === "entrenamiento")
               newPublicacion.sort((a, b) => a.fecha - b.fecha);
-            setPrimero(newPublicacion[0].id);
+            if (
+              newPublicacion.length > 0 &&
+              newPublicacion[0].bloqueado === true
+            ) {
+              newPublicacion[0].bloqueado = false;
+            }
             setPublicaciones(newPublicacion);
             setLoading(false);
           });
@@ -58,6 +57,7 @@ const Publicaciones = ({ datos_usuario, screen }) => {
             subscripcion();
           };
         } else {
+          setPrimero(null);
           setLoading(false);
         }
       } else {
@@ -88,20 +88,20 @@ const Publicaciones = ({ datos_usuario, screen }) => {
     return <View>{skeletonViews}</View>;
   }
   if (publicaciones !== null) {
+    console.log("res:", resultado);
     return (
-      <FlatList
-        data={publicaciones}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
+      <ScrollView>
+        {publicaciones.map((item) => (
           <Info
+            key={item.id.toString()}
             item={item}
             rol={usuario ? usuario.rol : ""}
             usuario_id={usuario ? usuario.id : ""}
             screen={screen}
             primero={item.id === primero ? true : false}
           />
-        )}
-      />
+        ))}
+      </ScrollView>
     );
   }
 };
@@ -143,6 +143,16 @@ const Info = ({ item, rol, usuario_id, screen, primero }) => {
     NuevaNoticia();
   }, [usuario_id, item.id]);
 
+  useEffect(() => {
+    if (opcionVisible === "eliminar" || opcionVisible === "editar") {
+      const timeoutId = setTimeout(() => {
+        setOpcionVisible(null);
+      }, 0);
+
+      return () => clearTimeout(timeoutId); // Limpiar el timeout si el componente se desmonta antes de que se complete
+    }
+  }, [opcionVisible]);
+
   const FormatoFecha = (fecha) => {
     if (!fecha) return "";
     const diferenciaTiempo = Date.now() - fecha.getTime();
@@ -178,69 +188,34 @@ const Info = ({ item, rol, usuario_id, screen, primero }) => {
     setOpcionVisible(null);
   };
 
-  const onSwipeRight = () => {
-    return (
-      <View style={{ flexDirection: "row" }}>
-        <TouchableOpacity
-          onPress={handleEditarPress}
-          style={[publicaciones.editar]}
-        >
-          <Text style={{ color: "#000000", fontWeight: "bold", fontSize: 10 }}>
-            Editar
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={handleEliminarPress}
-          style={[publicaciones.eliminar]}
-        >
-          <Text style={{ color: "#fff", fontWeight: "bold", fontSize: 10 }}>
-            Eliminar
-          </Text>
-        </TouchableOpacity>
-        {opcionVisible === "editar" && (
-          <OpcionesUD
-            onClose={handleClose}
-            noticiaId={item.id}
-            imagenUrl={item.imagen}
-            onScreen={screen}
-            accion="editar"
-          />
-        )}
-        {opcionVisible === "eliminar" && (
-          <OpcionesUD
-            onClose={handleClose}
-            noticiaId={item.id}
-            imagenUrl={item.imagen}
-            onScreen={screen}
-            accion="eliminar"
-          />
-        )}
-      </View>
-    );
-  };
-
-  const resultado =
-    enEntrenamiento && item.bloqueado === false
-      ? false
-      : enEntrenamiento && item.bloqueado === true
-      ? nueva
-      : false;
-
   const datos = () => {
+    resultado =
+      enEntrenamiento && item.bloqueado === false
+        ? (console.log("ResultadoF1: false"), false)
+        : enEntrenamiento && item.bloqueado === true
+        ? (console.log("ResultadoN:", nueva), nueva)
+        : (console.log("ResultadoF2: false"), false);
     return (
       <TouchableOpacity
         style={{
           ...publicaciones.noticia_btn,
-          opacity: resultado ? 0.9 : 1,
+          opacity: (
+            resultado !== null && resultado !== undefined ? resultado : true
+          )
+            ? 0.9
+            : 1,
         }}
-        disabled={resultado}
+        disabled={
+          resultado !== null && resultado !== undefined ? resultado : true
+        }
         onPress={() => pressButton(item)}
       >
-        {resultado && (
+        {(resultado === null || resultado === undefined || resultado) && (
           <View style={publicaciones.candado}>
-            <FontAwesome name="lock" size={50} color="#00adef" />
+            <FontAwesome name="lock" size={70} color="#00adef" />
           </View>
         )}
+
         <View style={publicaciones.encabezado}>
           <Text style={publicaciones.autorTexto}>{item.autor}</Text>
           {fecha !== null && (
@@ -279,7 +254,56 @@ const Info = ({ item, rol, usuario_id, screen, primero }) => {
           <Swipeable
             friction={1.5}
             leftThreshold
-            renderRightActions={() => onSwipeRight()}
+            renderRightActions={() => (
+              <View style={{ flexDirection: "row" }}>
+                <TouchableOpacity
+                  onPress={handleEditarPress}
+                  style={[publicaciones.editar]}
+                >
+                  <Text
+                    style={{
+                      color: "#000000",
+                      fontWeight: "bold",
+                      fontSize: 10,
+                    }}
+                  >
+                    Editar
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={handleEliminarPress}
+                  style={[publicaciones.eliminar]}
+                >
+                  <Text
+                    style={{ color: "#fff", fontWeight: "bold", fontSize: 10 }}
+                  >
+                    Eliminar
+                  </Text>
+                </TouchableOpacity>
+                {opcionVisible === "editar" && (
+                  <>
+                    <OpcionesUD
+                      onClose={handleClose}
+                      noticiaId={item.id}
+                      imagenUrl={item.imagen}
+                      onScreen={screen}
+                      accion="editar"
+                    />
+                  </>
+                )}
+                {opcionVisible === "eliminar" && (
+                  <>
+                    <OpcionesUD
+                      onClose={handleClose}
+                      noticiaId={item.id}
+                      imagenUrl={item.imagen}
+                      onScreen={screen}
+                      accion="eliminar"
+                    />
+                  </>
+                )}
+              </View>
+            )}
           >
             {datos()}
           </Swipeable>

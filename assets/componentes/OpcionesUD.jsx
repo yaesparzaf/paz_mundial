@@ -1,24 +1,9 @@
-import {
-  View,
-  Text,
-  Modal,
-  TouchableOpacity,
-  StyleSheet,
-  TouchableWithoutFeedback,
-} from "react-native";
-import React, { useEffect, useState } from "react";
-import Publicar from "./Publicar";
 import { useNavigation } from "@react-navigation/native";
-import {
-  collection,
-  deleteDoc,
-  doc,
-  getDoc,
-  getDocs,
-  where,
-} from "firebase/firestore";
+import { collection, deleteDoc, doc, getDocs } from "firebase/firestore";
 import { deleteObject, getStorage, ref } from "firebase/storage";
+import { useEffect, useState } from "react";
 import { db } from "../../fb/firebase-config";
+import { Alert } from "react-native";
 
 const OpcionesUD = ({ onClose, noticiaId, imagenUrl, onScreen, accion }) => {
   const navegacion = useNavigation();
@@ -70,7 +55,21 @@ const OpcionesUD = ({ onClose, noticiaId, imagenUrl, onScreen, accion }) => {
     if (accion === "editar") {
       pressEditar();
     } else if (accion === "eliminar") {
-      pressEliminar();
+      // Mostrar la alerta de confirmación aquí
+      Alert.alert(
+        "Eliminar Noticia",
+        "¿Está seguro de que desea eliminar esta noticia?",
+        [
+          {
+            text: "Cancelar",
+            style: "cancel",
+          },
+          {
+            text: "Eliminar",
+            onPress: pressEliminar,
+          },
+        ]
+      );
     }
   }, [accion]);
 
