@@ -1,5 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
-import { SafeAreaView, StyleSheet, StatusBar, Image } from "react-native";
+import {
+  SafeAreaView,
+  StyleSheet,
+  StatusBar,
+  Image,
+  Dimensions,
+} from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
@@ -10,6 +16,7 @@ import { AuthenticatedUserContex } from "../fb/AuthenticatedUserProvider";
 import GetCache from "../assets/cache/GetCache";
 import MyDrawer from "./MyDrawer";
 import TabStack from "./TabStack";
+const { height: screenHeight } = Dimensions.get("window");
 
 const Stack = createStackNavigator();
 
@@ -64,10 +71,7 @@ const MainStack = () => {
   if (isLoading) {
     return (
       <SafeAreaView style={styles.loading_container}>
-        <Image
-          style={styles.loading}
-          source={require("../assets/splash.png")}
-        />
+        <Image style={styles.loading} source={require("../assets/lod.gif")} />
       </SafeAreaView>
     );
   }
@@ -121,11 +125,13 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    // backgroundColor:'red'
+    width: "100%",
+    height: screenHeight,
   },
   loading: {
-    width: "100%",
-    height: 700,
+    width: 70,
+    height: 70,
+    resizeMode: "cover",
   },
 });
 

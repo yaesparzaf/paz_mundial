@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginVertical: -30,
-    backgroundColor: "#00adef",
+    backgroundColor: "#ffffff",
   },
 
   imageContainer: {
@@ -70,14 +70,14 @@ const styles = StyleSheet.create({
     borderRadius: 50,
   },
   userName: {
-    color: "#fff",
+    color: "#000000",
     fontSize: 18,
-    fontWeight: "bold",
+    fontWeight: "900",
   },
   userRole: {
     fontSize: 13,
-    color: "#fff",
-    fontWeight: "300",
+    color: "#747474",
+    fontWeight: "400",
   },
   drawerContent: {
     flex: 1,

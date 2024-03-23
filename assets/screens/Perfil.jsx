@@ -1,4 +1,11 @@
-import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  ImageBackground,
+} from "react-native";
 import React from "react";
 import { contexUser } from "../../fb/AuthenticatedUserProvider";
 import LogOut from "../componentes/LogOut";
@@ -19,16 +26,21 @@ const Perfil = () => {
     <View style={styles.container}>
       {usuario !== null && (
         <>
-          <View style={styles.image_cont}>
-            <Image
-              source={{
-                uri: usuario.image,
-              }}
-              style={styles.profileImage}
-              resizeMode="cover"
-              onError={() => {}}
-            />
-          </View>
+          <ImageBackground
+            source={require("../a.jpg")}
+            style={styles.backgroundImage}
+          >
+            <View style={styles.image_cont}>
+              <Image
+                source={{
+                  uri: usuario.image,
+                }}
+                style={styles.profileImage}
+                resizeMode="cover"
+                onError={() => {}}
+              />
+            </View>
+          </ImageBackground>
 
           <View style={styles.data_cont}>
             <Text style={styles.data_title}>Nombre</Text>
@@ -42,9 +54,9 @@ const Perfil = () => {
           </View>
         </>
       )}
-      <View style={styles.boton_cont}>
-        <TouchableOpacity style={styles.boton_edit} onPress={onNavegacion}>
-          <Text>Editar</Text>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity style={styles.button} onPress={onNavegacion}>
+          <Text style={styles.buttonText}>Editar datos!</Text>
         </TouchableOpacity>
       </View>
       <LogOut />
@@ -58,14 +70,22 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#ffffff",
   },
+  backgroundImage: {
+    width: "100%",
+    resizeMode: "cover",
+    height: 200,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   image_cont: {
-    backgroundColor: "#000",
     borderWidth: 1,
     borderColor: "black",
     borderRadius: 90,
     marginBottom: 20,
     overflow: "hidden",
     marginTop: 20,
+    width: 130,
+    height: 130,
   },
   profileImage: {
     width: 130,
@@ -75,14 +95,6 @@ const styles = StyleSheet.create({
     alignContent: "flex-end",
     alignItems: "flex-end",
     justifyContent: "flex-end",
-  },
-  boton_edit: {
-    marginTop: 30,
-    backgroundColor: "#00adef",
-    padding: 15,
-    borderRadius: 20,
-    alignItems: "center",
-    width: 250,
   },
   data_cont: {
     height: 180,
@@ -102,6 +114,21 @@ const styles = StyleSheet.create({
   data_info: {
     color: "#000000",
     fontSize: 18,
+  },
+  buttonContainer: {
+    marginTop: 25,
+    alignItems: "center",
+  },
+  button: {
+    backgroundColor: "#74caff",
+    borderRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
   },
 });
 

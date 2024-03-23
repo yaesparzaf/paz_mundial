@@ -26,7 +26,7 @@ const Noticias = () => {
   } else {
     return (
       <SafeAreaView>
-        <Publicaciones datos_usuario={usuario} />
+        <Publicaciones datos_usuario={usuario} screen={"noticias"} />
       </SafeAreaView>
     );
   }

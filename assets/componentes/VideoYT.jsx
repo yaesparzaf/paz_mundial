@@ -2,16 +2,13 @@ import React, { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import YouTube from "react-native-youtube-iframe";
 import axios from "axios";
-import { useVideoContext } from "./MeditarContext";
 import { yt } from "../../fb/firebase-config";
 import PutCache from "../cache/PutCache";
 import GetCache from "../cache/GetCache";
-import { Skeleton } from "moti/skeleton";
-import { MotiView } from "moti";
 
-const VideoYT = React.memo(({ video }) => {
+const VideoYT = React.memo(({ video, esPublicacion }) => {
   const [videoInfo, setVideoInfo] = useState(null);
-  const [videoId, setVideoId] = useState(video.video_id);
+  const [videoId, setVideoId] = useState(video);
   //const {cacheVideo, videoACache, setCacheVideo} = useVideoContext();
   //const [precargaVideo, setPrecargaVideo] = useState({});
 
@@ -33,7 +30,8 @@ const VideoYT = React.memo(({ video }) => {
                 categoryId: response.data.items[0].snippet.categoryId,
               };
               setVideoInfo(newInfo);
-              PutCache({ key: String(videoId), datos: newInfo });
+              if (!esPublicacion)
+                PutCache({ key: String(videoId), datos: newInfo });
             } else {
               console.error("No se encontró información del video.");
             }
@@ -52,22 +50,35 @@ const VideoYT = React.memo(({ video }) => {
   return (
     <View>
       {videoInfo ? (
-        <View
-          style={{
-            marginTop: 10,
-            alignSelf: "center",
-            justifyContent: "center",
-            resizeMode: "center",
-          }}
-        >
-          <YouTube
-            videoId={videoId}
-            height={250}
-            width={400}
-            initialPlayerParams={{
-              controls: 0,
+        <View>
+          <View
+            style={{
+              width: "100%",
+              aspectRatio: 16 / 9,
+              borderRadius: 10,
+              overflow: "hidden",
+              marginVertical: 20,
             }}
-          />
+          >
+            <YouTube
+              videoId={videoId}
+              height={320}
+              playerVars={{
+                modestbranding: 1, // Oculta el logo de YouTube
+                controls: 1, // Muestra los controles del reproductor
+                autoplay: 0, // No reproducir automáticamente
+                loop: 0, // No repetir el video
+                rel: 0, // No mostrar videos relacionados al final
+                iv_load_policy: 3, // No mostrar anotaciones
+                cc_load_policy: 0, // No mostrar subtítulos
+                fs: 0, // No mostrar botón de pantalla completa
+                disablekb: 1, // Deshabilitar el control del teclado
+                enablejsapi: 1, // Habilitar la API de JavaScript
+                playsinline: 1, // Reproducir en el contenedor del componente
+                quality: "small", // Calidad baja
+              }}
+            />
+          </View>
           <TouchableOpacity
             style={{ position: "absolute", top: 0, width: "100%", height: 55 }}
           />

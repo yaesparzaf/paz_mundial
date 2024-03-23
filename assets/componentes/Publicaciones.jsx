@@ -22,35 +22,50 @@ import { useNavigation } from "@react-navigation/native";
 import { FontAwesome } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import OpcionesUD from "./OpcionesUD";
-import { contexUser } from "../../fb/AuthenticatedUserProvider";
 import { Skeleton } from "moti/skeleton";
+import publicaciones from "../styles/publicacionesStyles";
+import { addLeida } from "../../fb/DatosUsers";
+import { Swipeable } from "react-native-gesture-handler";
 
-const Publicaciones = ({ datos_usuario }) => {
-  //const { usuario } = contexUser();
+const Publicaciones = ({ datos_usuario, screen }) => {
   const usuario = datos_usuario;
   const [loading, setLoading] = useState(true);
   const [publicaciones, setPublicaciones] = useState([]);
   const [noticiaLeida, setNoticiaLeida] = useState();
+  const [primero, setPrimero] = useState(null);
 
   useEffect(() => {
-    if (usuario) {
-      const q = query(collection(db, "noticias"));
-      const subscripcion = onSnapshot(q, (snapshot) => {
-        const newPublicacion = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        newPublicacion.sort((a, b) => b.fecha - a.fecha);
-        setPublicaciones(newPublicacion);
+    const getColeccion = async () => {
+      if (usuario && screen) {
+        const colecc = collection(db, screen);
+        const isEmpty = await getDocs(colecc);
+        if (!isEmpty.empty) {
+          const q = query(colecc);
+          const subscripcion = onSnapshot(q, (snapshot) => {
+            const newPublicacion = snapshot.docs.map((doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            }));
+            if (screen === "noticias")
+              newPublicacion.sort((a, b) => b.fecha - a.fecha);
+            else if (screen === "entrenamiento")
+              newPublicacion.sort((a, b) => a.fecha - b.fecha);
+            setPrimero(newPublicacion[0].id);
+            setPublicaciones(newPublicacion);
+            setLoading(false);
+          });
+          return () => {
+            subscripcion();
+          };
+        } else {
+          setLoading(false);
+        }
+      } else {
         setLoading(false);
-      });
-      return () => {
-        subscripcion();
-      };
-    } else {
-      setLoading(false);
-    }
-  }, [usuario]);
+      }
+    };
+    getColeccion();
+  }, [usuario, screen]);
 
   if (loading) {
     const skeletonViews = [];
@@ -72,185 +87,208 @@ const Publicaciones = ({ datos_usuario }) => {
 
     return <View>{skeletonViews}</View>;
   }
-
-  return (
-    <FlatList
-      data={publicaciones}
-      keyExtractor={(item) => item.id.toString()}
-      renderItem={({ item }) => (
-        <Info
-          item={item}
-          rol={usuario ? usuario.rol : ""}
-          usuario_id={usuario ? usuario.id : ""}
-        />
-      )}
-    />
-  );
+  if (publicaciones !== null) {
+    return (
+      <FlatList
+        data={publicaciones}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
+          <Info
+            item={item}
+            rol={usuario ? usuario.rol : ""}
+            usuario_id={usuario ? usuario.id : ""}
+            screen={screen}
+            primero={item.id === primero ? true : false}
+          />
+        )}
+      />
+    );
+  }
 };
 
-const Info = ({ item, rol, usuario_id }) => {
+const Info = ({ item, rol, usuario_id, screen, primero }) => {
+  const navegacion = useNavigation();
   const [mostrarOpciones, setMostrarOpciones] = useState(false);
   const [nueva, setNueva] = useState();
-  const navegacion = useNavigation();
+  const [enEntrenamiento, setEnEntrenamiento] = useState();
+  const [opcionVisible, setOpcionVisible] = React.useState(null);
   const fecha = item.fecha ? item.fecha.toDate() : null;
+  let coleccion;
+  if (screen === "noticias") {
+    coleccion = "noticiasLeidas";
+  } else if (screen === "entrenamiento") {
+    coleccion = "entrenamientoVisto";
+  }
   useEffect(() => {
     const NuevaNoticia = async () => {
+      if (screen === "entrenamiento") setEnEntrenamiento(true);
       try {
-        const coleccionRef = collection(
-          db,
-          "usuarios",
-          usuario_id,
-          "noticiasLeidas"
-        );
+        const coleccionRef = collection(db, "usuarios", usuario_id, coleccion);
         const datosColeccion = await getDocs(coleccionRef);
         const vacia = datosColeccion.empty;
-        if (vacia) setNueva(vacia);
-        const noticia_leida = datosColeccion.docs.some(
-          (doc) => doc.data().noticia_id === item.id
-        );
-        setNueva(!noticia_leida);
+        if (vacia) {
+          await addLeida(coleccion, item.id, usuario_id);
+          setNueva(true);
+        } else {
+          const noticia_leida = datosColeccion.docs.some((doc) => {
+            if (doc.id === item.id) {
+              return true;
+            }
+            return false;
+          });
+          setNueva(!noticia_leida);
+        }
       } catch (error) {}
     };
     NuevaNoticia();
   }, [usuario_id, item.id]);
 
-  const addLeida = async (noticia_id) => {
-    const coleccionRef = await getDocs(
-      collection(db, "usuarios", usuario_id, "noticiasLeidas")
-    );
-    //const querySnapshot = await getDocs(query(coleccionRef, where('noticia_id', '==', noticia_id)));
-    setNueva(false);
-    //if (coleccionRef.empty) {
-    const noticiaRef = doc(
-      db,
-      "usuarios",
-      usuario_id,
-      "noticiasLeidas",
-      noticia_id
-    );
-    await setDoc(noticiaRef, {
-      noticia_id: noticia_id,
-      leida: true,
-    });
-    // }
-  };
-
   const FormatoFecha = (fecha) => {
     if (!fecha) return "";
-    const options = { day: "numeric", month: "numeric", year: "numeric" };
-    return fecha.toLocaleDateString(undefined, options);
+    const diferenciaTiempo = Date.now() - fecha.getTime();
+    const diferenciaDias = Math.floor(diferenciaTiempo / (1000 * 3600 * 24));
+    if (diferenciaDias === 0) {
+      return "Hoy";
+    } else if (diferenciaDias === 1) {
+      return "Ayer";
+    } else {
+      return `Hace ${diferenciaDias} días`;
+    }
   };
+
   const pressButton = (info) => {
-    //if(nueva)
-    //setNueva(true);
-    addLeida(info.id);
-    navegacion.navigate("NoticiaInfo", { info });
+    if (screen === "noticias") {
+      setNueva(false);
+      addLeida(coleccion, info.id, usuario_id);
+    }
+    navegacion.navigate("NoticiaInfo", { info, screen, usuario_id });
   };
-  const toggleOpciones = () => {
-    setMostrarOpciones(!mostrarOpciones);
+
+  const handleEditarPress = () => {
+    console.log("Botón de editar presionado");
+    setOpcionVisible("editar");
   };
-  return (
-    usuario_id && (
-      <View style={styles.publicacionContainer}>
-        <View style={styles.encabezado}>
-          <Text style={styles.autorTexto}>{item.autor}</Text>
-          {fecha !== null && (
-            <Text style={styles.fechaTexto}>{FormatoFecha(fecha)}</Text>
-          )}
-          {nueva && (
-            <MaterialIcons name="fiber-new" size={24} color="#00ADEF" />
-          )}
-          <View style={styles.menu_publicacion}>
-            {rol === "admin" && (
-              <TouchableOpacity activeOpacity={1.0} onPress={toggleOpciones}>
-                <Entypo name="dots-three-vertical" size={15} color="black" />
-              </TouchableOpacity>
-            )}
-          </View>
-        </View>
+
+  const handleEliminarPress = () => {
+    console.log("Botón de eliminar presionado");
+    setOpcionVisible("eliminar");
+  };
+
+  const handleClose = () => {
+    setOpcionVisible(null);
+  };
+
+  const onSwipeRight = () => {
+    return (
+      <View style={{ flexDirection: "row" }}>
         <TouchableOpacity
-          style={styles.noticia_btn}
-          onPress={() => pressButton(item)}
+          onPress={handleEditarPress}
+          style={[publicaciones.editar]}
         >
-          <Text style={styles.titulo_publicacion}>{item.titulo}</Text>
-          <Text
-            style={[
-              styles.asunto_publicacion,
-              { textAlign: item.align_asunto, fontStyle: item.tipo_letra },
-            ]}
-          >
-            {item.asunto}
+          <Text style={{ color: "#000000", fontWeight: "bold", fontSize: 10 }}>
+            Editar
           </Text>
-          {
-            item.imagen && <FontAwesome name="photo" size={18} color="black" />
-            //<Image source={{ uri: item.imagen }} style={styles.imagenPublicacion}
-          }
         </TouchableOpacity>
-        {mostrarOpciones && (
+        <TouchableOpacity
+          onPress={handleEliminarPress}
+          style={[publicaciones.eliminar]}
+        >
+          <Text style={{ color: "#fff", fontWeight: "bold", fontSize: 10 }}>
+            Eliminar
+          </Text>
+        </TouchableOpacity>
+        {opcionVisible === "editar" && (
           <OpcionesUD
-            onClose={toggleOpciones}
+            onClose={handleClose}
             noticiaId={item.id}
             imagenUrl={item.imagen}
+            onScreen={screen}
+            accion="editar"
           />
+        )}
+        {opcionVisible === "eliminar" && (
+          <OpcionesUD
+            onClose={handleClose}
+            noticiaId={item.id}
+            imagenUrl={item.imagen}
+            onScreen={screen}
+            accion="eliminar"
+          />
+        )}
+      </View>
+    );
+  };
+
+  const resultado =
+    enEntrenamiento && item.bloqueado === false
+      ? false
+      : enEntrenamiento && item.bloqueado === true
+      ? nueva
+      : false;
+
+  const datos = () => {
+    return (
+      <TouchableOpacity
+        style={{
+          ...publicaciones.noticia_btn,
+          opacity: resultado ? 0.9 : 1,
+        }}
+        disabled={resultado}
+        onPress={() => pressButton(item)}
+      >
+        {resultado && (
+          <View style={publicaciones.candado}>
+            <FontAwesome name="lock" size={50} color="#00adef" />
+          </View>
+        )}
+        <View style={publicaciones.encabezado}>
+          <Text style={publicaciones.autorTexto}>{item.autor}</Text>
+          {fecha !== null && (
+            <Text style={publicaciones.fechaTexto}>{FormatoFecha(fecha)}</Text>
+          )}
+          {nueva && screen === "noticias" && (
+            <MaterialIcons name="fiber-new" size={20} color="#00ADEF" />
+          )}
+        </View>
+        <Text style={publicaciones.titulo_publicacion}>{item.titulo}</Text>
+        <Text
+          style={[
+            publicaciones.asunto_publicacion,
+            { textAlign: item.align_asunto, fontStyle: item.tipo_letra },
+          ]}
+        >
+          {item.asunto}
+        </Text>
+        {item.imagen && (
+          <FontAwesome
+            style={{ paddingHorizontal: "5%" }}
+            name="photo"
+            size={16}
+            color="black"
+          />
+        )}
+        <View style={publicaciones.separador} />
+      </TouchableOpacity>
+    );
+  };
+
+  return (
+    usuario_id && (
+      <View style={publicaciones.publicacionContainer}>
+        {rol === "admin" && usuario_id == item.autor_id ? (
+          <Swipeable
+            friction={1.5}
+            leftThreshold
+            renderRightActions={() => onSwipeRight()}
+          >
+            {datos()}
+          </Swipeable>
+        ) : (
+          datos()
         )}
       </View>
     )
   );
 };
-
-const styles = StyleSheet.create({
-  publicacionContainer: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#00000021",
-    backgroundColor: "#fff",
-  },
-  skeletonItem: {
-    marginBottom: 10,
-    borderRadius: 5,
-    height: 100,
-    width: "100%",
-  },
-  noticia_btn: {
-    //backgroundColor:'brown'
-  },
-  encabezado: {
-    alignItems: "center",
-    flexDirection: "row",
-    height: 25,
-    //backgroundColor: 'red'
-  },
-  titulo_publicacion: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  asunto_publicacion: {
-    fontSize: 18,
-  },
-  autorTexto: {
-    fontWeight: "bold",
-    marginBottom: 5,
-    marginRight: 10,
-  },
-  textoPublicacion: {
-    fontSize: 15,
-    textAlign: "justify",
-  },
-  imagenPublicacion: {
-    height: 200,
-    resizeMode: "cover",
-    marginBottom: 10,
-  },
-  fechaTexto: {
-    fontSize: 12,
-    color: "#888",
-    marginTop: 0,
-  },
-  menu_publicacion: {
-    flexDirection: "row-reverse",
-    flex: 1,
-    //backgroundColor:'green'
-  },
-});
 
 export default Publicaciones;

@@ -1,7 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
-import { StyleSheet, TouchableOpacity } from "react-native";
-import { FAB } from "react-native-paper";
+import { StyleSheet } from "react-native";
 import { Entypo } from "@expo/vector-icons";
 
 const FloatButton = ({ pantalla }) => {
@@ -10,9 +9,11 @@ const FloatButton = ({ pantalla }) => {
     if (pantalla === "V") {
       navegacion.navigate("MeditarEdit");
     } else if (pantalla === "N") {
-      navegacion.navigate("Publicar");
+      navegacion.navigate("NuevaPublicacion", { screen: "noticias" });
     } else if (pantalla === "C") {
       navegacion.navigate("NuevoForo");
+    } else if (pantalla === "E") {
+      navegacion.navigate("NuevaPublicacion", { screen: "entrenamiento" });
     }
   };
   return (

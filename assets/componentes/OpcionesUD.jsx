@@ -6,8 +6,8 @@ import {
   StyleSheet,
   TouchableWithoutFeedback,
 } from "react-native";
-import React from "react";
-import Publicar from "../screens/Publicar";
+import React, { useEffect, useState } from "react";
+import Publicar from "./Publicar";
 import { useNavigation } from "@react-navigation/native";
 import {
   collection,
@@ -20,17 +20,33 @@ import {
 import { deleteObject, getStorage, ref } from "firebase/storage";
 import { db } from "../../fb/firebase-config";
 
-const OpcionesUD = ({ onClose, noticiaId, imagenUrl }) => {
+const OpcionesUD = ({ onClose, noticiaId, imagenUrl, onScreen, accion }) => {
   const navegacion = useNavigation();
+  const [coleccionLeidas, setColeccionLeidas] = useState();
+
+  useEffect(() => {
+    if (onScreen === "noticias") {
+      setColeccionLeidas("noticiasLeidas");
+    } else if (onScreen === "entrenamiento") {
+      setColeccionLeidas("entrenamientoVisto");
+    }
+  }, [onScreen]);
+
   const pressEditar = () => {
-    navegacion.navigate("Publicar", { noticiaId });
-    onClose();
+    console.log("Entro a editar");
+    navegacion.navigate("NuevaPublicacion", {
+      noticiaId: noticiaId,
+      screen: onScreen,
+    });
+    console.log("Saliendo de editar");
   };
+
   const pressEliminar = async () => {
+    console.log("Entro a eliminar");
     const storage = getStorage();
     const imagenRef = ref(storage, imagenUrl);
     try {
-      await deleteDoc(doc(db, "noticias", noticiaId));
+      await deleteDoc(doc(db, onScreen, noticiaId));
       if (imagenUrl) await deleteObject(imagenRef);
       const allUsuarios = await getDocs(collection(db, "usuarios"));
       await Promise.all(
@@ -40,64 +56,25 @@ const OpcionesUD = ({ onClose, noticiaId, imagenUrl }) => {
             db,
             "usuarios",
             usuario_id,
-            "noticiasLeidas",
+            coleccionLeidas,
             noticiaId
           );
           if (noticiaLeidaRef) await deleteDoc(noticiaLeidaRef);
         })
       );
     } catch (error) {}
-    onClose();
+    console.log("Termino eliminar");
   };
-  const pressOverlay = () => {
-    onClose();
-  };
-  return (
-    <Modal animationType="slide" transparent={true} visible={true}>
-      <TouchableWithoutFeedback onPress={pressOverlay}>
-        <View style={styles.overlay} />
-      </TouchableWithoutFeedback>
-      <View style={styles.modalContent}>
-        <TouchableOpacity style={styles.acciones_btn} onPress={pressEditar}>
-          <Text style={styles.acciones_texto}>Editar</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.acciones_btn}>
-          <Text
-            style={{ ...styles.acciones_texto, color: "red" }}
-            onPress={pressEliminar}
-          >
-            Eliminar
-          </Text>
-        </TouchableOpacity>
-      </View>
-    </Modal>
-  );
-};
 
-const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    //backgroundColor: 'rgba(0, 0, 0, 0.2)',
-  },
-  modalContent: {
-    flex: 0.3,
-    alignItems: "center",
-    justifyContent: "center",
-    bottom: 0,
-    backgroundColor: "white",
-  },
-  acciones_btn: {
-    justifyContent: "center",
-    width: "50%",
-    height: 50,
-    borderBottomWidth: 0.8,
-    borderColor: "black",
-    //backgroundColor: 'red',
-  },
-  acciones_texto: {
-    fontSize: 20,
-    textAlign: "center",
-  },
-});
+  useEffect(() => {
+    if (accion === "editar") {
+      pressEditar();
+    } else if (accion === "eliminar") {
+      pressEliminar();
+    }
+  }, [accion]);
+
+  return null; // El componente no renderiza nada directamente
+};
 
 export default OpcionesUD;

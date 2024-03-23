@@ -90,6 +90,14 @@ const MyTabs = () => {
               color={color}
             />
           ),
+          headerRight: () => (
+            <TouchableOpacity
+              onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
+              style={styles.account}
+            >
+              {usuario && usuario.rol === rol && <FloatButton pantalla="E" />}
+            </TouchableOpacity>
+          ),
           headerShown: true,
         }}
       />

@@ -5,13 +5,13 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { MaterialIcons } from "@expo/vector-icons";
 import Foro from "../assets/screens/Foro";
 import Perfil from "../assets/screens/Perfil";
-import Publicar from "../assets/screens/Publicar";
 import NoticiaInfo from "../assets/screens/NoticiaInfo";
 import MeditarEdit from "../assets/screens/MeditarEdit";
 import MyTabs from "./MyTabs";
 import Login from "../assets/componentes/Login";
 import PerfilEdit from "../assets/screens/PerfilEdit";
 import NuevoForo from "../assets/screens/NuevoForo";
+import NuevaPublicacion from "../assets/screens/NuevaPublicacion";
 
 const Stack = createStackNavigator();
 
@@ -21,9 +21,9 @@ const TabStack = () => {
     <Stack.Navigator
       screenOptions={{
         headerStyle: {
-          backgroundColor: "#00ADEF",
+          backgroundColor: "#ffffff",
         },
-        headerTintColor: "#fff",
+        headerTintColor: "#000000",
         headerTitleStyle: {
           fontWeight: "bold",
         },
@@ -66,15 +66,12 @@ const TabStack = () => {
         })}
       />
       <Stack.Screen
-        name="Publicar"
-        component={Publicar}
-        options={{ title: "Crear noticia" }}
-      />
-      <Stack.Screen
         name="NoticiaInfo"
         component={NoticiaInfo}
         options={{
-          title: "Noticia",
+          title: "Post",
+          headerTitleAlign: "center",
+          headerTitleStyle: { fontSize: 17, fontWeight: "900" },
         }}
       />
       <Stack.Screen
@@ -94,6 +91,7 @@ const TabStack = () => {
         component={NuevoForo}
         options={{ title: "Nuevo foro" }}
       />
+      <Stack.Screen name="NuevaPublicacion" component={NuevaPublicacion} />
     </Stack.Navigator>
   );
 };

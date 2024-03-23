@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image, Dimensions } from "react-native";
+import { Dimensions, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Perfil from "../assets/screens/Perfil";
 import { contexUser } from "../fb/AuthenticatedUserProvider";
@@ -17,14 +17,14 @@ const Stack = createStackNavigator();
 
 const MyDrawer = () => {
   const tam = Dimensions.get("window").width * 0.05;
-  const col = "#fff";
+  const col = "#000000";
   return (
     <Drawer.Navigator
       screenOptions={{
         drawerPosition: "right",
         headerLeft: false,
-        drawerActiveBackgroundColor: "#00adef",
-        drawerInactiveBackgroundColor: "#000000",
+        drawerActiveBackgroundColor: "#ececec",
+        drawerInactiveBackgroundColor: "#ffffff76",
         headerTitleStyle: {
           fontSize: 24, // Ajusta el tamaño del texto del título
           color: "#fff",
@@ -43,7 +43,7 @@ const MyDrawer = () => {
           drawerPosition: "right",
           headerShown: false,
           drawerLabelStyle: {
-            color: "#fff",
+            color: "#000000",
             fontSize: 14,
           },
           drawerItemStyle: {
@@ -59,10 +59,10 @@ const MyDrawer = () => {
       <Drawer.Screen
         name=" Mi Perfil"
         component={PerfilStack}
-        options={{
+        options={({ navigation }) => ({
           drawerPosition: "right",
           drawerLabelStyle: {
-            color: "#fff",
+            color: "#000000",
             fontSize: 14,
           },
           drawerItemStyle: {
@@ -76,7 +76,7 @@ const MyDrawer = () => {
           drawerIcon: ({ size, color }) => (
             <Ionicons name="person" size={tam} color={col} />
           ),
-        }}
+        })}
       />
     </Drawer.Navigator>
   );
@@ -86,7 +86,20 @@ const PerfilStack = () => {
   //const navigation = useNavigation();
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Perfil" component={Perfil} />
+      <Stack.Screen
+        name="Perfil"
+        component={Perfil}
+        options={({ navigation }) => ({
+          headerLeft: () => (
+            <TouchableOpacity
+              onPress={() => navigation.goBack()}
+              style={{ marginLeft: 20 }}
+            >
+              <Ionicons name="arrow-back" size={24} color="#000000" />
+            </TouchableOpacity>
+          ),
+        })}
+      />
       <Stack.Screen
         name="PerfilEdit"
         component={PerfilEdit}

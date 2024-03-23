@@ -14,7 +14,7 @@ import { FontAwesome } from "@expo/vector-icons";
 import ContadorAnimado from "./ContadorAnimado";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { contexUser } from "../../fb/AuthenticatedUserProvider";
-import DatosUsers from "../../fb/DatosUsers";
+import { DatosUsers } from "../../fb/DatosUsers";
 import PutCache from "../cache/PutCache";
 import GetAlls from "../cache/GetAlls";
 import Icon from "react-native-vector-icons/FontAwesome";

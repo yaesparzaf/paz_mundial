@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
   },
   url_input: {
     fontSize: 18,
-    backgroundColor: "red",
+    backgroundColor: "#ffffff",
   },
 });
 
