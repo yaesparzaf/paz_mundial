@@ -30,7 +30,6 @@ const addLeida = async (coleccion, noticia_id, usuario_id) => {
       if (documento.id === noticia_id) return true;
       return false;
     });
-    console.log("existe en la coleccion?: ", existe);
     if (!existe) {
       const noticiaRef = doc(db, "usuarios", usuario_id, coleccion, noticia_id);
       await setDoc(noticiaRef, {

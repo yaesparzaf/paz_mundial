@@ -7,6 +7,9 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  ActivityIndicator,
+  Modal,
+  Button,
 } from "react-native";
 import { TextInput } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
@@ -31,6 +34,10 @@ import SubirImagen from "../../fb/SubirImagen";
 import getId from "../rules/reglas";
 import { Alert } from "react-native";
 import { addLeida } from "../../fb/DatosUsers";
+import Icon from "react-native-vector-icons/FontAwesome";
+import YTVideo from "../YTVideo.png";
+import Agrega from "../Agrega.png";
+import { FontAwesome } from "@expo/vector-icons"; // Importa el icono de FontAwesome
 
 const Publicar = ({ docId, screen }) => {
   const { usuario } = contexUser();
@@ -57,6 +64,9 @@ const Publicar = ({ docId, screen }) => {
   const [coleccion, setColeccion] = useState();
   const [nameNavigate, setNameNavigate] = useState();
   const [addVideo, setAddVideo] = useState(false);
+  const [loading, setloading] = useState(false);
+  const [nuevaVariable, setNuevaVariable] = useState(false);
+  const [urlPreview, setUrlPreview] = useState(null);
   const [url, setUrl] = useState("");
   useEffect(() => {
     const obtenerDatos = async () => {
@@ -106,6 +116,23 @@ const Publicar = ({ docId, screen }) => {
 
   const keyboardHide = () => {
     setMenuEdicion(false);
+  };
+
+  const handlePreview = async () => {
+    try {
+      const response = await fetch(
+        `https://www.youtube.com/oembed?url=${url}&format=json`
+      );
+
+      if (!response.ok) {
+        throw new Error("Error al obtener la previsualización del video");
+      }
+      const data = await response.json();
+      const previewUrl = data.thumbnail_url;
+      setUrlPreview(previewUrl);
+    } catch (error) {
+      console.error("Error:", error.message);
+    }
   };
 
   const getRespuesta = async (response) => {
@@ -216,7 +243,6 @@ const Publicar = ({ docId, screen }) => {
     const documentoRef = doc(db, coleccion, documentoId);
     try {
       if (prev_imagen || new_imagen) {
-        console.log("entro al if de prev_imagen && new_imagen");
         await updateDoc(documentoRef, {
           align_asunto: alignAsunto,
           align_texto: alignTexto,
@@ -231,15 +257,11 @@ const Publicar = ({ docId, screen }) => {
           ...(video_id !== undefined && { video_id: video_id[1] }),
         });
         setGuardandoImagen(true);
-        console.log("_______________");
-        console.log("esto tiene imagenURI: ", imagenUri);
         const imagenSubida = await SubirImagen(documentoRef, new_imagen);
-        console.log("respuesta: ", imagenSubida);
         if (imagenSubida) {
           setGuardandoImagen(false);
         }
       } else if (prev_imagen && !new_imagen) {
-        console.log("entro al else  de  prev_imagen && !new_imagen");
         await updateDoc(documentoRef, {
           align_asunto: alignAsunto,
           align_texto: alignTexto,
@@ -262,7 +284,6 @@ const Publicar = ({ docId, screen }) => {
         }
         //else if cuando no hay imagen previa pero si imagen nueva
       } else {
-        console.log("entro al else 207");
         await updateDoc(documentoRef, {
           align_asunto: alignAsunto,
           align_texto: alignTexto,
@@ -292,7 +313,7 @@ const Publicar = ({ docId, screen }) => {
               setItalica(!italica);
             }}
           >
-            <Feather name="italic" size={24} color="black" />
+            <Feather name="italic" size={20} color="black" />
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.align_Text}
@@ -300,7 +321,7 @@ const Publicar = ({ docId, screen }) => {
               setAlignAsunto("left");
             }}
           >
-            <Feather name="align-left" size={24} color="black" />
+            <Feather name="align-left" size={20} color="black" />
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.align_Text}
@@ -308,7 +329,7 @@ const Publicar = ({ docId, screen }) => {
               setAlignAsunto("center");
             }}
           >
-            <Feather name="align-center" size={24} color="black" />
+            <Feather name="align-center" size={20} color="black" />
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.align_Text}
@@ -316,7 +337,7 @@ const Publicar = ({ docId, screen }) => {
               setAlignAsunto("right");
             }}
           >
-            <Feather name="align-right" size={24} color="black" />
+            <Feather name="align-right" size={20} color="black" />
           </TouchableOpacity>
         </View>
       );
@@ -329,7 +350,7 @@ const Publicar = ({ docId, screen }) => {
               input2 ? setAlignTexto2("left") : setAlignTexto("left");
             }}
           >
-            <Feather name="align-left" size={24} color="black" />
+            <Feather name="align-left" size={20} color="black" />
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.align_Text}
@@ -337,25 +358,18 @@ const Publicar = ({ docId, screen }) => {
               input2 ? setAlignTexto2("center") : setAlignTexto("center");
             }}
           >
-            <Feather name="align-center" size={24} color="black" />
+            <Feather name="align-center" size={20} color="black" />
           </TouchableOpacity>
         </View>
       );
     }
   };
 
-  //   const agregarTexto = (index, value) => {
-  //     const nuevoTexto = [...textos];
-  //     nuevoTexto[index] = value;
-  //     setTextos(nuevoTexto);
-  //   };
-
   const agregarInput = () => {
     setSegundoInput(true);
   };
 
   const validarEnvio = () => {
-    console.log("en validar envio");
     if (addVideo) {
       const video_id = getId(url);
       if (video_id !== null) {
@@ -385,6 +399,7 @@ const Publicar = ({ docId, screen }) => {
         video_id
       );
     }
+    setloading(true);
   };
 
   const validarEdicion = () => {
@@ -419,40 +434,65 @@ const Publicar = ({ docId, screen }) => {
         imagenUri_prev
       );
     }
+    setloading(true);
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: "white", paddingHorizontal: 15 }}
+    >
       <ScrollView>
         <View style={styles.botones_cont}>
-          <AbrirGaleria respuesta={getRespuesta} />
-          <TouchableOpacity onPress={agregarInput}>
-            <Text
-              style={{
-                padding: 10,
-                backgroundColor: "#00adef",
-                borderRadius: 10,
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <AbrirGaleria respuesta={getRespuesta} />
+            <TouchableOpacity
+              onPress={() => {
+                setAddVideo(true);
+                setNuevaVariable(true);
+                if (url && url !== "" && url !== undefined && url !== null) {
+                  handlePreview();
+                }
               }}
             >
-              Añadir texto
-            </Text>
-          </TouchableOpacity>
-          {/* boton para agregar video -------------*/}
-          <TouchableOpacity onPress={() => setAddVideo(true)}>
-            <Text>Video</Text>
-          </TouchableOpacity>
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <Image
+                  source={YTVideo}
+                  style={{
+                    width: 35,
+                    height: 35,
+                    tintColor: "black",
+                    marginHorizontal: 10,
+                  }}
+                />
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={agregarInput}>
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <Image
+                  source={Agrega}
+                  style={{
+                    width: 35,
+                    height: 35,
+                    tintColor: "black",
+                    marginHorizontal: 10,
+                  }}
+                />
+              </View>
+            </TouchableOpacity>
+          </View>
+
           <TouchableOpacity
             onPress={editar ? validarEdicion : validarEnvio}
             style={{
               ...styles.publicar_btn,
-              backgroundColor: publicar ? "#00FFFF" : "#A9A9A9",
+              backgroundColor: publicar ? "#00adef" : "#cccccc",
             }}
             disabled={!publicar || guardandoImagen}
           >
             <Text
               style={{
                 ...styles.text_botones,
-                color: publicar ? "#000000" : "#D3D3D3",
+                color: publicar ? "#ffffff" : "#D3D3D3",
               }}
             >
               {guardandoImagen ? "Publicando..." : "Publicar"}
@@ -460,21 +500,6 @@ const Publicar = ({ docId, screen }) => {
           </TouchableOpacity>
         </View>
         <View>
-          {/* {coleccion === "entrenamiento" && (
-            <TextInput
-              placeholder="Num. entrenamiento"
-              keyboardType="numeric"
-              maxLength={3}
-              value={numEnt}
-              style={styles.texto_input}
-              onChangeText={(numero) => {
-                setNumEnt(numero);
-                setPublicar(
-                  numero && titulo && (imagenUri || titulo.length > 0)
-                );
-              }}
-            />
-          )} */}
           <TextInput
             placeholder="Título"
             style={styles.titulo_asunto_input}
@@ -523,29 +548,24 @@ const Publicar = ({ docId, screen }) => {
             }}
           />
         </View>
-        <View style={styles.prev_cont}>
-          {imagenUri ? (
-            <View style={styles.prev_cont}>
-              <TouchableOpacity
-                style={styles.eliminarButton}
-                onPress={eliminarImagen}
-              >
-                <FontAwesome5 name="times-circle" size={25} color="#000" />
-              </TouchableOpacity>
-              {(esImagen || editar) && (
-                <Image source={{ uri: imagenUri }} style={styles.image} />
-              )}
-              {esVideo && (
-                <Video
-                  source={{ uri: imagenUri }}
-                  style={styles.video}
-                  controls={true}
-                  resizeMode="cover"
-                />
-              )}
-            </View>
-          ) : null}
-        </View>
+        {imagenUri ? (
+          <View style={styles.prev_cont}>
+            {(esImagen || editar) && (
+              <Image
+                source={{ uri: imagenUri }}
+                style={styles.image}
+                resizeMode="contain"
+              />
+            )}
+            <TouchableOpacity
+              style={styles.eliminarButton}
+              onPress={eliminarImagen}
+            >
+              <FontAwesome5 name="times-circle" size={20} color="#000" />
+            </TouchableOpacity>
+          </View>
+        ) : null}
+
         <View>
           {menuEdicion && segundoInput && MenuEdicion("T", "T2")}
           {segundoInput && (
@@ -564,14 +584,127 @@ const Publicar = ({ docId, screen }) => {
             />
           )}
           {addVideo && (
-            <TextInput
-              placeholder="Ingrese url del video"
-              value={url}
-              onChangeText={setUrl}
-            />
+            <Modal
+              animationType="slide"
+              transparent={true}
+              visible={nuevaVariable}
+              onRequestClose={() => setNuevaVariable(false)}
+            >
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  backgroundColor: "rgba(0, 0, 0, 0.5)",
+                }}
+              >
+                <View
+                  style={{
+                    backgroundColor: "white",
+                    padding: 20,
+                    margin: 10,
+                    borderRadius: 10,
+                    width: "90%",
+                  }}
+                >
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      marginBottom: 20,
+                    }}
+                  >
+                    <FontAwesome
+                      name="youtube"
+                      size={50}
+                      color="red"
+                      style={{ marginRight: 10 }}
+                    />
+                    <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+                      Agrega video
+                    </Text>
+                  </View>
+                  <TextInput
+                    placeholder="Ingrese URL del video"
+                    value={url}
+                    onChangeText={setUrl}
+                    style={{
+                      borderBottomWidth: 1,
+                      borderColor: "#ef0000",
+                      marginBottom: 5,
+                    }}
+                  />
+                  {urlPreview && (
+                    <Image
+                      source={{ uri: urlPreview }}
+                      style={{
+                        alignSelf: "center",
+                        width: "100%",
+                        height: 150,
+                        margin: 20,
+                        borderRadius: 10,
+                      }}
+                    />
+                  )}
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <TouchableOpacity
+                      style={{
+                        backgroundColor: "red",
+                        borderRadius: 5,
+                        padding: 10,
+                        width: "48%", // Ajusta el ancho según sea necesario
+                      }}
+                      onPress={() => {
+                        handlePreview();
+                        setNuevaVariable(false); // Aquí se actualiza la nueva variable al cerrar el modal
+                      }}
+                    >
+                      <Text
+                        style={{
+                          color: "white",
+                          textAlign: "center",
+                          fontSize: 16,
+                        }}
+                      >
+                        Aceptar
+                      </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={{
+                        backgroundColor: "#eeeeee",
+                        borderRadius: 5,
+                        padding: 10,
+                        width: "48%",
+                      }}
+                      onPress={() => setNuevaVariable(false)} // Aquí se actualiza la nueva variable al cerrar el modal
+                    >
+                      <Text
+                        style={{
+                          color: "#000",
+                          textAlign: "center",
+                          fontSize: 16,
+                        }}
+                      >
+                        Cancelar
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </View>
+            </Modal>
           )}
         </View>
       </ScrollView>
+      {loading && (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#00adef" />
+        </View>
+      )}
     </SafeAreaView>
   );
 };
@@ -579,13 +712,14 @@ const Publicar = ({ docId, screen }) => {
 const styles = StyleSheet.create({
   texto_input: {
     textAlignVertical: "top",
-    fontSize: 20,
-    //backgroundColor: 'red'
+    fontSize: 16,
+    backgroundColor: "#ffffff",
   },
   botones_cont: {
+    backgroundColor: "#ffffff",
     flexDirection: "row",
-    marginHorizontal: 10,
     justifyContent: "space-between",
+    alignItems: "center",
   },
   row: {
     flexDirection: "row",
@@ -604,43 +738,55 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flexDirection: "row",
   },
-  prev_cont: {
-    marginTop: 20,
-    backgroundColor: "white",
-  },
-  imagen_prev: {
-    alignItems: "center",
-    //backgroundColor: 'green'
-  },
+
   titulo_asunto_input: {
     //backgroundColor: '#FEA',
     height: 50,
-    fontSize: 20,
+    fontSize: 16,
+  },
+  prev_cont: {
+    backgroundColor: "#ffffff",
+    height: 300,
+    position: "relative",
+  },
+  eliminarButton: {
+    width: 25,
+    height: 25,
+    backgroundColor: "rgba(255,255,255,0.5)", // Ajusta el color y la opacidad según tu diseño
+    position: "absolute",
+    top: 5,
+    right: 5,
+    justifyContent: "center", // Centra el contenido verticalmente
+    alignItems: "center", // Centra el contenido horizontalmente
   },
   image: {
-    width: "100%",
-    height: 500,
-    resizeMode: "contain",
-    marginHorizontal: 5,
+    backgroundColor: "#ffffff",
+    flex: 1,
+    width: null,
+    height: null,
   },
   publicar_btn: {
-    width: "30%",
-    height: 40,
+    width: "25%",
+    height: 30,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 5,
   },
-  eliminarButton: {
-    alignItems: "flex-end",
-    //position: 'absolute',
-    width: 25,
-    flexDirection: "row-reverse",
-    right: 0,
-    backgroundColor: "#D3D3D3",
-  },
+
   text_botones: {
-    fontSize: 18,
-    color: "#00000",
+    fontSize: 15,
+    fontWeight: "700",
+    justifyContent: "space-between",
+  },
+  loadingContainer: {
+    position: "absolute",
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: "rgba(255, 255, 255, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 

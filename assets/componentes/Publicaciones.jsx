@@ -4,18 +4,17 @@ import { collection, getDocs, onSnapshot, query } from "firebase/firestore";
 import { Skeleton } from "moti/skeleton";
 import React, { useEffect, useState } from "react";
 import {
-  FlatList,
+  ScrollView,
   Text,
   TouchableOpacity,
   View,
-  ScrollView,
+  Dimensions,
 } from "react-native";
 import { Swipeable } from "react-native-gesture-handler";
 import { addLeida } from "../../fb/DatosUsers";
 import { db } from "../../fb/firebase-config";
 import publicaciones from "../styles/publicacionesStyles";
 import OpcionesUD from "./OpcionesUD";
-
 let resultado = null;
 
 const Publicaciones = ({ datos_usuario, screen }) => {
@@ -24,6 +23,9 @@ const Publicaciones = ({ datos_usuario, screen }) => {
   const [publicaciones, setPublicaciones] = useState([]);
   const [noticiaLeida, setNoticiaLeida] = useState();
   const [primero, setPrimero] = useState(null);
+  const [alturaPantalla, setAlturaPantalla] = useState(
+    Dimensions.get("window").height
+  );
 
   useEffect(() => {
     const getColeccion = async () => {
@@ -31,7 +33,6 @@ const Publicaciones = ({ datos_usuario, screen }) => {
         const colecc = collection(db, screen);
         const isEmpty = await getDocs(colecc);
         if (!isEmpty.empty) {
-          console.log("en empty");
           if (isEmpty.size === 1) setPrimero(true);
           else setPrimero(false);
           const q = query(colecc);
@@ -87,8 +88,7 @@ const Publicaciones = ({ datos_usuario, screen }) => {
 
     return <View>{skeletonViews}</View>;
   }
-  if (publicaciones !== null) {
-    console.log("res:", resultado);
+  if (publicaciones && publicaciones.length > 0) {
     return (
       <ScrollView>
         {publicaciones.map((item) => (
@@ -102,6 +102,21 @@ const Publicaciones = ({ datos_usuario, screen }) => {
           />
         ))}
       </ScrollView>
+    );
+  } else {
+    return (
+      <View
+        style={{
+          paddingHorizontal: 10,
+          paddingVertical: 100,
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Text style={{ color: "#000", fontSize: 16, fontWeight: "200" }}>
+          No hay noticias disponibles
+        </Text>
+      </View>
     );
   }
 };
@@ -171,16 +186,14 @@ const Info = ({ item, rol, usuario_id, screen, primero }) => {
       setNueva(false);
       addLeida(coleccion, info.id, usuario_id);
     }
-    navegacion.navigate("NoticiaInfo", { info, screen, usuario_id });
+    navegacion.navigate("NoticiaInfo", { info, screen, usuario_id, resultado });
   };
 
   const handleEditarPress = () => {
-    console.log("Botón de editar presionado");
     setOpcionVisible("editar");
   };
 
   const handleEliminarPress = () => {
-    console.log("Botón de eliminar presionado");
     setOpcionVisible("eliminar");
   };
 
@@ -191,10 +204,11 @@ const Info = ({ item, rol, usuario_id, screen, primero }) => {
   const datos = () => {
     resultado =
       enEntrenamiento && item.bloqueado === false
-        ? (console.log("ResultadoF1: false"), false)
+        ? false
         : enEntrenamiento && item.bloqueado === true
-        ? (console.log("ResultadoN:", nueva), nueva)
-        : (console.log("ResultadoF2: false"), false);
+        ? nueva
+        : false;
+
     return (
       <TouchableOpacity
         style={{
@@ -314,5 +328,5 @@ const Info = ({ item, rol, usuario_id, screen, primero }) => {
     )
   );
 };
-
+export { resultado };
 export default Publicaciones;

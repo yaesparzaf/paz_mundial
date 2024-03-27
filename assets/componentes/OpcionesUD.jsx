@@ -18,16 +18,13 @@ const OpcionesUD = ({ onClose, noticiaId, imagenUrl, onScreen, accion }) => {
   }, [onScreen]);
 
   const pressEditar = () => {
-    console.log("Entro a editar");
     navegacion.navigate("NuevaPublicacion", {
       noticiaId: noticiaId,
       screen: onScreen,
     });
-    console.log("Saliendo de editar");
   };
 
   const pressEliminar = async () => {
-    console.log("Entro a eliminar");
     const storage = getStorage();
     const imagenRef = ref(storage, imagenUrl);
     try {
@@ -48,7 +45,6 @@ const OpcionesUD = ({ onClose, noticiaId, imagenUrl, onScreen, accion }) => {
         })
       );
     } catch (error) {}
-    console.log("Termino eliminar");
   };
 
   useEffect(() => {

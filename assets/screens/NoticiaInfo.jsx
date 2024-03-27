@@ -1,22 +1,23 @@
-import React, { useState } from "react";
+import { MaterialIcons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import React, { useState, useEffect } from "react";
 import {
-  View,
-  Text,
-  SafeAreaView,
-  StyleSheet,
   Image,
-  ScrollView,
-  TouchableOpacity,
-  FlatList,
   Modal,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import DesbloquearEntrenamiento from "../../fb/DesbloquearEntrenamiento";
 import VideoYT from "../componentes/VideoYT";
-import { MaterialIcons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
+import { FontAwesome5 } from "@expo/vector-icons";
 
 const NoticiaInfo = ({ route }) => {
   const { params } = route;
+  const { resultado } = route.params;
   const {
     align_asunto,
     align_texto,
@@ -33,12 +34,11 @@ const NoticiaInfo = ({ route }) => {
   } = params?.info || {};
   const screen = params?.screen;
   const usuario_id = params.usuario_id;
-  const formato_fecha = fecha.toDate().toLocaleDateString();
   const navegacion = useNavigation();
   const [showVideoModal, setShowVideoModal] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [desbloqueado, setDesbloqueado] = useState(false);
-  const video = [{ id: video_id }];
+  const [urlPreview, setUrlPreview] = useState(null);
   const handleOpenModal = () => {
     setShowVideoModal(true);
   };
@@ -54,14 +54,39 @@ const NoticiaInfo = ({ route }) => {
       screen: screen,
       datos: { datos },
     });
-    console.log("Existe?: ", existe);
-
     navegacion.reset({
       routes: [{ name: "Entrenamiento" }],
     });
     setDesbloqueado(true);
     setModalVisible(true);
   };
+
+  useEffect(() => {
+    if (
+      video_id &&
+      video_id !== "" &&
+      video_id !== undefined &&
+      video_id !== null
+    ) {
+      const handlePreview = async () => {
+        try {
+          const response = await fetch(
+            `https://www.youtube.com/oembed?url=https://youtu.be/${video_id}&format=json`
+          );
+          if (!response.ok) {
+            throw new Error("Error al obtener la previsualización del video");
+          }
+          const data = await response.json();
+          const previewUrl = data.thumbnail_url;
+          setUrlPreview(previewUrl);
+        } catch (error) {
+          console.error("Error:", error.message);
+        }
+      };
+
+      handlePreview();
+    }
+  }, [video_id]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -103,9 +128,37 @@ const NoticiaInfo = ({ route }) => {
                 </Text>
                 {video_id && (
                   <View>
-                    <TouchableOpacity onPress={handleOpenModal}>
-                      <Text style={styles.abrirModal}>Ver Video</Text>
-                    </TouchableOpacity>
+                    <View style={{ marginVertical: 10 }}>
+                      <TouchableOpacity onPress={handleOpenModal}>
+                        <Image
+                          source={{ uri: urlPreview }}
+                          style={{
+                            width: "100%",
+                            height: 180,
+                            borderRadius: 20,
+                          }}
+                        />
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={handleOpenModal}
+                        style={{
+                          position: "absolute",
+                          alignSelf: "center",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          width: "100%",
+                          height: 180,
+                          top: 0,
+                          right: 0,
+                          backgroundColor: "#00000030",
+                          padding: 20,
+                          borderRadius: 20,
+                        }}
+                      >
+                        <FontAwesome5 name="play" size={20} color="#fff" />
+                      </TouchableOpacity>
+                    </View>
+
                     <Modal
                       animationType="slide"
                       transparent={true}
@@ -152,7 +205,9 @@ const NoticiaInfo = ({ route }) => {
                 disabled={desbloqueado}
               >
                 <MaterialIcons name="lock" size={20} color="#000000" />
-                <Text style={styles.text_btn}>Abre la siguiente puerta</Text>
+                <Text style={styles.text_btn}>
+                  Desbloquea la siguiente clase
+                </Text>
               </TouchableOpacity>
             )}
           </View>
@@ -226,7 +281,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: "100%",
-    height: 400,
+    height: 200,
     borderRadius: 10,
     marginBottom: 10,
   },
@@ -268,18 +323,21 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     backgroundColor: "white",
-    padding: 20,
-    borderRadius: 8,
-    elevation: 5,
+    padding: 15,
+    borderRadius: 10,
+    elevation: 10,
   },
   modalTexto: {
     fontSize: 18,
     marginBottom: 10,
+    fontWeight: "300",
   },
   cerrarModal: {
-    color: "blue",
+    color: "#00adef",
     textAlign: "center",
     marginTop: 10,
+    padding: 10,
+    fontWeight: "600",
   },
   modalContainer2: {
     flex: 1,

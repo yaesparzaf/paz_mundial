@@ -91,7 +91,15 @@ const TabStack = () => {
         component={NuevoForo}
         options={{ title: "Nuevo foro" }}
       />
-      <Stack.Screen name="NuevaPublicacion" component={NuevaPublicacion} />
+      <Stack.Screen
+        name="NuevaPublicacion"
+        component={NuevaPublicacion}
+        options={{
+          title: "",
+          headerTitleAlign: "center",
+          headerTitleStyle: { fontSize: 17, fontWeight: "900" },
+        }}
+      />
     </Stack.Navigator>
   );
 };

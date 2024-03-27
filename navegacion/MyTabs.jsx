@@ -16,6 +16,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import FloatButton from "../assets/componentes/FloatButton";
 import { contexUser } from "../fb/AuthenticatedUserProvider";
 import { useNavigation } from "@react-navigation/native";
+import nuevo from "../assets/nuevo.png";
 
 const Tab = createBottomTabNavigator();
 
@@ -59,7 +60,7 @@ const MyTabs = () => {
           headerShown: true,
         }}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         name="Comunidad"
         component={Comunidad}
         options={{
@@ -80,7 +81,7 @@ const MyTabs = () => {
           ),
           headerShown: true,
         }}
-      />
+      /> */}
       <Tab.Screen
         name="Entrenamiento"
         component={Entrenamiento}
