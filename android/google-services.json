@@ -1,0 +1,50 @@
+{
+  "project_info": {
+    "project_number": "133476762148",
+    "project_id": "app-paz-mundial",
+    "storage_bucket": "app-paz-mundial.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:133476762148:android:74690522d9a14f14444eb1",
+        "android_client_info": {
+          "package_name": "dev.despertar.pazmundial"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "133476762148-9ct1ei1d60sgdbf2beask2fihbbqvrm6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "dev.despertar.pazmundial",
+            "certificate_hash": "57bfba2928d05aa21d115795ada9bdcd8f878aa6"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDBrNNWma_w3g3kRKPBdsUjTwmTjZ9ByGo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "133476762148-546r6guks5q39h84mid0ktj3i1g9pngf.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "133476762148-5ec612ukt96ohs88frg5emcaila6hff7.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "dev.despertar.pazmunidial"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

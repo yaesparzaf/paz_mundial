@@ -21,6 +21,7 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import * as Google from "expo-auth-session/providers/google";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import useContador from "../../fb/useContador";
+import GoogleLoginButton from "./GoogleLoginButton";
 
 const Login = ({ onLogin, onShowSignUp }) => {
   const [email, setEmail] = useState("");
@@ -64,6 +65,12 @@ const Login = ({ onLogin, onShowSignUp }) => {
       console.error("Error al iniciar sesión:", error);
       Alert.alert("Error", "Usuario o contraseña incorrectos");
     }
+  };
+
+  const handleLoginSuccess = (code) => {
+    console.log("Código de autorización:", code);
+    // Aquí puedes intercambiar el código por un token de acceso
+    // Recuerda que este paso se recomienda realizarlo en el servidor
   };
 
   return (
@@ -123,6 +130,11 @@ const Login = ({ onLogin, onShowSignUp }) => {
             </Text>
             ahora y únete!
           </Text>
+          <View
+            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          >
+            <GoogleLoginButton onLoginSuccess={handleLoginSuccess} />
+          </View>
         </View>
       </View>
     </KeyboardAwareScrollView>
