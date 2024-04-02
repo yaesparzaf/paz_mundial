@@ -23,7 +23,7 @@ const PermisosNotificaciones = () => {
   };
 
   return (
-    <View style={{justifyContent: "center", alignItems: "center" }}>
+    <View style={{ justifyContent: "center", alignItems: "center" }}>
       <Text>Permisos de notificaciones:</Text>
       <Button title="Solicitar permisos" onPress={solicitarPermisos} />
       {permissionGranted && <Text>Permisos concedidos</Text>}
