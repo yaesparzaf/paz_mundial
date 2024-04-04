@@ -1,16 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
+import { View, StyleSheet, Text, TouchableOpacity, Button } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Publicaciones from "../componentes/Publicaciones";
 import { contexUser } from "../../fb/AuthenticatedUserProvider";
-import PermisosNotificaciones from "../notificaciones/PermisosNotificaciones";
+import GetCache from "../cache/GetCache";
+import GetAlls from "../cache/GetAlls";
+import { enviarNotificacion } from "../notificaciones/PermisosNotificaciones";
 
 const Noticias = () => {
   const { usuario } = contexUser();
   const [loading, setLoading] = useState(true);
 
   const mostrarCache = async () => {
-    GetAlls();
+    //GetAlls();
+    const token = await GetCache({ key: "token" });
+    await enviarNotificacion(token, "noticias");
   };
 
   useEffect(() => {
@@ -28,7 +32,7 @@ const Noticias = () => {
   } else {
     return (
       <SafeAreaView>
-        {/* <PermisosNotificaciones /> */}
+        <Button title="Notificacion" onPress={mostrarCache} />
         <Publicaciones datos_usuario={usuario} screen={"noticias"} />
       </SafeAreaView>
     );
