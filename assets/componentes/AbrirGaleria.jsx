@@ -1,7 +1,6 @@
-import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
-import React, { useEffect, useState } from "react";
 import * as ImagePicker from "expo-image-picker";
-import { FontAwesome5 } from "@expo/vector-icons";
+import React, { useState } from "react";
+import { Image, StyleSheet, TouchableOpacity } from "react-native";
 import foto from "../foto.png";
 
 const AbrirGaleria = ({ respuesta }) => {
@@ -40,8 +39,8 @@ const AbrirGaleria = ({ respuesta }) => {
       <Image
         source={foto}
         style={{
-          width: 20,
-          height: 20,
+          width: 25,
+          height: 25,
           tintColor: "black",
           marginHorizontal: 10,
         }}

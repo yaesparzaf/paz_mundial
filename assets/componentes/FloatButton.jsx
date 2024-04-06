@@ -18,10 +18,11 @@ const FloatButton = ({ pantalla }) => {
   };
   return (
     <Entypo
-      name={pantalla == "C" ? "circle-with-plus" : "new-message"}
-      size={24}
+      name={pantalla === "C" ? "circle-with-plus" : "new-message"}
+      size={20}
       color="black"
       onPress={navegarAPublicar}
+      style={{ backgroundColor: "#ffffff", padding: 10 }} // Ejemplo de estilo agregado
     />
   );
 };

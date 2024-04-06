@@ -14,7 +14,7 @@ const Noticias = () => {
   const mostrarCache = async () => {
     //GetAlls();
     const token = await GetCache({ key: "token" });
-    await enviarNotificacion(token, "noticias");
+    await enviarNotificacion(token, "entrenamiento");
   };
 
   useEffect(() => {

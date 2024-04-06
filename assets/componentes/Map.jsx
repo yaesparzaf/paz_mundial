@@ -20,7 +20,6 @@ const Map = () => {
 
   useEffect(() => {
     if (datos.length > 0 && !coordsRecibidas) {
-      console.log("Coordenadas recibidas:", datos);
       setCoordsRecibidas(true);
     }
   }, [datos, coordsRecibidas]);

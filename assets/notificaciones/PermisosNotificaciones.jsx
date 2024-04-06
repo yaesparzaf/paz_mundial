@@ -4,6 +4,7 @@ import * as Notifications from "expo-notifications";
 import * as Device from "expo-device";
 import agregarDatos from "../../fb/agregarDatos";
 import GetCache from "../cache/GetCache";
+import * as Linking from "expo-linking";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -16,40 +17,47 @@ Notifications.setNotificationHandler({
 export default function PermisosNotificaciones() {
   const notificationListener = useRef();
   const responseListener = useRef();
+  const lastNotificationResponse = Notifications.useLastNotificationResponse();
 
   useEffect(() => {
     registerForPushNotificationsAsync();
-
-    notificationListener.current =
-      Notifications.addNotificationReceivedListener((notification) => {
-        console.log("notificacion pulsada: ", notification);
-      });
-
-    responseListener.current =
+    const notificationListener =
       Notifications.addNotificationResponseReceivedListener((response) => {
-        console.log("el que: ", response);
+        const screen = response.notification.request.content.data.screen;
+        // Abrir la aplicación directamente en la pantalla especificada
+        Linking.openURL(`exp://192.168.1.35:8081/--/${screen}`);
       });
 
-    return () => {
-      Notifications.removeNotificationSubscription(
-        notificationListener.current
-      );
-      Notifications.removeNotificationSubscription(responseListener.current);
-    };
-  }, []);
-
-  useEffect(() => {
     AppState.addEventListener("change", handleAppStateChange);
 
     return () => {
+      Notifications.removeNotificationSubscription(notificationListener);
       AppState.removeEventListener("change", handleAppStateChange);
     };
   }, []);
 
   const handleAppStateChange = (nextAppState) => {
     if (nextAppState === "background") {
+      console.log("La aplicación está en segundo plano");
     }
   };
+
+  useEffect(() => {
+    if (
+      lastNotificationResponse &&
+      lastNotificationResponse.notification.request.content.data.url &&
+      lastNotificationResponse.actionIdentifier ===
+        Notifications.DEFAULT_ACTION_IDENTIFIER
+    ) {
+      console.log(
+        "se: ",
+        lastNotificationResponse.notification.request.content.data.url
+      );
+      Linking.openURL(
+        lastNotificationResponse.notification.request.content.data.url
+      );
+    }
+  }, [lastNotificationResponse]);
 
   async function registerForPushNotificationsAsync() {
     let token;

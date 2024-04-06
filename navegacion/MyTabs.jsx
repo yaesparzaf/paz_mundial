@@ -16,13 +16,14 @@ import { MaterialIcons } from "@expo/vector-icons";
 import FloatButton from "../assets/componentes/FloatButton";
 import { contexUser } from "../fb/AuthenticatedUserProvider";
 import { useNavigation } from "@react-navigation/native";
+import nuevo from "../assets/nuevo.png";
 
 const Tab = createBottomTabNavigator();
 
 const MyTabs = () => {
   const tam = Dimensions.get("window").width * 0.05;
-  const { usuario } = contexUser();
   const navegacion = useNavigation();
+  const { usuario } = contexUser();
   const rol = "admin";
   return (
     <Tab.Navigator
@@ -50,7 +51,7 @@ const MyTabs = () => {
           ),
           headerRight: () => (
             <TouchableOpacity
-              onPress={() => navegacion.dispatch(DrawerActions.toggleDrawer())}
+              onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
               style={styles.account}
             >
               {usuario && usuario.rol === rol && <FloatButton pantalla="N" />}
@@ -59,7 +60,7 @@ const MyTabs = () => {
           headerShown: true,
         }}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         name="Comunidad"
         component={Comunidad}
         options={{
@@ -80,7 +81,7 @@ const MyTabs = () => {
           ),
           headerShown: true,
         }}
-      />
+      /> */}
       <Tab.Screen
         name="Entrenamiento"
         component={Entrenamiento}
@@ -100,7 +101,7 @@ const MyTabs = () => {
           ),
           headerRight: () => (
             <TouchableOpacity
-              onPress={() => navegacion.dispatch(DrawerActions.toggleDrawer())}
+              onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
               style={styles.account}
             >
               {usuario && usuario.rol === rol && <FloatButton pantalla="E" />}

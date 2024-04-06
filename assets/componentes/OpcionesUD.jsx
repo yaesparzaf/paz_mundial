@@ -1,52 +1,30 @@
-import {
-  View,
-  Text,
-  Modal,
-  TouchableOpacity,
-  StyleSheet,
-  TouchableWithoutFeedback,
-} from "react-native";
-import React, { useEffect, useState } from "react";
-import Publicar from "./Publicar";
 import { useNavigation } from "@react-navigation/native";
-import {
-  collection,
-  deleteDoc,
-  doc,
-  getDoc,
-  getDocs,
-  where,
-} from "firebase/firestore";
+import { collection, deleteDoc, doc, getDocs } from "firebase/firestore";
 import { deleteObject, getStorage, ref } from "firebase/storage";
+import { useEffect, useState } from "react";
 import { db } from "../../fb/firebase-config";
-import route from "color-convert/route";
-import { mdiConsoleNetworkOutline } from "@mdi/js";
+import { Alert } from "react-native";
 
 const OpcionesUD = ({ onClose, noticiaId, imagenUrl, onScreen, accion }) => {
   const navegacion = useNavigation();
   const [coleccionLeidas, setColeccionLeidas] = useState();
-  let screen;
+
   useEffect(() => {
     if (onScreen === "noticias") {
       setColeccionLeidas("noticiasLeidas");
-      screen = "Noticias";
     } else if (onScreen === "entrenamiento") {
       setColeccionLeidas("entrenamientoVisto");
-      screen = "Entrenamiento";
     }
   }, [onScreen]);
 
   const pressEditar = () => {
-    console.log("Entro a editar");
     navegacion.navigate("NuevaPublicacion", {
       noticiaId: noticiaId,
       screen: onScreen,
     });
-    console.log("Saliendo de editar");
   };
 
   const pressEliminar = async () => {
-    console.log("Entro a eliminar");
     const storage = getStorage();
     const imagenRef = ref(storage, imagenUrl);
     try {
@@ -67,18 +45,31 @@ const OpcionesUD = ({ onClose, noticiaId, imagenUrl, onScreen, accion }) => {
         })
       );
     } catch (error) {}
-    navegacion.reset({ routes: [{ name: "Entrenamiento" }] });
   };
 
   useEffect(() => {
     if (accion === "editar") {
       pressEditar();
     } else if (accion === "eliminar") {
-      pressEliminar();
+      // Mostrar la alerta de confirmación aquí
+      Alert.alert(
+        "Eliminar Noticia",
+        "¿Está seguro de que desea eliminar esta noticia?",
+        [
+          {
+            text: "Cancelar",
+            style: "cancel",
+          },
+          {
+            text: "Eliminar",
+            onPress: pressEliminar,
+          },
+        ]
+      );
     }
   }, [accion]);
 
-  return null;
+  return null; // El componente no renderiza nada directamente
 };
 
 export default OpcionesUD;

@@ -1,0 +1,44 @@
+import React, { useState, useEffect } from "react";
+import { Button } from "react-native";
+import * as AuthSession from "expo-auth-session";
+import * as WebBrowser from "expo-web-browser";
+
+WebBrowser.maybeCompleteAuthSession(); // Asegúrate de que la sesión de autenticación pueda completarse
+
+const GoogleLoginButton = ({ onLoginSuccess }) => {
+  // Preparar el endpoint de autenticación de Google
+  const discovery = AuthSession.useAutoDiscovery("https://accounts.google.com");
+
+  // Iniciar el proceso de autenticación cuando el usuario presiona el botón
+  const [request, response, promptAsync] = AuthSession.useAuthRequest(
+    {
+      redirectUri: "https://auth.expo.io/@yamildespertar/paz_mundial",
+      clientId:
+        "133476762148-546r6guks5q39h84mid0ktj3i1g9pngf.apps.googleusercontent.com",
+      responseType: "code",
+      scopes: ["openid", "profile", "email"],
+    },
+    discovery
+  );
+
+  useEffect(() => {
+    console.log("Response: ", response);
+    if (response?.type === "success") {
+      const { code } = response.params;
+      console.log("CODE: ", code); // Solo para propósitos de depuración
+      onLoginSuccess(code); // Manejar el éxito de la autenticación según sea necesario
+    }
+  }, [response]);
+
+  return (
+    <Button
+      disabled={!request}
+      title="Iniciar sesión con Google"
+      onPress={() => {
+        promptAsync();
+      }}
+    />
+  );
+};
+
+export default GoogleLoginButton;
